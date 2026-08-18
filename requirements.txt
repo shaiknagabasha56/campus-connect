@@ -1,0 +1,7 @@
+Flask
+Flask-SQLAlchemy
+Flask-Mail
+Flask-Bcrypt
+PyMySQL
+python-dotenv
+itsdangerous

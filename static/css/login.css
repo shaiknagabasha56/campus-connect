@@ -1,0 +1,1420 @@
+/*==================================================
+RESET
+==================================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    font-size:16px;
+}
+
+body{
+
+    background:
+        radial-gradient(circle at 20% 20%,
+            rgba(255,255,255,.12),
+            transparent 25%),
+
+        radial-gradient(circle at 85% 15%,
+            rgba(130,210,255,.18),
+            transparent 25%),
+
+        radial-gradient(circle at 70% 80%,
+            rgba(0,60,130,.45),
+            transparent 35%),
+
+       
+}
+
+/*==================================================
+PAGE
+==================================================*/
+
+.page{
+
+    width:100%;
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:40px;
+
+    overflow:hidden;
+
+}
+
+/*====================================
+  3D Scene
+====================================*/
+
+.scene{
+
+    width:900px;
+    height:500px;
+
+    perspective:1800px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+/*==================================================
+CARD
+==================================================*/
+
+.login-card{
+
+    width:900px;
+    height:500px;
+
+    background:#fff;
+
+    overflow:hidden;
+
+    display:flex;
+
+    position:relative;
+
+    /*border-radius:22px;*/
+
+    box-shadow:
+        0 30px 60px rgba(0,0,0,.22);
+
+}
+
+
+.login-card:hover{
+
+
+    box-shadow:
+    0 45px 80px rgba(0, 0, 0, 0.342),
+    0 0 30px rgba(3, 3, 3, 0.45),
+    0 0 60px rgba(2, 2, 2, 0.25);
+    
+}
+
+/*====================================
+  Flip Card
+====================================*/
+
+.flip-card{
+
+    position:relative;
+
+    width:100%;
+    height:100%;
+
+    transform-style:preserve-3d;
+
+    transition:transform .9s cubic-bezier(.68,-0.55,.27,1.55);
+
+}
+
+/*====================================
+  Card Faces
+====================================*/
+
+.card-face{
+
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+
+}
+
+.card-front{
+
+    transform:rotateY(0deg);
+
+}
+
+.card-back{
+
+    transform:rotateY(180deg);
+
+}
+
+/*====================================
+  Flip Animation
+====================================*/
+
+.flip-card.flip{
+
+    transform:rotateY(180deg);
+
+}
+
+
+/*==================================================
+LEFT PANEL
+==================================================*/
+
+.left-panel{
+
+    position:relative;
+
+    width:47%;
+
+    height:100%;
+
+    background:#fff;
+
+    overflow:hidden;
+}
+
+/*==================================================
+MAIN BLUE PANEL
+==================================================*/
+
+.left-shape{
+
+    position:absolute;
+
+    width:700px;
+    height:600px;
+
+    left:-290px;
+    top:-200px;
+
+    border-radius:50%;
+
+    background:linear-gradient(
+        135deg,
+        #2195f7 0%,
+        #00509d 100%
+    );
+
+    z-index:1;
+}
+/*==================================================
+BOTTOM LEFT CIRCLE
+==================================================*/
+
+.circle-left{
+
+    position:absolute;
+
+    width:220px;
+    height:220px;
+
+    left:-50px;
+    bottom:-40px;
+
+    border-radius:50%;
+
+    background:linear-gradient(
+        135deg,
+        #2499ff,
+        #0057b0
+    );
+
+    z-index:3;
+}
+
+/*==================================================
+CENTER CIRCLE
+==================================================*/
+
+.circle-center{
+
+    position:absolute;
+
+    width:160px;
+    height:160px;
+
+    left:210px;
+    bottom:120px;
+
+    border-radius:50%;
+
+    background:linear-gradient(
+        135deg,
+        #289bff,
+        #004d97
+    );
+
+    box-shadow:
+    -10px 15px 30px rgba(0,0,0,.22);
+
+    z-index:5;
+}
+
+/*==================================================
+WELCOME TEXT
+==================================================*/
+
+.welcome-content{
+
+    position:absolute;
+
+    top:16px;
+    left:19px;
+
+    width:320px;
+
+    color:#fff;
+
+    z-index:10;
+}
+
+.welcome-content h1{
+
+    font-size:52px;
+
+    font-weight:800;
+
+    letter-spacing:2px;
+
+    margin-bottom:3px;
+}
+
+.welcome-content h3{
+
+    font-size:25px;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+}
+
+.welcome-content p{
+
+    font-size:10px;
+
+    line-height:2;
+
+    opacity:.92;
+}
+
+/*==================================================
+RIGHT PANEL
+==================================================*/
+
+.right-panel{
+
+    position:relative;
+
+    width:53%;
+    height:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:30px;
+
+    overflow:hidden;
+
+    background:#fff;
+}
+
+/*==================================================
+BOTTOM RIGHT CIRCLE
+==================================================*/
+
+.circle-right{
+
+    position:absolute;
+
+    width:190px;
+    height:190px;
+
+    right:-95px;
+    bottom:-95px;
+
+    border-radius:50%;
+
+    background:linear-gradient(
+        135deg,
+        #2d9eff,
+        #0a63c7
+    );
+
+    z-index:1;
+}
+
+/*==================================================
+FORM CONTAINER
+==================================================*/
+
+.form-container{
+
+    width:380px;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+
+    height:100%;
+
+    position:relative;
+
+    z-index:5;
+}
+/*==================================================
+FORM CONTAINER
+==================================================*/
+
+.form-container{
+
+
+    display:flex;
+    flex-direction:column;
+
+    position:relative;
+
+    z-index:5;
+}
+
+/*==================================================
+TITLE
+==================================================*/
+
+.form-container h2{
+
+    text-align:center;
+
+    font-size:54px;
+
+    font-weight:700;
+
+    line-height:1;
+
+    color:#222;
+
+    margin-bottom:12px;
+}
+
+.subtitle{
+
+    text-align:center;
+
+    font-size:12px;
+
+    color:#8a8a8a;
+
+    margin-bottom:34px;
+}
+
+/*==================================================
+INPUT BOX
+==================================================*/
+
+.input-box{
+
+    position:relative;
+
+    width:100%;
+
+    margin-bottom:18px;
+}
+
+.input-box input{
+
+    width:100%;
+    height:54px;
+
+    background:#f4f4f4;
+
+    border:none;
+    outline:none;
+
+    border-radius:8px;
+
+    padding-left:46px;
+    padding-right:80px;
+
+    font-size:14px;
+
+    color:#333;
+
+    font-family:'Poppins',sans-serif;
+
+    transition:.25s;
+}
+
+.input-box input::placeholder{
+
+    color:#8f8f8f;
+}
+
+.input-box input:focus{
+
+    background:#f8f8f8;
+
+    box-shadow:0 0 0 2px rgba(18,113,220,.15);
+}
+
+/*==================================================
+ICONS
+==================================================*/
+
+.icon{
+
+    position:absolute;
+
+    left:16px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:18px;
+    height:18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#444;
+}
+
+.icon svg{
+
+    width:18px;
+    height:18px;
+
+    display:block;
+
+    fill:currentColor;
+}
+
+/*==================================================
+SHOW PASSWORD
+==================================================*/
+
+#togglePassword,
+#toggleSignupPassword{
+
+    position:absolute;
+
+    right:16px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    color:#0b4f9b;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    letter-spacing:.4px;
+
+    font-family:'Poppins',sans-serif;
+
+    z-index:10;
+
+}
+
+/*==================================================
+OPTIONS
+==================================================*/
+
+.options{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin:2px 0 22px;
+}
+
+.options label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:12px;
+
+    color:#666;
+
+    cursor:pointer;
+}
+
+.options input[type="checkbox"]{
+
+    width:14px;
+    height:14px;
+
+    accent-color:#0a5db8;
+}
+
+.options a{
+
+    font-size:12px;
+
+    color:#0b58aa;
+
+    text-decoration:none;
+}
+
+.options a:hover{
+
+    text-decoration:underline;
+}
+
+/*==================================================
+LOGIN BUTTON
+==================================================*/
+
+.login-btn{
+
+    width:100%;
+    height:56px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:linear-gradient(
+        180deg,
+        #0b5aa9,
+        #08478c
+    );
+
+    color:#fff;
+
+    font-size:20px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    font-family:'Poppins',sans-serif;
+
+    box-shadow:0 10px 20px rgba(8,71,140,.25);
+
+    transition:.25s;
+}
+
+.login-btn:hover{
+
+    transform:translateY(-2px);
+}
+
+/*==================================================
+DIVIDER
+==================================================*/
+
+.divider{
+
+    display:flex;
+
+    align-items:center;
+
+    margin:20px 0;
+}
+
+.divider::before,
+.divider::after{
+
+    content:"";
+
+    flex:1;
+
+    height:1px;
+
+    background:#d8d8d8;
+}
+
+.divider span{
+
+    margin:0 16px;
+
+    color:#888;
+
+    font-size:12px;
+}
+
+
+/*==================================================
+SIGNUP text in login page
+==================================================*/
+
+.signup{
+
+    margin-top:28px;
+
+    text-align:center;
+
+    font-size:12px;
+
+    color:#777;
+}
+
+.signup a{
+
+    color:#0b5aa9;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    margin-left:4px;
+}
+
+.signup a:hover{
+
+    text-decoration:underline;
+}
+
+
+/*==================================================
+signup form backside
+==================================================*/
+
+.signup-form .input-box input{
+
+    height:40px;
+    font-size:14px;
+    padding-left:42px;
+    padding-right:70px;
+}
+
+.signup-form .input-box{
+    margin-bottom:8px;
+}
+
+.signup-form .iocn{
+    height:30px;
+	
+}
+
+.signup-form .divider{
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+
+.signup-form .login-btn{
+   margin-bottom:2px;
+   margin-top:5px;
+}
+
+
+.signup-form .google-btn{
+   margin-bottom:15px;
+}
+
+.signup-form .signup{
+   margin-top:3px;
+}
+
+/*==================================================
+BUTTONS
+==================================================*/
+
+button{
+
+    font-family:'Poppins',sans-serif;
+}
+
+input{
+
+    font-family:'Poppins',sans-serif;
+}
+
+
+
+/*==================================================
+Login with google
+==================================================*/
+
+.google-btn{
+
+    width:100%;
+    height:56px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#4285F4;
+
+    color:#fff;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+
+    cursor:pointer;
+
+    font-size:17px;
+    font-weight:600;
+
+    font-family:'Poppins',sans-serif;
+
+    transition:.25s;
+
+    box-shadow:0 8px 18px rgba(66,133,244,.35);
+}
+
+.google-btn:hover{
+
+    background:#357ae8;
+
+    transform:translateY(-2px);
+}
+
+.google-btn:active{
+
+    transform:translateY(0);
+}
+
+.google-icon{
+
+    width:24px;
+    height:24px;
+
+    background:#fff;
+    border-radius:50%;
+
+    padding:3px;
+}
+
+.google-btn span{
+
+    letter-spacing:.3px;
+}
+
+
+
+/*==================================================
+RESPONSIVE
+==================================================*/
+
+/* ---------- Large Desktop ---------- */
+@media (max-width:1200px){
+
+    .login-card{
+        width:1050px;
+        height:580px;
+    }
+
+    .welcome-content{
+        left:60px;
+        width:300px;
+    }
+
+    .welcome-content h1{
+        font-size:54px;
+    }
+
+    .circle-center{
+        left:250px;
+    }
+
+    .form-container{
+        width:390px;
+    }
+
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width:992px){
+
+    .page{
+        padding:25px;
+    }
+
+    .login-card{
+
+        flex-direction:column;
+
+        width:100%;
+        max-width:760px;
+
+        height:auto;
+    }
+
+    .left-panel{
+
+        width:100%;
+        height:320px;
+    }
+
+    .right-panel{
+
+        width:100%;
+
+        padding:30px 0;
+    }
+
+    .left-shape{
+
+        width:100%;
+        height:80%;
+
+        border-radius:0 0 180px 180px;
+    }
+
+    .welcome-content{
+
+        left:50%;
+        top:65px;
+
+        transform:translateX(-50%);
+
+        width:80%;
+
+        text-align:center;
+    }
+
+    .welcome-content h1{
+        font-size:48px;
+    }
+
+    .welcome-content h3{
+        font-size:18px;
+    }
+
+    .circle-center{
+
+        left:50%;
+        bottom:-45px;
+
+        transform:translateX(-50%);
+    }
+
+    .circle-right{
+        display:none;
+    }
+
+    .form-container{
+        width:85%;
+        max-width:430px;
+    }
+
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width:768px){
+
+    .page{
+        padding:18px;
+    }
+
+    .login-card{
+        border-radius:18px;
+    }
+
+    .left-panel{
+        height:270px;
+    }
+
+    .welcome-content{
+        width:90%;
+    }
+
+    .welcome-content h1{
+        font-size:40px;
+    }
+
+    .welcome-content h3{
+        font-size:16px;
+    }
+
+    .welcome-content p{
+        display:none;
+    }
+
+    .circle-center{
+
+        width:145px;
+        height:145px;
+
+        bottom:-35px;
+    }
+
+    .circle-left{
+
+        width:200px;
+        height:200px;
+    }
+
+    .form-container{
+        width:90%;
+    }
+
+    .form-container h2{
+        font-size:48px;
+    }
+
+    .subtitle{
+        font-size:11px;
+        margin-bottom:28px;
+    }
+
+    .input-box input{
+
+        height:50px;
+
+        font-size:13px;
+
+        padding-left:44px;
+    }
+
+    .login-btn,
+    .other-btn{
+
+        height:50px;
+
+        font-size:17px;
+    }
+
+    .options{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:10px;
+    }
+
+}
+
+/* ---------- Small Phones ---------- */
+@media (max-width:480px){
+
+    .page{
+        padding:12px;
+    }
+
+    .left-panel{
+        height:220px;
+    }
+
+    .welcome-content h1{
+        font-size:34px;
+    }
+
+    .welcome-content h3{
+        font-size:15px;
+    }
+
+    .circle-center{
+
+        width:120px;
+        height:120px;
+    }
+
+    .circle-left{
+
+        width:170px;
+        height:170px;
+    }
+
+    .form-container h2{
+        font-size:38px;
+    }
+
+    .input-box{
+        margin-bottom:14px;
+    }
+
+    .input-box input{
+
+        height:48px;
+
+        font-size:12px;
+    }
+
+    .login-btn,
+    .other-btn{
+
+        height:48px;
+
+        font-size:15px;
+    }
+
+    .signup{
+        margin-top:20px;
+    }
+
+}
+
+/*==================================================
+SMOOTH TRANSITIONS
+==================================================*/
+
+button,
+input,
+a{
+    transition:all .25s ease;
+}
+
+/*==================================================
+ACCESSIBILITY
+==================================================*/
+
+button:focus-visible,
+input:focus-visible{
+
+    outline:2px solid #1b7fe3;
+    outline-offset:2px;
+}
+
+
+.card-face .login-card{
+
+    position:absolute;
+
+    inset:0;
+
+}
+
+
+.flip-card{
+
+    will-change:transform;
+
+    transform:translateZ(0);
+
+}
+
+.card-face{
+
+    transform-style:preserve-3d;
+
+}
+
+/*==================================================
+            FORGOT PASSWORD OVERLAY
+==================================================*/
+
+.forgot-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    backdrop-filter:blur(8px);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:.35s ease;
+
+    z-index:9999;
+
+}
+
+/* Show Popup */
+
+.forgot-overlay.active{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+/*==================================================
+            POPUP CARD
+==================================================*/
+
+.forgot-card{
+
+    width:420px;
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:35px 32px;
+
+    position:relative;
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.25);
+
+    transform:translateY(25px) scale(.95);
+
+    transition:.35s ease;
+
+}
+
+/* Animation */
+
+.forgot-overlay.active .forgot-card{
+
+    transform:translateY(0) scale(1);
+
+}
+
+/*==================================================
+            TITLE
+==================================================*/
+
+.forgot-card h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#222;
+
+    text-align:center;
+
+    margin-bottom:10px;
+
+}
+
+.forgot-card p{
+
+    text-align:center;
+
+    color:#777;
+
+    font-size:14px;
+
+    margin-bottom:28px;
+
+}
+
+/*==================================================
+            INPUT
+==================================================*/
+
+.forgot-card .input-box{
+
+    margin-bottom:22px;
+
+}
+
+.forgot-card .input-box input{
+
+    height:54px;
+
+    background:#f5f5f5;
+
+}
+
+/*==================================================
+            BUTTON
+==================================================*/
+
+.reset-btn{
+
+    width:100%;
+
+    height:54px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    color:#fff;
+
+    background:linear-gradient(
+        180deg,
+        #0b5aa9,
+        #08478c
+    );
+
+    font-family:'Poppins',sans-serif;
+
+    transition:.25s;
+
+}
+
+.reset-btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/*==================================================
+            CLOSE BUTTON
+==================================================*/
+
+.close-forgot{
+
+    position:absolute;
+
+    top:14px;
+
+    right:14px;
+
+    width:34px;
+
+    height:34px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#f3f3f3;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    transition:.25s;
+
+}
+
+.close-forgot:hover{
+
+    background:#e6e6e6;
+
+    transform:rotate(90deg);
+
+}
+
+/*==================================================
+            MESSAGE
+==================================================*/
+
+.forgot-message{
+
+    margin-top:18px;
+
+    min-height:22px;
+
+    text-align:center;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.forgot-message.success{
+
+    color:#2e9d45;
+
+}
+
+.forgot-message.error{
+
+    color:#d93025;
+
+}
+
+/*==================================================
+            RESPONSIVE
+==================================================*/
+
+@media(max-width:500px){
+
+    .forgot-card{
+
+        width:92%;
+
+        padding:28px 22px;
+
+    }
+
+}
+
+
+
+/*==================================================
+                FORM error and success MESSAGE
+==================================================*/
+
+.form-message{
+
+    width:100%;
+
+    min-height:22px;
+
+    text-align:left;
+
+    font-size:14px;
+
+    font-weight:500;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:all .3s ease;
+
+}
+
+.form-message.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+/*==================================================
+            SHOW MESSAGE
+==================================================*/
+
+.form-message.show{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:translateY(0);
+
+}
+
+
+.form-message.error{
+    color:#e53935;
+}
+
+.form-message.success{
+    color:#2e7d32;
+}
+
+.form-message.info{
+    color:#1976d2;
+}

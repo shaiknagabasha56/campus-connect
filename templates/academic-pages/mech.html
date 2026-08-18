@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MECH — Academic — RGUKT</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="../../static/css/mech.css">
+<style>:root{--cat:#78716c;}</style>
+</head>
+<body>
+<header class="na-topbar">
+ <div class="container">
+  <a href="{{ url_for('academic.academic_homepage') }}" class="na-brand"><span class="na-brand-mark">R</span>RGUKT</a>
+  <div class="na-right-group">
+   <nav class="na-nav-simple">
+    <a href="{{ url_for('academic.academic_homepage') }}">Home</a>
+    <a href="#contact">Contact</a>
+   </nav>
+   <button id="calendar-toggle" class="icon-btn" aria-label="Toggle calendar"><i class="fa-regular fa-calendar"></i></button>
+   <div class="na-search-wrap"><i class="fa-solid fa-magnifying-glass na-search-icon"></i><input id="na-search-input" placeholder="Search categories..." aria-label="Search"></div>
+  </div>
+  <div id="calendar-panel" class="calendar hidden">
+   <div class="calendar-header"><button id="prev-month">◀</button><span id="month-year"></span><button id="next-month">▶</button></div>
+   <div class="calendar-body"><div class="day-names"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div id="calendar-days" class="days-grid"></div></div>
+   <div class="calendar-footer"><div class="event-input-wrap"><input id="event-input" placeholder="Add new event..."><button id="add-event-btn">＋</button></div><div class="event-list"><p id="events">No Events</p></div></div>
+  </div>
+ </div>
+</header>
+
+<div class="na-breadcrumb"><a href="{{ url_for('academic.academic_homepage') }}">Home</a><span class="sep">›</span><a href="{{ url_for('academic.academic_homepage') }}">Academic</a><span class="sep">›</span><span class="current">MECH</span></div>
+
+<main class="na-catwrap">
+ <div class="na-cat-header">
+  <div class="na-cat-icon"><i class="fa-solid fa-gears"></i></div>
+  <div><h1>MECH</h1><p>Department of Mechanical Engineering.</p></div>
+ </div>
+
+ <section class="na-updates">
+  <div class="na-updates-head"><h2>Latest Updates</h2>
+   <div class="na-filter"><button class="na-filter-toggle" data-filter-toggle aria-label="Filter updates"><i class="fa-solid fa-filter"></i></button>
+    <div class="na-filter-menu hidden"><button class="na-filter-option active" data-filter="all">All</button><button class="na-filter-option" data-filter="new">New</button><button class="na-filter-option" data-filter="old">Old</button></div>
+   </div>
+  </div>
+  <div class="na-updates-feed">
+        <article class="na-update-item" role="button" tabindex="0" data-status="new" data-title="Workshop safety briefing" data-date="09-07-2026" data-time="10:30 AM" data-uploaded-by="MECH Department" data-deadline="" data-category="Safety" data-category-color="#78716c" data-email="mech@rgukt.ac.in" data-image="" data-apply="false"  data-body="Mandatory safety briefing scheduled before the next manufacturing lab session." data-full="A mandatory safety briefing has been scheduled before the next manufacturing laboratory session. Students should attend before entering the workshop area.">
+          <div class="na-update-marker"></div>
+          <div>
+            <div class="na-update-date">09-07-2026<span class="na-time">10:30 AM</span></div>
+            <p class="na-update-title">Workshop safety briefing</p>
+            <p class="na-update-body">Mandatory safety briefing scheduled before the next manufacturing lab session.</p>
+          </div>
+        </article>
+        <article class="na-update-item" role="button" tabindex="0" data-status="old" data-title="CAD software licenses renewed" data-date="26-06-2026" data-time="3:00 PM" data-uploaded-by="MECH Department" data-deadline="" data-category="Lab Update" data-category-color="#78716c" data-email="mech@rgukt.ac.in" data-image="" data-apply="false"  data-body="Updated CAD software licenses are now available in the design lab." data-full="Updated CAD software licenses are now available in the design laboratory for student design and project work.">
+          <div class="na-update-marker"></div>
+          <div>
+            <div class="na-update-date">26-06-2026<span class="na-time">3:00 PM</span></div>
+            <p class="na-update-title">CAD software licenses renewed</p>
+            <p class="na-update-body">Updated CAD software licenses are now available in the design lab.</p>
+          </div>
+        </article></div>
+ </section>
+
+ <aside>
+  <div class="na-side-card">
+   <h4>Contact &amp; Info</h4>
+   <div class="na-info-row"><i class="fa-solid fa-user"></i><div><span class="na-info-label">HOD</span>[HOD Name]</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-phone"></i><div><span class="na-info-label">Contact</span>[Contact Number]</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-location-dot"></i><div><span class="na-info-label">Location</span>[MECH Block, Floor]</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-clock"></i><div><span class="na-info-label">Office Hours</span>[e.g. Mon–Sat, 9:30 AM–4:30 PM]</div></div>
+  </div>
+  <div class="na-side-card complaint-card"><h4>Need Something Resolved?</h4><button id="complaint-btn" class="primary-btn"><i class="fa-solid fa-circle-exclamation"></i>&nbsp; Raise a Complaint</button></div>
+  
+ </aside>
+
+</main>
+
+<section class="hod-section" id="contact">
+  <div class="hod-photo hod-section-photo"><img src="../../static/images/hod.svg" alt="HOD profile placeholder"></div>
+  <div class="hod-main-info">
+    <h2>HOD</h2>
+    <h3>[HOD Name]</h3>
+    <p class="designation">Head of Department (HOD)</p>
+  </div>
+  <div class="hod-contact-info">
+    <div><span>Contact</span><strong>[Contact Number]</strong></div>
+    <div><span>Email</span><strong>mech@rgukt.ac.in</strong></div>
+    <div><span>Cabin No.</span><strong>[Cabin Number]</strong></div>
+  </div>
+  <button id="hod-profile-btn" class="secondary-btn hod-view-btn">View Profile</button>
+</section>
+
+<footer class="na-footer-rich">
+ <div class="footer-inner">
+  <div class="footer-col"><h3>RGUKT</h3><p>Rajiv Gandhi University of Knowledge Technologies (RGUKT) was established to provide high-quality technical education to rural youth. With fully residential campuses, RGUKT offers a unique 6-year integrated program (PUC + B.Tech), along with advanced postgraduate and research opportunities.<br><br>Guided by its vision to bridge the rural-urban education gap, RGUKT nurtures innovation, research, and holistic development to empower students for a brighter future.</p></div>
+  <div class="footer-col"><h4>University Links</h4><div class="footer-links">
+    <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">RGUKT Official Website ↗</a>
+    <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">Admissions ↗</a>
+    <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">Academics ↗</a>
+    <a href="../clubs-and-cells.html">Clubs &amp; Cells</a>
+  </div></div>
+  <div class="footer-col"><h4>Quick Navigation</h4><div class="footer-links"><a href="../index.html">Home</a><a href="../academic.html">Academic</a><a href="../contact.html">Contact</a><a href="#top">Back to top ↑</a></div></div>
+ </div>
+ <div class="footer-bottom"><span>© 2026 RGUKT — Academic Department</span><span>MECH</span></div>
+</footer>
+
+<!-- Update detail -->
+<div id="update-modal" class="modal-backdrop hidden">
+ <div class="modal-card">
+  <div class="modal-head update-modal-head"><div></div><button class="close-btn modal-close" aria-label="Close">×</button></div>
+  <div id="modal-update-detail-content" class="modal-body">
+   <img id="modal-update-image" class="update-image" alt="Update image">
+   <div class="update-category" id="modal-update-category">Update</div>
+   <h3 class="update-detail-title" id="modal-update-title-secondary">Update</h3>
+   <div class="update-meta-list">
+    <div class="update-meta-row"><i class="fa-solid fa-user"></i><strong id="modal-update-uploader">MECH Department</strong></div>
+    <div class="update-meta-row"><i class="fa-regular fa-calendar"></i><strong id="modal-update-date">05-07-2026 · 10:00 AM</strong></div>
+    <div class="update-meta-row"><i class="fa-solid fa-hourglass-end"></i><strong id="modal-update-deadline">No deadline</strong></div>
+   </div>
+   <p id="modal-update-body" class="update-description"></p>
+   <p class="update-contact">Have a question? <i class="fa-solid fa-envelope" style="color:var(--cat)"></i> <a id="modal-update-email" href="#">Not provided</a></p>
+   <button id="modal-apply-btn" class="update-apply-btn" type="button" style="display:none">Apply Now</button>
+  </div>
+ </div>
+</div>
+
+<!-- Complaint -->
+<div id="complaint-modal" class="modal-backdrop hidden">
+ <div class="modal-card">
+  <div class="modal-head"><div><h2>Raise a Complaint</h2><p>MECH Department</p></div><button class="close-btn modal-close">×</button></div>
+  <div class="modal-body">
+   <form class="demo-form">
+    <div class="form-error"></div><div class="form-success"></div>
+    <div class="form-grid">
+     <div class="form-group"><label>ID No</label><input required placeholder="Enter ID number"></div>
+     <div class="form-group"><label>Name</label><input required placeholder="Enter full name"></div>
+     <div class="form-group"><label>Email</label><input type="email" required placeholder="Enter email"></div>
+     <div class="form-group"><label>Phone Number</label><input type="tel" required placeholder="Enter phone number"></div>
+     <div class="form-group"><label>Branch</label><input required value="MECH" readonly></div>
+     <div class="form-group"><label>Year</label><select required><option value="">Select year</option><option>PUC1</option><option>PUC2</option><option>E1</option><option>E2</option><option>E3</option><option>E4</option></select></div>
+     <div class="form-group"><label>Current Semester</label><select required><option value="">Select semester</option><option>Sem1</option><option>Sem2</option></select></div>
+     <div class="form-group"><label>Complaint Type</label><select required><option value="">Select type</option><option>Academic</option><option>Infrastructure</option><option>Lab</option><option>Faculty / Staff</option><option>Other</option></select></div>
+     <div class="form-group full"><label>Complaint Description</label><textarea required placeholder="Describe your complaint..."></textarea></div>
+    </div>
+    <div class="form-actions"><button type="button" class="secondary-btn modal-close">Cancel</button><button class="primary-btn" type="submit">Submit Complaint</button></div>
+   </form>
+  </div>
+ </div>
+</div>
+
+<!-- HOD -->
+<div id="hod-modal" class="modal-backdrop hidden">
+ <div class="modal-card profile-modal">
+  <div class="modal-head"><div><h2>HOD Profile</h2><p>MECH Department</p></div><button class="close-btn modal-close">×</button></div>
+  <div class="modal-body"><div class="profile-preview"><div class="hod-photo"><img src="hod-placeholder.svg" alt="HOD profile placeholder"></div><div><h3 style="margin:0 0 4px">[HOD Name]</h3><p style="margin:0;color:var(--cat);font-size:12px;font-weight:700">Head of Department (HOD)</p></div></div><p style="font-size:13px;color:#64748b;line-height:1.7;margin:0">HOD profile details can be connected to the department database later. Replace the placeholder name and profile image with the actual department information.</p></div>
+ </div>
+</div>
+<script src="../../static/js/mech.js"></script>
+</body>
+</html>

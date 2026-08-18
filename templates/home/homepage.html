@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/ac42c3b1f7.js" crossorigin="anonymous"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RGUKT - Virtual Notice Board</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="../../static/css/homepage.css">
+</head>
+<body>
+
+
+<!-- TOP NAV -->
+<header class="topbar" aria-label="top navigation">
+  <div class="container">
+    <!-- Brand -->
+    <div class="brand_1" aria-hidden="false">
+      <div>
+        <img src="../static/rgukt.png" class="rgukt-logo"/>
+      </div>
+      <div style="font-size:20px;letter-spacing:0.6px">CAMPUS CONNECT</div>
+    </div>
+
+    <!-- Main Nav -->
+    <nav class="main-nav" role="navigation" aria-label="main nav">
+      <a href="#">Home</a>
+      <a href="#radio">Radio</a>
+      <a href="{{ url_for('clubs.clubs_homepage') }}">Clubs</a>
+      <a href="{{ url_for('cells.cells_homepage') }}">Cells</a>
+      <a href="{{ url_for('complaints.complaints_homepage') }}">Complaints</a>
+    </nav>
+
+    <!-- Right Side Actions -->
+    <div class="top-actions">
+      <!-- Calculator -->
+      <a href="cgpa_calc.html">
+        <button style="background:var(--accent); color:#fff; border:none; padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:500;">
+          Calculator
+        </button>
+      </a>
+
+      <!-- Calendar -->
+      <button id="calendar-toggle" class="icon-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"> <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"/> </svg>
+      </button>
+
+      <!-- Calendar Panel -->
+      <div id="calendar-panel" class="calendar hidden">
+        <div class="calendar-header">
+          <button id="prev-month">◀</button>
+          <span id="month-year"></span>
+          <button id="next-month">▶</button>
+        </div>
+
+        <div class="calendar-body">
+          <div class="day-names">
+            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+          </div>
+          <div id="calendar-days" class="days-grid"></div>
+        </div>
+
+        <!-- Footer with event input -->
+        <div class="calendar-footer">
+          <div class="event-input-wrap">
+            <input type="text" id="event-input" placeholder="Add new event..." />
+            <button id="add-event-btn">＋</button>
+          </div>
+          <div class="event-list">
+            <p id="events">No Events</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-wrap" role="search" aria-label="Search announcements">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/></svg>
+        <input id="nav-search" type="text" placeholder="Search notices..." aria-label="Search"/>
+      </div>
+
+      <!-- Profile -->
+      <div class="profile" title="Profile">
+        <img src="../static/cse-rgukt.png" alt="Profile">
+      </div>
+    </div>
+  </div>
+</header>
+
+
+
+<a href="{{ url_for('emergency.emergency_homepage') }}">
+<div class="updates-container">
+  <div class="updates-label">Emergency</div>
+  <div class="updates-marquee">
+    <div class="marquee-content">
+      <span><b>🩸Need A+ blood for heart suregery |</b></span>
+      <span><b>⚡️Power shorage in college for two days |</b></span>
+      <span><b>💦Water shortage for this day |</b></span>
+      <span><b>Director interactive session with students on 4:00pm |</b></span>
+    </div>
+  </div>
+</div>
+</a>
+
+
+
+
+
+
+
+
+  <!-- HERO SLIDER -->
+  <div class="hero-wrap" aria-hidden="false">
+    <div class="hero" role="region" aria-label="Main carousel">
+      <div class="slides" id="slides">
+        <!-- Slide 1 -->
+        <div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop');" data-title="Hackathon 2025" data-sub="Sept 15-16 • Register by Sept 10">
+          <div class="slide-content">
+            <div class="label">Upcoming Event</div>
+            <h2>Hackathon 2025 — College Tech Challenge</h2>
+            <p>Join teams, solve challenges and win prizes. Register fast to secure your slot.</p>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=1200&auto=format&fit=crop');" data-title="Guest Lecture" data-sub="Sept 18 • 3 PM">
+          <div class="slide-content">
+            <div class="label">Guest Lecture</div>
+            <h2>AI & Future of Computing — Prof. Reddy</h2>
+            <p>Attend the talk to learn about practical AI applications and campus research opportunities.</p>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1200&auto=format&fit=crop');" data-title="Cultural Fest" data-sub="Oct 05">
+          <div class="slide-content">
+            <div class="label">Campus Life</div>
+            <h2>Cultural Fest 2025 — Performances & Competitions</h2>
+            <p>Auditions starting soon. Showcase your talent and join the festivities.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- arrows -->
+      <button class="arrow prev" aria-label="Previous slide">&#10094;</button>
+      <button class="arrow next" aria-label="Next slide">&#10095;</button>
+
+      <!-- dots -->
+      <div class="dots" id="dots"></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="container" role="main">
+   
+   
+  <h2>📌 Latest Announcements</h2>
+  <div class="cards-container">
+    
+    <!-- Card 1 -->
+    <div class="card" data-card="1" data-interval="5000">
+      <span class="tag general">Academic</span>
+      <a href="{{ url_for('academic.academic_homepage') }}" class="arrow">↗</a>
+      <div class="announcement active">
+        <h4>Exam Revaluation Deadline</h4>
+        <p>Submit forms before Sept 18. Late applications not acceptable.</p>
+      </div>
+      <div class="announcement">
+        <h4>Holiday Notice</h4>
+        <p>College will remain closed on Sept 20 due to maintenance.</p>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-card="2" data-interval="7000">
+      <span class="tag clubs">Non-academic</span>
+      <a href="{{ url_for('non_academic.non_academic_homepage') }}" class="arrow">↗</a>
+      <div class="announcement active">
+        <h4>Tech-Xcel</h4>
+        <p>Conducting quiz on 15th September on behalf of Engineers Day.</p>
+      </div>
+      <div class="announcement">
+        <h4>Artix Club</h4>
+        <p>Recruting hosts for Engineers day celebrated on sep 15.</p>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-card="3" data-interval="6000">
+      <span class="tag technical">Clubs</span>
+      <a href="{{ url_for('clubs.clubs_homepage') }}" class="arrow">↗</a>
+      <div class="announcement active">
+        <h4>Hackathon 2025</h4>
+        <p>Smart India Internal Hackathon on 13 and 14 September.</p>
+      </div>
+      <div class="announcement">
+        <h4>Coding Contest</h4>
+        <p>Participate in the coding contest on Sept 25.</p>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card" data-card="4" data-interval="8000">
+      <span class="tag non-technical">Cells</span>
+      <a href="{{ url_for('cells.cells_homepage') }}" class="arrow">↗</a>
+      <div class="announcement active">
+        <h4>Library Timings</h4>
+        <p>Library open till 8 PM — extended hours for students.</p>
+      </div>
+      <div class="announcement">
+        <h4>Sports Meet</h4>
+        <p>Annual sports meet registrations open till Sept 28.</p>
+      </div>
+    </div>
+
+  </div>
+
+
+   
+
+
+<!-- News & Events Section -->
+<div class="news">
+  <section class="news-card">
+    <div class="news-header">
+      <h2>All college updates</h2>
+      <a href="#" class="news-link" title="View all">↗</a>
+    </div>
+
+    <div class="news-scroll">
+      <ul class="news-list">
+        <li>
+          <span class="marker red"></span>
+          <div class="news-content">
+            <div class="news-date">23-04-2025 <span>12:00 PM</span></div>
+            <p>RGUKT-AP Student Sai Shivani Secures 11th Rank in UPSC Civil Services Examination</p>
+          </div>
+        </li>
+        <li>
+          <span class="marker purple"></span>
+          <div class="news-content">
+            <div class="news-date">05-05-2025 <span>7:30 PM </span></div>
+            <p>NPTEL Examinations Successfully Conducted at RGUKT — Over 10,300 Students Participated</p>
+          </div>
+        </li>
+        <li>
+          <span class="marker yellow"></span>
+          <div class="news-content">
+            <div class="news-date">26-05-2025 <span>12:00 AM</span></div>
+            <p>A Historic Achievement in NPTEL Certifications</p>
+          </div>
+        </li>
+        <li>
+          <span class="marker green"></span>
+          <div class="news-content">
+            <div class="news-date">09-06-2025 <span>1:30 PM</span></div>
+            <p>Entrepreneurship Education FDP By Wadhwani Foundation</p>
+          </div>
+        </li>
+         <li>
+          <span class="marker purple"></span>
+          <div class="news-content">
+            <div class="news-date">15-09-2025 <span>9:30 AM</span></div>
+            <p>Engineers  Day celebrations in seminar hall</p>
+          </div>
+        </li>
+         <li>
+          <span class="marker yellow"></span>
+          <div class="news-content">
+            <div class="news-date">26-09-2025 <span>12:00 PM</span></div>
+            <p>Basket ball league starts</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+	<!-- Radio -->
+<h2 id="radio" style=" max-width:1100px;padding:0 18px">Central Radio</h2>
+    <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">Campus Audio — Live</div>
+
+      <div class="menu-item active" data-id="college" id="m-college">
+        <div class="emoji">🎙</div>
+        <div>
+          <div style="font-weight:700">College Radio</div>
+          <div style="font-size:12px;color:var(--muted)">Live campus news & shows</div>
+        </div>
+      </div>
+
+      <div class="menu-item" data-id="commentary" id="m-commentary">
+        <div class="emoji">🎧</div>
+        <div>
+          <div style="font-weight:700">Live Commentary</div>
+          <div style="font-size:12px;color:var(--muted)">Event coverage</div>
+        </div>
+      </div>
+
+      <div class="menu-item" data-id="meetings" id="m-meetings">
+        <div class="emoji">🏫</div>
+        <div>
+          <div style="font-weight:700">Meetings</div>
+          <div style="font-size:12px;color:var(--muted)">Seminar recordings</div>
+        </div>
+      </div>
+
+      <div class="menu-item" data-id="songs" id="m-songs">
+        <div class="emoji">🎶</div>
+        <div>
+          <div style="font-weight:700">Special Songs</div>
+          <div style="font-size:12px;color:var(--muted)">Curated tracks</div>
+        </div>
+      </div>
+      <div style="flex:1"></div>
+      
+    </aside>
+
+    <main class="main">
+      <div class="player" role="region" aria-label="FM Tuner">
+        <div class="dial-wrap">
+          <div class="dial" id="dial">
+            <div class="ticks" id="ticks"></div>
+            <div class="needle" id="needle" role="slider" aria-label="Tuner needle" aria-valuemin="88" aria-valuemax="108" aria-valuenow="93.1"></div>
+
+            <div class="freq">
+              <div class="num" id="freqNum">93.1</div>
+              <div class="label" id="freqLabel">FM - College Radio</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn secondary" id="prevBtn">⏮ Prev</button>
+          <button class="btn" id="playPauseBtn">⏸ Pause</button>
+          <button class="btn secondary" id="nextBtn">⏭ Next</button>
+        </div>
+
+        <div class="meta" id="metaRow">
+          <div id="metaName" style="font-weight:700">College Radio • 93.1 MHz</div>
+          <div id="metaState">Playing</div>
+        </div>
+
+        <!-- audio element (hidden UI) -->
+        <audio id="player" crossorigin="anonymous"></audio>
+      </div>
+    </main>
+  </div>
+  </main>
+  
+  
+ <!-- PROFILE DASHBOARD PANEL -->
+<div class="profile-dashboard" id="profileDashboard" aria-hidden="true">
+<div class="dashboard-header">
+  <!-- Theme Toggle Button -->
+  <button id="themeToggle" class="theme-btn" aria-label="Toggle Dark/Light Theme">
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="black" class="bi bi-brightness-high-fill" viewBox="0 0 16 16">
+  <path d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/>
+</svg>
+  </button>
+
+  <!-- Profile section -->
+  <div class="dashboard-user">
+    <img src="../static/cse-rgukt.png" alt="Profile">
+    <div>
+      <p><strong>Basha</strong></p>
+      <p class="email">basha@rguktong.ac.in</p>
+    </div>
+  </div>
+
+  <button class="close-dashboard" aria-label="Close">&times;</button>
+</div>
+
+
+  <div class="dashboard-options">
+    <button class="dash-btn" data-panel="accountPanel">Account</button>
+    <button class="dash-btn" data-panel="savedPanel">Saved announcements</button>
+    <button class="dash-btn" data-panel="recordingsPanel">Recordings</button>
+    <button class="dash-btn" data-panel="settingsPanel">Settings</button>
+    <button class="dash-btn" data-panel="helpPanel">Help & Support</button>
+    <a href="{{ url_for('auth.login') }}">
+    <button class="dash-btn logout">Logout</button>
+    </a>
+  </div>
+</div>
+
+<!-- ACCOUNT SUB-PANEL -->
+<div class="sub-dashboard" id="accountPanel">
+  <div class="sub-header">
+    <button class="back-btn">&larr; Back</button>
+    <h3>Account Settings</h3>
+  </div>
+  <div class="sub-content ">
+    <button class="dash-btn" style="width:270px;">Edit Profile</button>
+    <button class="dash-btn" style="width:270px;">Change Password</button>
+    <button class="dash-btn" style="width:270px;">Privacy Settings</button>
+  </div>
+</div>
+
+<!-- SAVED ANNOUNCEMENTS PANEL -->
+<div class="sub-dashboard" id="savedPanel">
+  <div class="sub-header">
+    <button class="back-btn">&larr; Back</button>
+    <h3>Saved Announcements</h3>
+  </div>
+  <div class="sub-content">
+    <p>No saved announcements yet.</p>
+  </div>
+</div>
+
+<!-- RECORDINGS PANEL -->
+<div class="sub-dashboard" id="recordingsPanel">
+  <div class="sub-header">
+    <button class="back-btn">&larr; Back</button>
+    <h3>Recordings</h3>
+  </div>
+  <div class="sub-content">
+    <p>Your saved recordings will appear here.</p>
+  </div>
+</div>
+
+<!-- SETTINGS PANEL -->
+<div class="sub-dashboard" id="settingsPanel">
+  <div class="sub-header">
+    <button class="back-btn">&larr; Back</button>
+    <h3>Settings</h3>
+  </div>
+  <div class="sub-content">
+    <p>General settings options here...</p>
+  </div>
+</div>
+
+<!-- HELP & SUPPORT PANEL -->
+<div class="sub-dashboard" id="helpPanel">
+  <div class="sub-header">
+    <button class="back-btn">&larr; Back</button>
+    <h3>Help & Support</h3>
+  </div>
+  <div class="sub-content">
+    <p>FAQ, Contact support, etc...</p>
+  </div>
+</div>
+
+<!-- DASHBOARD OVERLAY -->
+<div class="dashboard-overlay" id="dashboardOverlay"></div>
+
+<!-- About Section -->
+<section class="about-section">
+  <div class="about-container">
+    <h2 id="about">About</h2>
+    <p>
+      Rajiv Gandhi University of Knowledge Technologies (RGUKT) was established 
+      to provide high-quality technical education to rural youth. 
+      With fully residential campuses, RGUKT offers a unique 
+      6-year integrated program (PUC + B.Tech), along with advanced 
+      postgraduate and research opportunities.
+    </p>
+    <p>
+      Guided by its vision to bridge the rural-urban education gap, 
+      RGUKT nurtures innovation, research, and holistic development 
+      to empower students for a brighter future.
+    </p>
+  </div>
+</section>
+
+
+
+<footer class="footer">
+  <div class="footer-container">
+    
+    <!-- Left Side: External Links -->
+    <div class="footer-links">
+      <h3>Quick Links</h3>
+      <div class="links-grid">
+        <a href="https://www.rgukt.in" target="_blank">RGUKT Main</a>
+        <a href="https://rgukt.in/admissions/ug-admissions/2025" target="_blank">Admissions</a>
+        <a href="https://rguktong.ac.in" target="_blank">RGUKT Ongole</a>
+        <a href="http://nexus.rguktong.ac.in/" target="_blank">Results</a>
+        <a href="https://placements.rgukt.ac.in" target="_blank">Placements</a>
+        <a href="https://rguktong.ac.in/instituteinfo.php?data=careers" target="_blank">Career</a>
+        <a href="http://alumni.rguktong.ac.in/" target="_blank">Alumni</a>
+        <a href="https://rguktong.ac.in/instituteinfo.php?data=contact" target="_blank">Help desk</a>
+      </div>
+    </div>
+
+    <!-- Right Side: Contact Info -->
+    <div class="footer-contact">
+      <h3 id="contact">Contact Us</h3>
+      <p>Email: <a href="mailto:info@rgukt.ac.in">direcor@rguktong.ac.in</a></p>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#https://www.linkedin.com/company/rguktongole"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Copyright -->
+  <div class="footer-bottom">
+    <p>&copy; 2025 RGUKT Website. All Rights Reserved.</p>
+  </div>
+</footer>
+
+
+
+
+<div id="rg-chat-widget" aria-hidden="false">
+  <button id="rg-chat-toggle" aria-label="Open chat">💬</button>
+
+  <div id="rg-chat-panel" role="dialog" aria-hidden="true" aria-label="Chat panel">
+    <div class="rg-chat-header">
+      <div class="rg-title">
+        <img src="" alt="" style="width:28px;height:28px;border-radius:50%;background: #fff;">
+        <div>BotPenguin</div>
+      </div>
+      <button class="rg-chat-close" id="rg-chat-close" aria-label="Close chat">✕</button>
+    </div>
+
+    <div class="rg-chat-messages" id="rg-chat-messages" role="log" aria-live="polite">
+      <div class="rg-msg rg-bot">Hi! Welcome to BotPenguin. I'll be assisting you here today.</div>
+      <div class="rg-msg rg-bot">How can I help you today?</div>
+    </div>
+
+    <div class="rg-chat-suggestions" id="rg-chat-suggestions">
+      
+    </div>
+
+    <div class="rg-chat-footer">
+      <button id="rg-emoji-btn" class="rg-emoji-btn" aria-haspopup="dialog" aria-expanded="false">😊</button>
+      <input id="rg-chat-input" type="text" placeholder="Type a message..." aria-label="Message input" />
+      <button id="rg-send-btn" aria-label="Send">➤</button>
+
+      <!-- emoji picker (absolute inside panel; placed to left so it doesn't cover send) -->
+      <div id="rg-emoji-picker" aria-hidden="true" role="dialog" aria-label="Emoji picker">
+        <!-- emojis (data-emoji attribute used by JS) -->
+        <span class="rg-emoji" data-emoji="😀">😀</span>
+        <span class="rg-emoji" data-emoji="😁">😁</span>
+        <span class="rg-emoji" data-emoji="😂">😂</span>
+        <span class="rg-emoji" data-emoji="😍">😍</span>
+        <span class="rg-emoji" data-emoji="🤔">🤔</span>
+        <span class="rg-emoji" data-emoji="👍">👍</span>
+        <span class="rg-emoji" data-emoji="🔥">🔥</span>
+        <span class="rg-emoji" data-emoji="🎉">🎉</span>
+        <span class="rg-emoji" data-emoji="❤️">❤️</span>
+        <span class="rg-emoji" data-emoji="😅">😅</span>
+        <span class="rg-emoji" data-emoji="🙌">🙌</span>
+        <span class="rg-emoji" data-emoji="🙏">🙏</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <!-- ---------- JS: slider + search simple filter ---------- -->
+  
+  <script src="../../static/js/homepage.js"></script>
+</body>
+</html>

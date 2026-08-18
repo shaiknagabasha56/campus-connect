@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>Mess — Non-Academic — RGUKT</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/css/mess.css">
+
+    <style>
+        :root {
+            --cat: #F97316;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="na-topbar">
+        <div class="container">
+
+            <a href="{{ url_for('homepage.homepage') }}" class="na-brand">
+                <span class="na-brand-mark">R</span>RGUKT
+            </a>
+
+            <div class="na-right-group">
+
+                <nav class="na-nav-simple">
+                    <a href="{{ url_for('non_academic.non_academic_homepage') }}">Home</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+
+                <button id="calendar-toggle" class="icon-btn" aria-label="Toggle calendar">
+                    <i class="fa-regular fa-calendar"></i>
+                </button>
+
+                <div class="na-search-wrap">
+                    <i class="fa-solid fa-magnifying-glass na-search-icon"></i>
+                    <input id="na-search-input" placeholder="Search updates..." aria-label="Search">
+                </div>
+
+            </div>
+
+            <div id="calendar-panel" class="calendar hidden">
+
+                <div class="calendar-header">
+                    <button id="prev-month">◀</button>
+                    <span id="month-year"></span>
+                    <button id="next-month">▶</button>
+                </div>
+
+                <div class="calendar-body">
+                    <div class="day-names">
+                        <span>S</span>
+                        <span>M</span>
+                        <span>T</span>
+                        <span>W</span>
+                        <span>T</span>
+                        <span>F</span>
+                        <span>S</span>
+                    </div>
+
+                    <div id="calendar-days" class="days-grid"></div>
+                </div>
+
+                <div class="calendar-footer">
+
+                    <div class="event-input-wrap">
+                        <input id="event-input" placeholder="Add new event...">
+                        <button id="add-event-btn">＋</button>
+                    </div>
+
+                    <div class="event-list">
+                        <p id="events">No Events</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </header>
+
+
+    <div class="na-breadcrumb">
+        <a href="{{ url_for('non_academic.non_academic_homepage') }}">Home</a>
+        <span class="sep">›</span>
+        <a href="../non-academic.html">Non-Academic</a>
+        <span class="sep">›</span>
+        <span class="current">Mess</span>
+    </div>
+
+
+    <main class="na-catwrap">
+
+        <div class="na-cat-header">
+
+            <div class="na-cat-icon">
+                <i class="fa-solid fa-utensils"></i>
+            </div>
+
+            <div>
+                <h1>Mess</h1>
+                <p>Daily mess menu, timings and notices.</p>
+            </div>
+
+        </div>
+
+
+        <section class="na-updates">
+
+            <div class="na-updates-head">
+
+                <h2>Latest Updates</h2>
+
+                <div class="na-filter">
+
+                    <button class="na-filter-toggle" data-filter-toggle aria-label="Filter updates">
+                        <i class="fa-solid fa-filter"></i>
+                    </button>
+
+                    <div class="na-filter-menu hidden">
+                        <button class="na-filter-option active" data-filter="all">All</button>
+                        <button class="na-filter-option" data-filter="new">New</button>
+                        <button class="na-filter-option" data-filter="old">Old</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="na-updates-feed">
+
+                <article
+                    class="na-update-item"
+                    role="button"
+                    tabindex="0"
+                    data-status="new"
+                    data-title="Special festive dinner on Independence Day"
+                    data-date="30-07-2026"
+                    data-time="6:10 PM"
+                    data-uploaded-by="Mess In-charge"
+                    data-deadline=""
+                    data-category="Non-Academic Update"
+                    data-category-color="#F97316"
+                    data-email="mess@rgukt.ac.in"
+                    data-image="../../static/images/whitecar.jpeg"
+                    data-apply="true"
+                    data-body="Special festive dinner on Independence Day, Aug 15. Regular timings apply."
+                    data-full="Special festive dinner on Independence Day, Aug 15. Regular timings apply."
+                >
+
+                    <div class="na-update-marker"></div>
+
+                    <div>
+                        <div class="na-update-date">
+                            30-07-2026
+                            <span class="na-time">6:10 PM</span>
+                        </div>
+
+                        <p class="na-update-title">
+                            Special festive dinner on Independence Day
+                        </p>
+
+                        <p class="na-update-body">
+                            Special festive dinner on Independence Day, Aug 15. Regular timings apply.
+                        </p>
+                    </div>
+
+                </article>
+
+
+                <article
+                    class="na-update-item"
+                    role="button"
+                    tabindex="0"
+                    data-status="old"
+                    data-title="Sunday breakfast menu updated"
+                    data-date="27-07-2026"
+                    data-time="1:00 PM"
+                    data-uploaded-by="Mess In-charge"
+                    data-deadline=""
+                    data-category="Non-Academic Update"
+                    data-category-color="#F97316"
+                    data-email="mess@rgukt.ac.in"
+                    data-image="../../static/images/me.png"
+                    data-apply="true"
+                    data-body="Sunday breakfast menu updated based on student feedback survey."
+                    data-full="Sunday breakfast menu updated based on student feedback survey."
+                >
+
+                    <div class="na-update-marker"></div>
+
+                    <div>
+                        <div class="na-update-date">
+                            27-07-2026
+                            <span class="na-time">1:00 PM</span>
+                        </div>
+
+                        <p class="na-update-title">
+                            Sunday breakfast menu updated
+                        </p>
+
+                        <p class="na-update-body">
+                            Sunday breakfast menu updated based on student feedback survey.
+                        </p>
+                    </div>
+
+                </article>
+
+                <article
+                    class="na-update-item"
+                    role="button"
+                    tabindex="0"
+                    data-status="old"
+                    data-title="Sunday breakfast menu updated"
+                    data-date="27-07-2026"
+                    data-time="1:00 PM"
+                    data-uploaded-by="Mess In-charge"
+                    data-deadline=""
+                    data-category="Non-Academic Update"
+                    data-category-color="#F97316"
+                    data-email="mess@rgukt.ac.in"
+                    data-image="../../static/images/me.png"
+                    data-apply="true"
+                    data-body="Sunday breakfast menu updated based on student feedback survey."
+                    data-full="Sunday breakfast menu updated based on student feedback survey."
+                >
+
+                    <div class="na-update-marker"></div>
+
+                    <div>
+                        <div class="na-update-date">
+                            27-07-2026
+                            <span class="na-time">1:00 PM</span>
+                        </div>
+
+                        <p class="na-update-title">
+                            Sunday breakfast menu updated
+                        </p>
+
+                        <p class="na-update-body">
+                            Sunday breakfast menu updated based on student feedback survey.
+                        </p>
+                    </div>
+
+                </article>
+
+
+                <article
+                    class="na-update-item"
+                    role="button"
+                    tabindex="0"
+                    data-status="old"
+                    data-title="Sunday breakfast menu updated"
+                    data-date="27-07-2026"
+                    data-time="1:00 PM"
+                    data-uploaded-by="Mess In-charge"
+                    data-deadline=""
+                    data-category="Non-Academic Update"
+                    data-category-color="#F97316"
+                    data-email="mess@rgukt.ac.in"
+                    data-image="../../static/images/me.png"
+                    data-apply="true"
+                    data-body="Sunday breakfast menu updated based on student feedback survey."
+                    data-full="Sunday breakfast menu updated based on student feedback survey."
+                >
+
+                    <div class="na-update-marker"></div>
+
+                    <div>
+                        <div class="na-update-date">
+                            27-07-2026
+                            <span class="na-time">1:00 PM</span>
+                        </div>
+
+                        <p class="na-update-title">
+                            Sunday breakfast menu updated
+                        </p>
+
+                        <p class="na-update-body">
+                            Sunday breakfast menu updated based on student feedback survey.
+                        </p>
+                    </div>
+
+                </article>
+
+                <article
+                    class="na-update-item"
+                    role="button"
+                    tabindex="0"
+                    data-status="old"
+                    data-title="Sunday breakfast menu updated"
+                    data-date="27-07-2026"
+                    data-time="1:00 PM"
+                    data-uploaded-by="Mess In-charge"
+                    data-deadline=""
+                    data-category="Non-Academic Update"
+                    data-category-color="#F97316"
+                    data-email="mess@rgukt.ac.in"
+                    data-image="../../static/images/me.png"
+                    data-apply="true"
+                    data-body="Sunday breakfast menu updated based on student feedback survey."
+                    data-full="Sunday breakfast menu updated based on student feedback survey."
+                >
+
+                    <div class="na-update-marker"></div>
+
+                    <div>
+                        <div class="na-update-date">
+                            27-07-2026
+                            <span class="na-time">1:00 PM</span>
+                        </div>
+
+                        <p class="na-update-title">
+                            Sunday breakfast menu updated
+                        </p>
+
+                        <p class="na-update-body">
+                            Sunday breakfast menu updated based on student feedback survey.
+                        </p>
+                    </div>
+
+                </article>
+
+
+                <article
+                    class="na-update-item"
+                    role="button"
+                    tabindex="0"
+                    data-status="old"
+                    data-title="Sunday breakfast menu updated"
+                    data-date="27-07-2026"
+                    data-time="1:00 PM"
+                    data-uploaded-by="Mess In-charge"
+                    data-deadline=""
+                    data-category="Non-Academic Update"
+                    data-category-color="#F97316"
+                    data-email="mess@rgukt.ac.in"
+                    data-image="../../static/images/me.png"
+                    data-apply="true"
+                    data-body="Sunday breakfast menu updated based on student feedback survey."
+                    data-full="Sunday breakfast menu updated based on student feedback survey."
+                >
+
+                    <div class="na-update-marker"></div>
+
+                    <div>
+                        <div class="na-update-date">
+                            27-07-2026
+                            <span class="na-time">1:00 PM</span>
+                        </div>
+
+                        <p class="na-update-title">
+                            Sunday breakfast menu updated
+                        </p>
+
+                        <p class="na-update-body">
+                            Sunday breakfast menu updated based on student feedback survey.
+                        </p>
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <aside>
+
+            <div class="na-side-card">
+
+                <h4>Contact &amp; Info</h4>
+
+                <div class="na-info-row">
+                    <i class="fa-solid fa-user"></i>
+                    <div>
+                        <span class="na-info-label">In-charge</span>
+                        Mess In-charge
+                    </div>
+                </div>
+
+                <div class="na-info-row">
+                    <i class="fa-solid fa-phone"></i>
+                    <div>
+                        <span class="na-info-label">Contact</span>
+                        [Contact Number]
+                    </div>
+                </div>
+
+                <div class="na-info-row">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <span class="na-info-label">Location</span>
+                        Mess Office / Dining Block
+                    </div>
+                </div>
+
+                <div class="na-info-row">
+                    <i class="fa-solid fa-clock"></i>
+                    <div>
+                        <span class="na-info-label">Office Hours</span>
+                        Mon–Sat, 7:00 AM–9:00 PM
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="na-side-card complaint-card">
+
+                <h4>Need Something Resolved?</h4>
+
+                <button id="complaint-btn" class="primary-btn">
+                    <i class="fa-solid fa-circle-exclamation"></i>&nbsp;
+                    Raise a Complaint
+                </button>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <section id="contact" class="hod-section">
+
+        <div class="hod-photo hod-section-photo">
+            <img src="../../static/images/hod.svg" alt="In-charge profile placeholder">
+        </div>
+
+        <div class="hod-main-info">
+            <h2>SECTION IN-CHARGE</h2>
+            <h3>Mess In-charge</h3>
+            <p class="designation">Non-Academic Section In-charge</p>
+        </div>
+
+        <div class="hod-contact-info">
+
+            <div>
+                <span>Contact</span>
+                <strong>[Contact Number]</strong>
+            </div>
+
+            <div>
+                <span>Email</span>
+                <strong>mess@rgukt.ac.in</strong>
+            </div>
+
+            <div>
+                <span>Office</span>
+                <strong>Mess Office / Dining Block</strong>
+            </div>
+
+        </div>
+
+        <button id="hod-profile-btn" class="secondary-btn hod-view-btn">
+            View Profile
+        </button>
+
+    </section>
+
+
+    <footer class="na-footer-rich">
+
+        <div class="footer-inner">
+
+            <div class="footer-col">
+
+                <h3>RGUKT</h3>
+
+                <p>
+                    Rajiv Gandhi University of Knowledge Technologies (RGUKT) was established to provide
+                    high-quality technical education to rural youth. With fully residential campuses,
+                    RGUKT offers a unique 6-year integrated program (PUC + B.Tech), along with advanced
+                    postgraduate and research opportunities.
+                    <br>
+                    <br>
+                    Campus Connect keeps non-academic information organized and accessible for students.
+                </p>
+
+            </div>
+
+
+            <div class="footer-col">
+
+                <h4>University Links</h4>
+
+                <div class="footer-links">
+
+                    <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">
+                        RGUKT Official Website ↗
+                    </a>
+
+                    <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">
+                        Admissions ↗
+                    </a>
+
+                    <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">
+                        Academics ↗
+                    </a>
+
+                    <a href="../clubs-and-cells.html">
+                        Clubs &amp; Cells
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-col">
+
+                <h4>Quick Navigation</h4>
+
+                <div class="footer-links">
+
+                    <a href="../index.html">Home</a>
+                    <a href="../non-academic.html">Non-Academic</a>
+                    <a href="../contact.html">Contact</a>
+                    <a href="#top">Back to top ↑</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+            <span>© 2026 RGUKT — Non-Academic Section</span>
+            <span>Mess</span>
+        </div>
+
+    </footer>
+
+
+    <!-- Update detail -->
+
+    <div id="update-modal" class="modal-backdrop hidden">
+
+        <div class="modal-card">
+
+            <div class="modal-head update-modal-head">
+                <div></div>
+
+                <button class="close-btn modal-close" aria-label="Close">
+                    ×
+                </button>
+            </div>
+
+
+            <div id="modal-update-detail-content" class="modal-body">
+
+                <img
+                    id="modal-update-image"
+                    class="update-image"
+                    alt="Update image"
+                >
+
+                <div class="update-category" id="modal-update-category">
+                    Update
+                </div>
+
+                <h3 class="update-detail-title" id="modal-update-title-secondary">
+                    Update
+                </h3>
+
+
+                <div class="update-meta-list">
+
+                    <div class="update-meta-row">
+                        <i class="fa-solid fa-user"></i>
+                        <strong id="modal-update-uploader">Mess In-charge</strong>
+                    </div>
+
+                    <div class="update-meta-row">
+                        <i class="fa-regular fa-calendar"></i>
+                        <strong id="modal-update-date">
+                            05-07-2026 · 10:00 AM
+                        </strong>
+                    </div>
+
+                    <div class="update-meta-row">
+                        <i class="fa-solid fa-hourglass-end"></i>
+                        <strong id="modal-update-deadline">
+                            No deadline
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <p id="modal-update-body" class="update-description"></p>
+
+
+                <p class="update-contact">
+                    Have a question?
+                    <i class="fa-solid fa-envelope" style="color:var(--cat)"></i>
+                    <a id="modal-update-email" href="#">
+                        Not provided
+                    </a>
+                </p>
+
+
+                <button
+                    id="modal-apply-btn"
+                    class="update-apply-btn"
+                    type="button"
+                    style="display:none"
+                >
+                    Apply Now
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Complaint -->
+
+    <div id="complaint-modal" class="modal-backdrop hidden">
+
+        <div class="modal-card">
+
+            <div class="modal-head">
+
+                <div>
+                    <h2>Raise a Complaint</h2>
+                    <p>Mess</p>
+                </div>
+
+                <button class="close-btn modal-close">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <form class="demo-form">
+
+                    <div class="form-error"></div>
+                    <div class="form-success"></div>
+
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>ID No</label>
+                            <input required placeholder="Enter ID number">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input required placeholder="Enter full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" required placeholder="Enter email">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" required placeholder="Enter phone number">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Section</label>
+                            <input required value="Mess" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Year</label>
+
+                            <select required>
+                                <option value="">Select year</option>
+                                <option>PUC1</option>
+                                <option>PUC2</option>
+                                <option>E1</option>
+                                <option>E2</option>
+                                <option>E3</option>
+                                <option>E4</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Complaint Type</label>
+
+                            <select required>
+                                <option value="">Select type</option>
+                                <option>Service</option>
+                                <option>Infrastructure</option>
+                                <option>Maintenance</option>
+                                <option>Staff</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Complaint Description</label>
+                            <textarea required placeholder="Describe your complaint..."></textarea>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button type="button" class="secondary-btn modal-close">
+                            Cancel
+                        </button>
+
+                        <button class="primary-btn" type="submit">
+                            Submit Complaint
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Profile -->
+
+    <div id="hod-modal" class="modal-backdrop hidden">
+
+        <div class="modal-card profile-modal">
+
+            <div class="modal-head">
+
+                <div>
+                    <h2>Section In-charge Profile</h2>
+                    <p>Mess</p>
+                </div>
+
+                <button class="close-btn modal-close">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="profile-preview">
+
+                    <div class="hod-photo">
+                        <img src="../../static/images/hod.svg" alt="Profile placeholder">
+                    </div>
+
+                    <div>
+                        <h3 style="margin:0 0 4px">
+                            Mess In-charge
+                        </h3>
+
+                        <p style="margin:0;color:var(--cat);font-size:12px;font-weight:700">
+                            Non-Academic Section In-charge
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <p style="font-size:13px;color:#64748b;line-height:1.7;margin:0">
+                    Profile details can be connected to the section database later.
+                    Replace the placeholder name and profile image with the actual section information.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="../../static/js/mess.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Academic — RGUKT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../../static/css/academic.css">
+</head>
+<body class="na-body">
+
+  <!-- NAVBAR: Logo + RGUKT (left)  |  Home About Contact Search (right) -->
+  <header class="na-topbar na-topbar-simple">
+    <div class="container">
+      <a href="../index.html" class="na-brand">
+        <img src="../rgukt.png" onerror="this.style.display='none'"/>
+        CAMPUS CONNECT
+      </a>
+
+      <div class="na-right-group">
+        <nav class="na-nav-simple">
+          <a href="{{ url_for('homepage.homepage') }}">Home</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <!-- Calendar -->
+        <button id="calendar-toggle" class="icon-btn" aria-label="Toggle calendar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"/>
+          </svg>
+        </button>
+
+        <div class="na-search-wrap" role="search">
+          <svg class="na-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/></svg>
+          <input id="na-search-input" type="text" placeholder="Search departments..." aria-label="Search"/>
+        </div>
+      </div>
+
+      <!-- Calendar Panel -->
+      <div id="calendar-panel" class="calendar hidden">
+        <div class="calendar-header">
+          <button id="prev-month">◀</button>
+          <span id="month-year"></span>
+          <button id="next-month">▶</button>
+        </div>
+        <div class="calendar-body">
+          <div class="day-names">
+            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+          </div>
+          <div id="calendar-days" class="days-grid"></div>
+        </div>
+        <div class="calendar-footer">
+          <div class="event-input-wrap">
+            <input type="text" id="event-input" placeholder="Add new event..." />
+            <button id="add-event-btn">＋</button>
+          </div>
+          <div class="event-list">
+            <p id="events">No Events</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- BREADCRUMB -->
+  <div class="na-breadcrumb">
+    <a href="../index.html">Home</a>
+    <span class="sep">›</span>
+    <span class="current">Academic</span>
+  </div>
+
+ 
+   <!-- MAJOR CARD: live scrolling announcements -->
+  <section class="na-ann-card">
+    <div class="na-ann-inner">
+      <div class="na-ann-header">
+        <h2>📌 Academic Updates</h2>
+        <a href="#" class="na-ann-link" title="View all">↗</a>
+      </div>
+      <div class="na-ann-scroll">
+        <ul class="na-ann-list" id="na-ann-list">
+
+          <li>
+            <span class="na-ann-marker" style="background:#06b6d4;"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">31-07-2026<span class="na-ann-time">7:40 AM</span><span class="na-ann-cat" style="background:#06b6d4;">CSE </span></span>
+              <p class="na-ann-text">Campus Wi-Fi will be intermittent between 1–3 AM tonight for a router firmware update.</p>
+            </div>
+          </li>
+
+          <li>
+            <span class="na-ann-marker" style="background:#F97316;"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">30-07-2026<span class="na-ann-time">6:10 PM</span><span class="na-ann-cat" style="background:#F97316;">ECE</span></span>
+              <p class="na-ann-text">Special festive dinner on Independence Day, Aug 15. Regular timings apply.</p>
+            </div>
+          </li>
+
+          <li>
+            <span class="na-ann-marker" style="background:#f59e0b;"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">29-07-2026<span class="na-ann-time">5:45 PM</span><span class="na-ann-cat" style="background:#f59e0b;">EEE</span></span>
+              <p class="na-ann-text">A second snacks counter is now open near the reading hall to reduce queue time.</p>
+            </div>
+          </li>
+
+          <li>
+            <span class="na-ann-marker" style="background:#F97316;"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">27-07-2026<span class="na-ann-time">1:00 PM</span><span class="na-ann-cat" style="background:#F97316;">CIVIL</span></span>
+              <p class="na-ann-text">Sunday breakfast menu updated based on student feedback survey.</p>
+            </div>
+          </li>
+
+          <li>
+            <span class="na-ann-marker" style="background:#0d9488;"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">26-07-2026<span class="na-ann-time">11:00 AM</span><span class="na-ann-cat" style="background:#0d9488;">MECH</span></span>
+              <p class="na-ann-text">New stock of lab coats and drawing kits has arrived for all branches.</p>
+            </div>
+          </li>
+
+          <li>
+            <span class="na-ann-marker" style="background:#ef4444;"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">25-07-2026<span class="na-ann-time">3:00 PM</span><span class="na-ann-cat" style="background:#ef4444;">METULLARY</span></span>
+              <p class="na-ann-text">Free general health checkup camp on Aug 2 in the seminar hall. All students welcome.</p>
+            </div>
+          </li>
+
+          <li>
+            <span class="na-ann-marker" style="background:#10b981;"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">22-07-2026<span class="na-ann-time">4:30 PM</span><span class="na-ann-cat" style="background:#10b981;">CHEMICAL</span></span>
+              <p class="na-ann-text">Renewal applications for 2026-27 are open till Aug 20 on the state portal.</p>
+            </div>
+          </li>
+
+          <li>
+            <span class="na-ann-marker" style="background:#8b5cf6;"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">20-07-2026<span class="na-ann-time">12:00 PM</span><span class="na-ann-cat" style="background:#8b5cf6;">AI-ML</span></span>
+              <p class="na-ann-text">Semester fee payment deadline is Aug 10. Late fee applies after this date.</p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORY GRID: 4 per row, 8 department cards -->
+  <section class="na-cat-grid">
+
+    <a class="na-tagcard" href="{{ url_for('academic.cse_homepage') }}" style="--tc-color:#1E3A8A;">
+      <div class="na-tagcard-top">
+        <span class="na-tag-pill">CSE</span>
+        <span class="na-tagcard-arrow">↗</span>
+      </div>
+      <h4>Computer Science & Engineering</h4>
+      <p>Department notices, timetables and academic updates.</p>
+    </a>
+
+    <a class="na-tagcard" href="{{ url_for('academic.ece_homepage') }}" style="--tc-color:#0ea5e9;">
+      <div class="na-tagcard-top">
+        <span class="na-tag-pill">ECE</span>
+        <span class="na-tagcard-arrow">↗</span>
+      </div>
+      <h4>Electronics & Communication</h4>
+      <p>Department notices, timetables and academic updates.</p>
+    </a>
+
+    <a class="na-tagcard" href="{{ url_for('academic.civil_homepage') }}" style="--tc-color:#a16207;">
+      <div class="na-tagcard-top">
+        <span class="na-tag-pill">CIVIL</span>
+        <span class="na-tagcard-arrow">↗</span>
+      </div>
+      <h4>Civil Engineering</h4>
+      <p>Department notices, timetables and academic updates.</p>
+    </a>
+
+    <a class="na-tagcard" href="{{ url_for('academic.eee_homepage') }}" style="--tc-color:#F97316;">
+      <div class="na-tagcard-top">
+        <span class="na-tag-pill">EEE</span>
+        <span class="na-tagcard-arrow">↗</span>
+      </div>
+      <h4>Electrical & Electronics</h4>
+      <p>Department notices, timetables and academic updates.</p>
+    </a>
+
+    <a class="na-tagcard" href="{{ url_for('academic.mech_homepage') }}" style="--tc-color:#4b5563;">
+      <div class="na-tagcard-top">
+        <span class="na-tag-pill">MECH</span>
+        <span class="na-tagcard-arrow">↗</span>
+      </div>
+      <h4>Mechanical Engineering</h4>
+      <p>Department notices, timetables and academic updates.</p>
+    </a>
+
+    <a class="na-tagcard" href="{{ url_for('academic.metallurgy_homepage') }}" style="--tc-color:#78716c;">
+      <div class="na-tagcard-top">
+        <span class="na-tag-pill">METALLURGY</span>
+        <span class="na-tagcard-arrow">↗</span>
+      </div>
+      <h4>Metallurgical Engineering</h4>
+      <p>Department notices, timetables and academic updates.</p>
+    </a>
+
+    <a class="na-tagcard" href="{{ url_for('academic.chemical_homepage') }}" style="--tc-color:#10b981;">
+      <div class="na-tagcard-top">
+        <span class="na-tag-pill">CHEMICAL</span>
+        <span class="na-tagcard-arrow">↗</span>
+      </div>
+      <h4>Chemical Engineering</h4>
+      <p>Department notices, timetables and academic updates.</p>
+    </a>
+
+    <a class="na-tagcard" href="{{ url_for('academic.ai_ml_homepage') }}" style="--tc-color:#8b5cf6;">
+      <div class="na-tagcard-top">
+        <span class="na-tag-pill">AI ML</span>
+        <span class="na-tagcard-arrow">↗</span>
+      </div>
+      <h4>AI & Machine Learning</h4>
+      <p>Department notices, timetables and academic updates.</p>
+    </a>
+
+  </section>
+
+  <!-- ABOUT -->
+  <section class="na-about">
+    <div class="na-about-inner">
+      <h2 id="about">About</h2>
+      <p>
+        Rajiv Gandhi University of Knowledge Technologies (RGUKT) was established
+        to provide high-quality technical education to rural youth.
+        With fully residential campuses, RGUKT offers a unique
+        6-year integrated program (PUC + B.Tech), along with advanced
+        postgraduate and research opportunities.
+      </p>
+      <p>
+        Guided by its vision to bridge the rural-urban education gap,
+        RGUKT nurtures innovation, research, and holistic development
+        to empower students for a brighter future.
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="na-footer-rich">
+    <div class="na-footer-rich-inner">
+      <div class="na-footer-quick">
+        <h3>Quick Links</h3>
+        <div class="na-footer-links-grid">
+          <a href="https://www.rgukt.in" target="_blank">RGUKT Main</a>
+          <a href="https://rgukt.in/admissions/ug-admissions/2025" target="_blank">Admissions</a>
+          <a href="https://rguktong.ac.in" target="_blank">RGUKT Ongole</a>
+          <a href="http://nexus.rguktong.ac.in/" target="_blank">Results</a>
+          <a href="https://placements.rgukt.ac.in" target="_blank">Placements</a>
+          <a href="https://rguktong.ac.in/instituteinfo.php?data=careers" target="_blank">Career</a>
+          <a href="http://alumni.rguktong.ac.in/" target="_blank">Alumni</a>
+          <a href="https://rguktong.ac.in/instituteinfo.php?data=contact" target="_blank">Help desk</a>
+        </div>
+      </div>
+
+      <div class="na-footer-contact">
+        <h3 id="contact">Contact Us</h3>
+        <p>Email: <a href="mailto:direcor@rguktong.ac.in">direcor@rguktong.ac.in</a></p>
+        <div class="na-social">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/rguktongole"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="na-footer-bottom">
+      <p>&copy; 2025 RGUKT Website. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../../static/js/academic.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raise a Complaint — RGUKT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../../static/css/complaint.css">
+  <style>:root{ --cat: #1E3A8A; }</style>
+</head>
+<body class="na-body">
+
+  <header class="na-topbar na-topbar-simple">
+    <div class="container">
+      <a href="index.html" class="na-brand">
+        <img src="rgukt.png" onerror="this.style.display='none'"/>
+        RGUKT
+      </a>
+
+      <div class="na-right-group">
+        <nav class="na-nav-simple">
+          <a href="{{ url_for('homepage.homepage') }}">Home</a>
+          <a href="index.html#about">About</a>
+          <a href="index.html#contact">Contact</a>
+        </nav>
+
+        <button id="calendar-toggle" class="icon-btn" aria-label="Toggle calendar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"/>
+          </svg>
+        </button>
+
+        <div class="na-search-wrap" role="search">
+          <svg class="na-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/></svg>
+          <input id="na-search-input" type="text" placeholder="Search categories..." aria-label="Search"/>
+        </div>
+      </div>
+
+      <div id="calendar-panel" class="calendar hidden">
+        <div class="calendar-header">
+          <button id="prev-month">◀</button>
+          <span id="month-year"></span>
+          <button id="next-month">▶</button>
+        </div>
+        <div class="calendar-body">
+          <div class="day-names">
+            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+          </div>
+          <div id="calendar-days" class="days-grid"></div>
+        </div>
+        <div class="calendar-footer">
+          <div class="event-input-wrap">
+            <input type="text" id="event-input" placeholder="Add new event..." />
+            <button id="add-event-btn">＋</button>
+          </div>
+          <div class="event-list">
+            <p id="events">No Events</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="na-breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="sep">›</span>
+    <span class="current">Raise a Complaint</span>
+  </div>
+
+  <div class="complaint-wrap">
+
+    <div class="na-cat-header">
+      <div class="na-cat-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+      <div>
+        <h1>Raise a Complaint</h1>
+        <p>Let us know what went wrong — we'll route it to the right department.</p>
+      </div>
+    </div>
+
+    <form class="complaint-form" id="complaint-form">
+
+      <div class="form-group">
+        <label for="c-name">Full Name</label>
+        <input type="text" id="c-name" name="name" placeholder="Your full name" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="c-roll">Roll No / ID</label>
+          <input type="text" id="c-roll" name="roll" placeholder="e.g. N200123" required>
+        </div>
+        <div class="form-group">
+          <label for="c-category">Category</label>
+          <select id="c-category" name="category" required>
+            <option value="" disabled selected>Select a category</option>
+            <option value="mess">Mess</option>
+            <option value="canteen">Canteen</option>
+            <option value="store">Store</option>
+            <option value="hostel">Hostel</option>
+            <option value="warden-office">Warden Office</option>
+            <option value="housekeeping">Housekeeping</option>
+            <option value="electrical">Electrical</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="it-infra">IT Infra</option>
+            <option value="hospital">Hospital</option>
+            <option value="scholarship-office">Scholarship Office</option>
+            <option value="financial-office">Financial Office</option>
+            <option value="academic">Academic</option>
+            <option value="clubs-and-cells">Clubs & Cells</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="c-priority">Priority</label>
+          <select id="c-priority" name="priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="c-contact">Contact Number</label>
+          <input type="tel" id="c-contact" name="contact" placeholder="+91 XXXXX XXXXX">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="c-desc">Complaint Details</label>
+        <textarea id="c-desc" name="description" rows="5" placeholder="Describe the issue clearly — include location and time if relevant." required></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> Submit Complaint</button>
+
+      <div id="complaint-success" class="complaint-success hidden">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Your complaint has been recorded. Reference ID: <strong id="ref-id"></strong></span>
+      </div>
+    </form>
+
+  </div>
+
+  <footer class="na-footer">
+    &copy; 2025 RGUKT Website. All Rights Reserved.
+  </footer>
+
+  <script src="../../static/js/complaint.js"></script>
+</body>
+</html>

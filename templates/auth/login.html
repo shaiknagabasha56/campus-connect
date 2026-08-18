@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RGUKT Digital Announcement System</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for(('static'), filename='css/login.css') }}">
+
+
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="scene">
+
+        <div class="flip-card">
+
+            <!-- ==========================================================
+                                FRONT SIDE (LOGIN)
+            =========================================================== -->
+
+            <div class="card-face card-front">
+
+                <div class="login-card">
+
+
+                    <!-- LEFT PANEL -->
+
+                    <section class="left-panel">
+
+                        <div class="left-shape"></div>
+
+                        <div class="circle circle-left"></div>
+
+                        <div class="circle circle-center"></div>
+
+                        <div class="welcome-content">
+
+                            <h1>WELCOME</h1>
+
+                            <h3>RGUKT Digital Announcement System</h3>
+
+                            <p>
+                                Welcome to the official digital platform for campus announcements.
+                                Stay informed with real-time updates on academic notices,
+                                examinations, placements, university events and activities through
+                                a secure and modern portal.
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                    <!-- RIGHT PANEL -->
+
+                    <section class="right-panel">
+
+                        <div class="circle circle-right"></div>
+
+                        <div class="form-container">
+                            
+                            <h2>Login</h2>
+
+                            <p class="subtitle">
+                                Login to access your profile dashboard
+                            </p>
+                            <div id="loginError" class="form-message"></div>
+
+                            <!-- Username -->
+
+                            <div class="input-box">
+
+                                <span class="icon">
+
+                                    <svg viewBox="0 0 24 24">
+
+                                        <path d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5
+                                        2.2-5 5 2.2 5 5 5zm0
+                                        2c-3.3 0-10 1.7-10
+                                        5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+
+                                    </svg>
+
+                                </span>
+
+                                <input id="loginEmail"
+                                       type="email"
+                                       placeholder="Email Address">
+
+                            </div>
+
+                            <!-- Password -->
+
+                            <div class="input-box">
+
+                                <span class="icon">
+
+                                    <svg viewBox="0 0 24 24">
+
+                                        <path d="M17 8h-1V6a4 4 0 0
+                                        0-8 0v2H7a2 2 0 0
+                                        0-2 2v10a2 2 0 0
+                                        0 2 2h10a2 2 0 0
+                                        0 2-2V10a2 2 0 0
+                                        0-2-2zm-5
+                                        9a1 1 0 1
+                                        1 0-2 1 1 0
+                                        0 1 0 2zm3-9h-6V6a3
+                                        3 0 0 1 6 0z"/>
+
+                                    </svg>
+
+                                </span>
+
+                                <input id="password"
+                                       type="password"
+                                       placeholder="Password">
+
+                                <button id="togglePassword"
+                                        type="button">
+
+                                    SHOW
+
+                                </button>
+
+                            </div>
+
+                            <div class="options">
+
+                                <label>
+
+                                    <input type="checkbox">
+
+                                    <span>Remember me</span>
+
+                                </label>
+
+                                <a href="#" id="forgotPasswordBtn">
+   					 Forgot Password?
+				</a>
+                            </div>
+                            <a href="{{ url_for('homepage.homepage') }}">
+                            <button class="login-btn">
+
+                                Login
+
+                            </button>
+                            </a>
+
+                            <div class="divider">
+
+                                <span>Or</span>
+
+                            </div>
+
+                            <button class="google-btn">
+
+                                 <svg class="google-icon"
+         xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 48 48">
+
+        <path fill="#EA4335"
+              d="M24 9.5c3.1 0 5.9 1.1 8.1 3.1l6-6C34.3 2.9 29.5 1 24 1 14.6 1 6.5 6.7 2.6 15l7.4 5.8C11.7 14.1 17.3 9.5 24 9.5z"/>
+
+        <path fill="#4285F4"
+              d="M46.5 24.5c0-1.6-.1-2.7-.4-4H24v8h12.7c-.3 2-1.7 5-4.7 7l7.2 5.6c4.3-4 7.3-9.8 7.3-16.6z"/>
+
+        <path fill="#34A853"
+              d="M10 28.8A14.8 14.8 0 0 1 9.2 24c0-1.7.3-3.3.8-4.8L2.6 15A23.2 23.2 0 0 0 1 24c0 3.3.8 6.4 2.3 9l6.7-4.2z"/>
+
+        <path fill="#FBBC05"
+              d="M24 47c6.5 0 11.9-2.2 15.8-5.9l-7.2-5.6c-2 1.4-4.7 2.4-8.6 2.4-6.6 0-12.3-4.5-14.3-10.5L2.6 33C6.5 41.3 14.6 47 24 47z"/>
+
+    </svg>
+
+                                <span>Login with Google</span>
+
+                            </button>
+
+                            <p class="signup">
+
+                                Don't have an account?
+
+                                <a href="#"
+                                   id="showSignup">
+
+                                    Sign Up
+
+                                </a>
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+            
+                        <!-- ==========================================================
+                                BACK SIDE (SIGNUP)
+            =========================================================== -->
+
+            <div class="card-face card-back">
+
+                <div class="login-card">
+
+                    <!-- LEFT PANEL -->
+
+                    <section class="left-panel">
+
+                        <div class="left-shape"></div>
+
+                        <div class="circle circle-left"></div>
+
+                        <div class="circle circle-center"></div>
+
+                        <div class="welcome-content">
+
+                            <h1>JOIN US</h1>
+
+                            <h3>RGUKT Digital Announcement System</h3>
+
+                            <p>
+                                Create your account to receive real-time campus announcements,
+                                examination updates, placement notifications,
+                                university events and personalized dashboard access.
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                    <!-- RIGHT PANEL -->
+
+                    <section class="right-panel">
+
+                        <div class="circle circle-right"></div>
+
+                        <div class="form-container signup-form">
+
+                            <h2>Create Account</h2>
+                            <div id="signupError" class="form-message"></div>
+
+                            <!-- Full Name -->
+
+                            <div class="input-box">
+
+                                <span class="icon">
+
+                                    <svg viewBox="0 0 24 24">
+
+                                        <path d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5
+                                        2.2-5 5 2.2 5 5 5zm0
+                                        2c-3.3 0-10 1.7-10
+                                        5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+
+                                    </svg>
+
+                                </span>
+
+                                <input id="signupFullName"
+                                       type="text"
+                                       placeholder="Full Name">
+
+                            </div>
+
+                            <!-- Phone -->
+
+                            <div class="input-box">
+
+                                <span class="icon">
+
+                                    <svg viewBox="0 0 24 24">
+
+                                        <path d="M6.6 10.8c1.7 3.4 4.5 6.2
+                                        7.9 7.9l2.6-2.6c.3-.3.8-.4
+                                        1.2-.3 1.3.4 2.6.6 4 .6.7
+                                        0 1.2.5 1.2 1.2V22c0 .7-.5
+                                        1.2-1.2 1.2C10.4 23.2.8
+                                        13.6.8 1.7.8 1 .3.5
+                                        1 .5h4.3c.7 0 1.2.5
+                                        1.2 1.2 0 1.4.2 2.7.6
+                                        4 .1.4 0 .9-.3
+                                        1.2l-2.2 2z"/>
+
+                                    </svg>
+
+                                </span>
+
+                                <input id="signupPhone"
+                                       type="tel"
+                                       placeholder="Phone Number">
+
+                            </div>
+
+                            <!-- Email -->
+
+                            <div class="input-box">
+
+                                <span class="icon">
+
+                                    <svg viewBox="0 0 24 24">
+
+                                        <path d="M20 4H4a2 2 0 0 0-2 2v12a2
+                                        2 0 0 0 2 2h16a2 2 0 0
+                                        0 2-2V6a2 2 0 0
+                                        0-2-2zm0 4-8
+                                        5L4 8V6l8
+                                        5 8-5z"/>
+
+                                    </svg>
+
+                                </span>
+
+                                <input id="signupEmail"
+                                       type="email"
+                                       placeholder="Email Address">
+
+                            </div>
+
+                            <!-- Password -->
+
+                            <div class="input-box">
+
+                                <span class="icon">
+
+                                    <svg viewBox="0 0 24 24">
+
+                                        <path d="M17 8h-1V6a4 4 0 0
+                                        0-8 0v2H7a2 2 0 0
+                                        0-2 2v10a2 2 0 0
+                                        0 2 2h10a2 2 0 0
+                                        0 2-2V10a2 2 0 0
+                                        0-2-2zm-5
+                                        9a1 1 0 1
+                                        1 0-2 1 1 0
+                                        0 1 0 2zm3-9h-6V6a3
+                                        3 0 0 1 6 0z"/>
+
+                                    </svg>
+
+                                </span>
+
+                                <input id="signupPassword"
+                                       type="password"
+                                       placeholder="Password">
+
+                                <button id="toggleSignupPassword"
+                                        type="button">
+
+                                    SHOW
+
+                                </button>
+
+                            </div>
+
+                            <!-- Confirm Password -->
+
+                            <div class="input-box">
+
+                                <span class="icon">
+
+                                    <svg viewBox="0 0 24 24">
+
+                                        <path d="M17 8h-1V6a4 4 0 0
+                                        0-8 0v2H7a2 2 0 0
+                                        0-2 2v10a2 2 0 0
+                                        0 2 2h10a2 2 0 0
+                                        0 2-2V10a2 2 0 0
+                                        0-2-2zm-5
+                                        9a1 1 0 1
+                                        1 0-2 1 1 0
+                                        0 1 0 2zm3-9h-6V6a3
+                                        3 0 0 1 6 0z"/>
+
+                                    </svg>
+
+                                </span>
+
+                                <input id="confirmPassword"
+                                       type="password"
+                                       placeholder="Confirm Password">
+
+                            </div>
+
+                            <button class="login-btn">
+
+                                Create Account
+
+                            </button>
+
+                            <div class="divider">
+
+                                <span>Or</span>
+
+                            </div>
+
+                            <button class="google-btn">
+
+                                 <svg class="google-icon"
+         xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 48 48">
+
+        <path fill="#EA4335"
+              d="M24 9.5c3.1 0 5.9 1.1 8.1 3.1l6-6C34.3 2.9 29.5 1 24 1 14.6 1 6.5 6.7 2.6 15l7.4 5.8C11.7 14.1 17.3 9.5 24 9.5z"/>
+
+        <path fill="#4285F4"
+              d="M46.5 24.5c0-1.6-.1-2.7-.4-4H24v8h12.7c-.3 2-1.7 5-4.7 7l7.2 5.6c4.3-4 7.3-9.8 7.3-16.6z"/>
+
+        <path fill="#34A853"
+              d="M10 28.8A14.8 14.8 0 0 1 9.2 24c0-1.7.3-3.3.8-4.8L2.6 15A23.2 23.2 0 0 0 1 24c0 3.3.8 6.4 2.3 9l6.7-4.2z"/>
+
+        <path fill="#FBBC05"
+              d="M24 47c6.5 0 11.9-2.2 15.8-5.9l-7.2-5.6c-2 1.4-4.7 2.4-8.6 2.4-6.6 0-12.3-4.5-14.3-10.5L2.6 33C6.5 41.3 14.6 47 24 47z"/>
+
+    </svg>
+
+                                <span>Sign Up with Google</span>
+
+                            </button>
+
+                            <p class="signup">
+
+                                Already have an account?
+
+                                <a href="#"
+                                   id="showLogin">
+
+                                    Login
+
+                                </a>
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+            
+                    </div> <!-- End flip-card -->
+
+    </div> <!-- End scene -->
+
+</div> <!-- End page -->
+
+<!-- ==========================================
+        FORGOT PASSWORD OVERLAY
+========================================== -->
+
+<div class="forgot-overlay" id="forgotOverlay">
+
+    <div class="forgot-card" id="forgotCard">
+
+        <button
+            class="close-forgot"
+            id="closeForgot">
+
+            ✕
+
+        </button>
+
+        <h2>
+
+            Forgot Password
+
+        </h2>
+
+        <p>
+
+            Enter your registered email address.
+
+        </p>
+
+        <div class="input-box">
+
+            <span class="icon">
+
+                <svg viewBox="0 0 24 24">
+
+                    <path d="M20 4H4a2 2 0 0 0-2 2v12a2
+                    2 0 0 0 2 2h16a2 2 0 0
+                    0 2-2V6a2 2 0 0
+                    0-2-2zm0 4-8
+                    5L4 8V6l8
+                    5 8-5z"/>
+
+                </svg>
+
+            </span>
+
+            <input
+                id="forgotEmail"
+                type="email"
+                placeholder="Registered Email">
+
+        </div>
+
+        <a href="{{ url_for('auth.reset_password') }}">
+        <button
+            class="reset-btn"
+            id="sendReset">
+
+            Send Reset Link
+
+        </button>
+        </a>
+        <p
+            class="forgot-message"
+            id="forgotMessage">
+
+        </p>
+
+    </div>
+
+</div>
+<script src="{{ url_for(('static'),filename='js/login.js') }}"></script>
+
+</body>
+</html>

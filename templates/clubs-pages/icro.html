@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>ICRO — Clubs &amp; Cells — RGUKT</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<link href="../../static/css/icro.css" rel="stylesheet"/>
+<style>:root{ --cat: #EAB308; }</style>
+</head>
+<body class="na-body">
+<header class="na-topbar na-topbar-simple">
+<div class="container">
+<a class="na-brand" href="../index.html">
+<img onerror="this.style.display='none'" src="../rgukt.png"/>
+        RGUKT
+      </a>
+<div class="na-right-group">
+<nav class="na-nav-simple">
+<a href="{{ url_for('clubs.clubs_homepage') }}">Home</a>
+<a href="#contact">Contact</a>
+</nav>
+<!-- Calendar -->
+<button aria-label="Toggle calendar" class="icon-btn" id="calendar-toggle">
+<svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"></path>
+</svg>
+</button>
+<div class="na-search-wrap" role="search">
+<svg class="na-search-icon" fill="currentColor" height="14" viewbox="0 0 16 16" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"></path></svg>
+<input aria-label="Search" id="na-search-input" placeholder="Search categories..." type="text"/>
+</div>
+</div>
+<!-- Calendar Panel (kept outside the group; absolutely positioned) -->
+<div class="calendar hidden" id="calendar-panel">
+<div class="calendar-header">
+<button id="prev-month">◀</button>
+<span id="month-year"></span>
+<button id="next-month">▶</button>
+</div>
+<div class="calendar-body">
+<div class="day-names">
+<span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+</div>
+<div class="days-grid" id="calendar-days"></div>
+</div>
+<div class="calendar-footer">
+<div class="event-input-wrap">
+<input id="event-input" placeholder="Add new event..." type="text"/>
+<button id="add-event-btn">＋</button>
+</div>
+<div class="event-list">
+<p id="events">No Events</p>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="na-breadcrumb">
+<a href="../index.html">Home</a>
+<span class="sep">›</span>
+<a href="clubs-and-cells.html">Clubs &amp; Cells</a>
+<span class="sep">›</span>
+<span class="current">ICRO</span>
+</div>
+<div class="na-catwrap">
+<div class="na-cat-header">
+<div class="na-cat-icon"><i class="fa-solid fa-lightbulb"></i></div>
+<div>
+<h1>ICRO</h1>
+<p>Innovation &amp; creative research club — projects, prototypes and idea incubation.</p>
+</div>
+</div>
+<!-- Primary content: updates feed -->
+<div class="na-updates">
+<div class="na-updates-head">
+<h2>Latest Updates</h2>
+<div class="na-filter">
+<button aria-label="Filter updates" class="na-filter-toggle" data-filter-toggle="">
+<i class="fa-solid fa-filter"></i>
+</button>
+<div class="na-filter-menu hidden">
+<button class="na-filter-option active" data-filter="all">All</button>
+<button class="na-filter-option" data-filter="new">New</button>
+<button class="na-filter-option" data-filter="old">Old</button>
+</div>
+</div>
+</div>
+<!--
+        Update cards:
+        data-apply="true"  -> Apply Now button is enabled
+        data-apply="false" -> Applications Closed button is disabled
+        no data-apply      -> Apply button is hidden
+      -->
+<div class="na-updates-list">
+       
+<button class="na-update-item na-update-clickable" data-apply="true" data-apply-link="/clubs/icro/apply" data-category="Event" data-category-color="#EAB308" data-deadline="" data-description="Members will pitch early-stage project ideas for peer feedback and mentorship." data-email="icro@rgukt.ac.in"  data-image="../../static/images/f2car.jpeg" data-status="new" data-title="Idea pitch session" data-upload-date="09-07-2026" data-upload-time="5:00 PM" data-uploaded-by="ICRO Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">09-07-2026<span class="na-time">5:00 PM</span></span>
+<span class="na-update-title">Idea pitch session</span>
+<span class="na-update-body">Members will pitch early-stage project ideas for peer feedback and mentorship.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+</span>
+</button>
+
+<button class="na-update-item na-update-clickable" data-category="Announcement" data-category-color="#EAB308" data-deadline="" data-description="New access hours announced for the shared prototyping and maker space." data-email="icro@rgukt.ac.in" data-image="../../static/images/welcome2.jpg" data-status="old" data-title="Prototype lab access updated" data-upload-date="25-06-2026" data-upload-time="4:30 PM" data-uploaded-by="ICRO Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">25-06-2026<span class="na-time">4:30 PM</span></span>
+<span class="na-update-title">Prototype lab access updated</span>
+<span class="na-update-body">New access hours announced for the shared prototyping and maker space.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+</span>
+</button>
+
+<button class="na-update-item na-update-clickable" data-apply="true" data-apply-link="/clubs/icro/apply" data-category="Event" data-category-color="#EAB308" data-deadline="" data-description="Members will pitch early-stage project ideas for peer feedback and mentorship." data-email="icro@rgukt.ac.in"   data-status="new" data-title="Idea pitch session" data-upload-date="09-07-2026" data-upload-time="5:00 PM" data-uploaded-by="ICRO Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">09-07-2026<span class="na-time">5:00 PM</span></span>
+<span class="na-update-title">Idea pitch session</span>
+<span class="na-update-body">Members will pitch early-stage project ideas for peer feedback and mentorship.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+</span>
+</button>
+
+<button class="na-update-item na-update-clickable" data-apply="true" data-apply-link="/clubs/icro/apply" data-category="Event" data-category-color="#EAB308" data-deadline="" data-description="Members will pitch early-stage project ideas for peer feedback and mentorship." data-email="icro@rgukt.ac.in"   data-status="new" data-title="Idea pitch session" data-upload-date="09-07-2026" data-upload-time="5:00 PM" data-uploaded-by="ICRO Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">09-07-2026<span class="na-time">5:00 PM</span></span>
+<span class="na-update-title">Idea pitch session</span>
+<span class="na-update-body">Members will pitch early-stage project ideas for peer feedback and mentorship.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+</span>
+</button>
+
+<button class="na-update-item na-update-clickable" data-apply="true" data-apply-link="/clubs/icro/apply" data-category="Event" data-category-color="#EAB308" data-deadline="" data-description="Members will pitch early-stage project ideas for peer feedback and mentorship." data-email="icro@rgukt.ac.in"   data-status="new" data-title="Idea pitch session" data-upload-date="09-07-2026" data-upload-time="5:00 PM" data-uploaded-by="ICRO Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">09-07-2026<span class="na-time">5:00 PM</span></span>
+<span class="na-update-title">Idea pitch session</span>
+<span class="na-update-body">Members will pitch early-stage project ideas for peer feedback and mentorship.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+</span>
+</button>
+
+<button class="na-update-item na-update-clickable" data-apply="true" data-apply-link="/clubs/icro/apply" data-category="Event" data-category-color="#EAB308" data-deadline="" data-description="Members will pitch early-stage project ideas for peer feedback and mentorship." data-email="icro@rgukt.ac.in"   data-status="new" data-title="Idea pitch session" data-upload-date="09-07-2026" data-upload-time="5:00 PM" data-uploaded-by="ICRO Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">09-07-2026<span class="na-time">5:00 PM</span></span>
+<span class="na-update-title">Idea pitch session</span>
+<span class="na-update-body">Members will pitch early-stage project ideas for peer feedback and mentorship.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+</span>
+</button>
+
+<button class="na-update-item na-update-clickable" data-apply="true" data-apply-link="/clubs/icro/apply" data-category="Event" data-category-color="#EAB308" data-deadline="" data-description="Members will pitch early-stage project ideas for peer feedback and mentorship." data-email="icro@rgukt.ac.in"   data-status="new" data-title="Idea pitch session" data-upload-date="09-07-2026" data-upload-time="5:00 PM" data-uploaded-by="ICRO Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">09-07-2026<span class="na-time">5:00 PM</span></span>
+<span class="na-update-title">Idea pitch session</span>
+<span class="na-update-body">Members will pitch early-stage project ideas for peer feedback and mentorship.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+</span>
+</button>
+
+</div>
+</div> <!-- Sidebar: info + complaint -->
+<aside>
+<div class="na-side-card">
+<h4>Quick Info</h4>
+<div class="na-info-row">
+<i class="fa-solid fa-user"></i>
+<div><span class="na-info-label">Convener</span>[Club Convener Name]</div>
+</div>
+<div class="na-info-row">
+<i class="fa-solid fa-phone"></i>
+<div><span class="na-info-label">Contact</span>[Contact Number]</div>
+</div>
+<div class="na-info-row">
+<i class="fa-solid fa-location-dot"></i>
+<div><span class="na-info-label">Location</span>[Club Room / Block]</div>
+</div>
+<div class="na-info-row">
+<i class="fa-solid fa-clock"></i>
+<div><span class="na-info-label">Meet Days</span>[e.g. Fridays, 5:00–6:30 PM]</div>
+</div>
+</div>
+<div class="na-side-card">
+<h4>Need Something Resolved?</h4>
+<button class="na-complaint-btn" id="openComplaintForm" type="button">
+<i class="fa-solid fa-circle-exclamation"></i> Raise a Complaint
+        </button>
+<p class="na-side-note">Report an issue related to an ICRO update or activity.</p>
+</div>
+</aside>
+</div>
+<!-- =========================================================
+       CLUB HEADS
+       ========================================================= -->
+<section aria-labelledby="club-heads-title" class="aws-club-heads">
+<div class="aws-section-heading">
+<span class="aws-section-kicker">Leadership</span>
+<h2 id="club-heads-title">Club Heads</h2>
+</div>
+<div class="aws-heads-grid">
+<article class="aws-head-card">
+<img alt="ICRO Club Head profile placeholder" src="../../static/images/icro-head-1.svg"/>
+<h3>Club Head Name</h3>
+<p>President</p>
+</article>
+<article class="aws-head-card">
+<img alt="ICRO Technical Lead profile placeholder" src="../../static/images/icro-head-2.svg"/>
+<h3>Technical Lead Name</h3>
+<p>Wise President</p>
+</article>
+<article class="aws-head-card">
+<img alt="ICRO Events Lead profile placeholder" src="../../static/images/icro-head-3.svg"/>
+<h3>Cordinator</h3>
+<p>Events Lead</p>
+</article>
+</div>
+</section>
+<!-- =========================================================
+       JOIN CLUB
+       ========================================================= -->
+<section aria-labelledby="join-club-title" class="aws-join-section" id="join-club">
+<div class="aws-join-inner">
+<div>
+<span class="aws-section-kicker">Get involved</span>
+<h2 id="join-club-title">Ready to explore cloud with us?</h2>
+<p>Join the ICRO and take part in learning sessions, workshops and community activities.</p>
+</div>
+<button class="aws-join-main-btn" id="openJoinForm" type="button">
+<i class="fa-solid fa-user-plus"></i> Join the Club
+      </button>
+</div>
+</section>
+<!-- =========================================================
+       CONTACT
+       ========================================================= -->
+<section aria-labelledby="aws-contact-title" class="aws-contact-section" id="contact">
+<div class="aws-contact-inner">
+<div class="aws-contact-heading">
+<span class="aws-section-kicker">Contact</span>
+<h2 id="aws-contact-title">Contact ICRO</h2>
+<p>Have a question about an update, event or club activity? Reach out through any of the channels below.</p>
+</div>
+<div class="aws-contact-grid">
+<a class="aws-contact-item" href="mailto:icro@rgukt.ac.in">
+<span class="aws-contact-icon"><i class="fa-solid fa-envelope"></i></span>
+<span><small>Email</small><strong>icro@rgukt.ac.in</strong></span>
+</a>
+<a class="aws-contact-item" href="tel:+910000000000">
+<span class="aws-contact-icon"><i class="fa-solid fa-phone"></i></span>
+<span><small>Phone</small><strong>+91 XXXXX XXXXX</strong></span>
+</a>
+<div class="aws-contact-item">
+<span class="aws-contact-icon"><i class="fa-solid fa-location-dot"></i></span>
+<span><small>Location</small><strong>RGUKT Campus</strong></span>
+</div>
+</div>
+<div class="aws-socials">
+<span>Follow ICRO</span>
+<div class="aws-social-links">
+<a aria-label="Instagram" href="#"><i class="fa-brands fa-instagram"></i></a>
+<a aria-label="LinkedIn" href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+<a aria-label="YouTube" href="#"><i class="fa-brands fa-youtube"></i></a>
+</div>
+</div>
+</div>
+</section>
+<!-- =========================================================
+       JOIN CLUB FORM MODAL
+       ========================================================= -->
+<div aria-hidden="true" class="action-form-overlay" id="joinFormOverlay">
+<div aria-labelledby="joinFormTitle" aria-modal="true" class="action-form-card" role="dialog">
+<button aria-label="Close" class="action-form-close" data-close-form="joinFormOverlay" type="button">×</button>
+<div class="action-form-heading">
+<span class="action-form-kicker">ICRO</span>
+<h2 id="joinFormTitle">Join the Club</h2>
+<p>Fill in your details to express your interest in joining the ICRO.</p>
+</div>
+<form class="action-form" id="joinClubForm">
+<div class="form-field"><label for="joinId">ID No.</label><input id="joinId" name="id_no" placeholder="Enter your ID number" required="" type="text"/></div>
+<div class="form-field"><label for="joinName">Name</label><input id="joinName" name="name" placeholder="Full name" required="" type="text"/></div>
+<div class="form-field"><label for="joinEmail">Email</label><input id="joinEmail" name="email" placeholder="name@example.com" required="" type="email"/></div>
+<div class="form-field"><label for="joinBranch">Branch</label><input id="joinBranch" name="branch" placeholder="e.g. CSE" required="" type="text"/></div>
+<div class="form-field"><label for="joinYear">Year</label><select id="joinYear" name="year" required=""><option disabled="" selected="" value="">Select year</option><option>PUC1</option><option>PUC2</option><option>E1</option><option>E2</option><option>E3</option><option>E4</option></select></div>
+<div class="form-field"><label for="joinSem">Current Sem</label><select id="joinSem" name="current_sem" required=""><option disabled="" selected="" value="">Select semester</option><option>Sem1</option><option>Sem2</option></select></div>
+<div class="form-field"><label for="joinPhone">Phone Number</label><input id="joinPhone" inputmode="numeric" name="phone" pattern="[0-9]{10}" placeholder="10-digit phone number" required="" type="tel"/></div>
+<div class="form-field form-field-full"><label for="joinWhy">Why do you want to join?</label><textarea id="joinWhy" maxlength="500" name="reason" placeholder="Tell us briefly why you want to join the AWS Cloud Club..." required="" rows="3"></textarea></div>
+<div class="action-form-actions form-field-full"><button class="action-form-submit" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Application</button></div>
+<p class="form-success" id="joinFormSuccess" role="status"></p>
+</form>
+</div>
+</div>
+<!-- =========================================================
+       COMPLAINT FORM MODAL
+       ========================================================= -->
+<div aria-hidden="true" class="action-form-overlay" id="complaintFormOverlay">
+<div aria-labelledby="complaintFormTitle" aria-modal="true" class="action-form-card" role="dialog">
+<button aria-label="Close" class="action-form-close" data-close-form="complaintFormOverlay" type="button">×</button>
+<div class="action-form-heading">
+<span class="action-form-kicker">ICRO</span>
+<h2 id="complaintFormTitle">Raise a Complaint</h2>
+<p>Provide your details and describe the issue so it can be reviewed by the appropriate club team.</p>
+</div>
+<form class="action-form" id="complaintForm">
+<div class="form-field"><label for="complaintId">ID No.</label><input id="complaintId" name="id_no" placeholder="Enter your ID number" required="" type="text"/></div>
+<div class="form-field"><label for="complaintName">Name</label><input id="complaintName" name="name" placeholder="Full name" required="" type="text"/></div>
+<div class="form-field"><label for="complaintEmail">Email</label><input id="complaintEmail" name="email" placeholder="name@example.com" required="" type="email"/></div>
+<div class="form-field"><label for="complaintBranch">Branch</label><input id="complaintBranch" name="branch" placeholder="e.g. CSE" required="" type="text"/></div>
+<div class="form-field"><label for="complaintYear">Year</label><select id="complaintYear" name="year" required=""><option disabled="" selected="" value="">Select year</option><option>PUC1</option><option>PUC2</option><option>E1</option><option>E2</option><option>E3</option><option>E4</option></select></div>
+<div class="form-field"><label for="complaintSem">Current Sem</label><select id="complaintSem" name="current_sem" required=""><option disabled="" selected="" value="">Select semester</option><option>Sem1</option><option>Sem2</option></select></div>
+<div class="form-field"><label for="complaintPhone">Phone Number</label><input id="complaintPhone" inputmode="numeric" name="phone" pattern="[0-9]{10}" placeholder="10-digit phone number" required="" type="tel"/></div>
+<div class="form-field"><label for="complaintSubject">Complaint Subject</label><input id="complaintSubject" name="subject" placeholder="Short subject" required="" type="text"/></div>
+<div class="form-field form-field-full"><label for="complaintMessage">Complaint Details</label><textarea id="complaintMessage" maxlength="1000" name="complaint" placeholder="Describe the issue clearly..." required="" rows="3"></textarea></div>
+<div class="action-form-actions form-field-full"><button class="action-form-submit" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Complaint</button></div>
+<p class="form-success" id="complaintFormSuccess" role="status"></p>
+</form>
+</div>
+</div>
+<!-- =========================================================
+       UPDATE DETAIL MODAL
+       ========================================================= -->
+<div aria-hidden="true" class="update-modal-overlay" id="updateModalOverlay">
+<div aria-labelledby="updateModalTitle" aria-modal="true" class="update-modal" role="dialog">
+<button aria-label="Close" class="update-modal-close" id="updateModalClose" type="button">×</button>
+<div class="update-modal-image-wrap" id="updateModalImageWrap">
+<img alt="" id="updateModalImage" src=""/>
+</div>
+<div class="update-modal-body">
+<span class="update-modal-tag" id="updateModalCategory"></span>
+<h2 id="updateModalTitle"></h2>
+<div class="update-modal-meta">
+<div class="update-modal-meta-row">
+<i class="fa-solid fa-user"></i>
+<span id="updateModalUploader"></span>
+</div>
+<div class="update-modal-meta-row">
+<i class="fa-regular fa-calendar"></i>
+<span id="updateModalDate"></span>
+</div>
+<div class="update-modal-meta-row update-modal-deadline" id="updateModalDeadlineRow">
+<i class="fa-solid fa-hourglass-half"></i>
+<span id="updateModalDeadline"></span>
+</div>
+</div>
+<p class="update-modal-desc" id="updateModalDesc"></p>
+<div class="update-modal-contact" id="updateModalContactRow">
+<span>Have a query?</span>
+<a href="#" id="updateModalEmail">
+<i class="fa-solid fa-envelope"></i>
+<span id="updateModalEmailText"></span>
+</a>
+</div>
+<button class="update-modal-apply" id="updateModalApply" type="button"></button>
+</div>
+</div>
+</div>
+<footer class="na-footer-rich">
+<div class="na-footer-rich-inner">
+<div class="na-footer-brand">
+<h3>RGUKT Campus Connect</h3>
+<p>One central place for students to discover campus updates, events, opportunities and announcements.</p>
+</div>
+<div class="na-footer-links-section">
+<h3>University Links</h3>
+<div class="na-footer-links-grid">
+<a href="https://www.rgukt.ac.in/" rel="noopener" target="_blank">RGUKT Official Website</a>
+<a href="https://www.rgukt.ac.in/admissions.html" rel="noopener" target="_blank">Admissions</a>
+<a href="https://www.rgukt.ac.in/academicprogrammes.html" rel="noopener" target="_blank">Academic Programmes</a>
+<a href="https://www.rgukt.ac.in/notices-downloads" rel="noopener" target="_blank">Notices &amp; Downloads</a>
+<a href="https://hub.rgukt.ac.in/hub/default" rel="noopener" target="_blank">RGUKT Student Hub</a>
+<a href="https://www.rgukt.ac.in/careers.html" rel="noopener" target="_blank">Careers</a>
+</div>
+</div>
+<div class="na-footer-contact">
+<h3>Campus Connect</h3>
+<p><i class="fa-solid fa-envelope"></i> <a href="mailto:campusconnect@rgukt.ac.in">campusconnect@rgukt.ac.in</a></p>
+<p><i class="fa-solid fa-globe"></i> <a href="https://www.rgukt.ac.in/" rel="noopener" target="_blank">University Website</a></p>
+<div class="na-social">
+<a aria-label="RGUKT Website" href="https://www.rgukt.ac.in/" rel="noopener" target="_blank"><i class="fa-solid fa-globe"></i></a>
+<a aria-label="RGUKT Notices" href="https://www.rgukt.ac.in/notices-downloads" rel="noopener" target="_blank"><i class="fa-solid fa-bullhorn"></i></a>
+<a aria-label="RGUKT Hub" href="https://hub.rgukt.ac.in/hub/default" rel="noopener" target="_blank"><i class="fa-solid fa-link"></i></a>
+</div>
+</div>
+</div>
+<div class="na-footer-bottom">
+      © 2026 RGUKT Campus Connect. All Rights Reserved.
+    </div>
+</footer>
+<script src="../../static/js/icro.js"></script>
+</body>
+</html>
