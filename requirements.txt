@@ -5,3 +5,5 @@ Flask-Bcrypt
 PyMySQL
 python-dotenv
 itsdangerous
+mysql-connector-python
+python-dotenv

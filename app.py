@@ -26,7 +26,7 @@ def createApp():
 
     @app.route("/")
     def landing_page():
-        return render_template("landingPage.html")
+        return render_template("landing.html")
     
     return app
     

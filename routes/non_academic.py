@@ -38,7 +38,7 @@ def hospital_homepage():
 
 @non_academic_bp.route("/scholorship-office")
 def scholorship_homepage():
-    return render_template("non-academic-pages/scholorship.html")
+    return render_template("non-academic-pages/scholarship.html")
 
 @non_academic_bp.route("/financial-office")
 def financial_homepage():
