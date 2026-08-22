@@ -1,183 +1,139 @@
-// non-academic.js
-// Shared behaviour for the non-academic hub + all category pages.
+const seedComplaints = [
+  {id:"RGUKT-CMP-2401", title:"Hostel water supply issue", category:"Hostel", priority:"High", status:"in-progress", description:"Water supply has been irregular in the residential block since yesterday evening. The issue affects students during morning and evening hours.", date:"Today, 10:42 AM", anonymous:false, name:"Student", roll:"N200123", phone:"+91 XXXXX XXXXX", attachments:[]},
+  {id:"RGUKT-CMP-2402", title:"Campus maintenance concern", category:"Infrastructure", priority:"Medium", status:"under-review", description:"A maintenance issue has been noticed near the academic block and requires inspection by the concerned department.", date:"Yesterday, 6:15 PM", anonymous:false, name:"Student", roll:"N200456", phone:"+91 XXXXX XXXXX", attachments:[]},
+  {id:"RGUKT-CMP-2403", title:"Anonymous infrastructure report", category:"Infrastructure", priority:"High", status:"new", description:"This complaint was submitted anonymously. The reported issue requires attention and supporting evidence may be attached below.", date:"20 Aug, 4:30 PM", anonymous:true, attachments:[]},
+  {id:"RGUKT-CMP-2404", title:"Library access concern", category:"Academic", priority:"Low", status:"resolved", description:"The reported issue regarding access timings has been reviewed and resolved by the concerned department.", date:"18 Aug, 11:20 AM", anonymous:false, name:"Student", roll:"N200789", phone:"+91 XXXXX XXXXX", attachments:[]},
+  {id:"RGUKT-CMP-2405", title:"Transport schedule issue", category:"Transport", priority:"Medium", status:"in-progress", description:"Students reported an inconsistency in the published transport schedule and requested clarification.", date:"16 Aug, 8:05 AM", anonymous:false, name:"Student", roll:"N200908", phone:"+91 XXXXX XXXXX", attachments:[]}
+];
 
-document.addEventListener('DOMContentLoaded', function () {
+let complaints = [...seedComplaints];
+let currentFilter = "all";
 
-  // ---- Simple fade-in for update items / cards (nice-to-have, respects reduced motion) ----
-  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!prefersReducedMotion) {
-    var items = document.querySelectorAll('.na-update-item, .na-tagcard, .na-card');
-    items.forEach(function (el, i) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(6px)';
-      el.style.transition = 'opacity .35s ease, transform .35s ease';
-      setTimeout(function () {
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-      }, 40 * i);
-    });
+const list = document.getElementById("complaints-list");
+const backdrop = document.getElementById("preview-backdrop");
+
+function prettyStatus(status){
+  return status === "under-review" ? "Under Review" : status.split("-").map(x=>x[0].toUpperCase()+x.slice(1)).join(" ");
+}
+
+function renderComplaints(){
+  const filtered = complaints.filter(c => currentFilter === "all" || c.status === currentFilter);
+  list.innerHTML = filtered.length ? filtered.map((c, i) => `
+    <button class="complaint-row" data-id="${c.id}">
+      <span class="row-marker"></span>
+      <span>
+        <h3>${escapeHTML(c.title)}</h3>
+        <p>${escapeHTML(c.description)}</p>
+        <span class="row-bottom"><i class="fa-solid fa-tag"></i> ${escapeHTML(c.category)} &nbsp; <i class="fa-solid fa-flag"></i> ${escapeHTML(c.priority)} &nbsp; <i class="fa-regular fa-clock"></i> ${escapeHTML(c.date)}</span>
+      </span>
+      <span class="status-badge ${c.status}">${prettyStatus(c.status)}</span>
+    </button>`).join("") : `<div style="padding:45px;text-align:center;color:#8290a1;font-size:14px">No complaints found for this status.</div>`;
+}
+
+function escapeHTML(value=""){
+  return String(value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
+}
+
+function openPreview(id){
+  const c = complaints.find(x => x.id === id);
+  if(!c) return;
+  document.getElementById("preview-title").textContent = c.title;
+  document.getElementById("preview-type").textContent = c.anonymous ? "ANONYMOUS COMPLAINT" : "COMPLAINT";
+  const badge = document.getElementById("preview-status");
+  badge.className = `status-badge ${c.status}`;
+  badge.textContent = prettyStatus(c.status);
+  document.getElementById("preview-date").textContent = c.date;
+  document.getElementById("preview-description").textContent = c.description;
+  document.getElementById("preview-reference").textContent = c.id;
+
+  const meta = [
+    ["Category", c.category],
+    ["Priority", c.priority],
+    ["Submitted As", c.anonymous ? "Anonymous" : (c.name || "Student")],
+    ["Roll / ID", c.anonymous ? "Not shared" : (c.roll || "Not provided")]
+  ];
+  document.getElementById("preview-meta").innerHTML = meta.map(([k,v])=>`<div class="meta-box"><span>${escapeHTML(k)}</span><strong>${escapeHTML(v)}</strong></div>`).join("");
+  renderAttachments(c.attachments || []);
+  backdrop.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closePreview(){
+  backdrop.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+function renderAttachments(files){
+  const holder = document.getElementById("attachment-preview");
+  if(!files.length){
+    holder.innerHTML = `<p style="margin:0;color:#8b98a8;font-size:13px">No attachments were provided.</p>`;
+    return;
   }
-
-  // ---- Hub page: filter category cards by search input ----
-  var searchInput = document.getElementById('na-search-input');
-  var catCards = document.querySelectorAll('.na-cat-grid .na-tagcard');
-  if (searchInput && catCards.length) {
-    searchInput.addEventListener('input', function () {
-      var q = searchInput.value.trim().toLowerCase();
-      catCards.forEach(function (card) {
-        var text = card.innerText.toLowerCase();
-        card.style.display = text.includes(q) ? '' : 'none';
-      });
-    });
-  }
-
-  // ---- Category page: filter updates by All / New / Old ----
-  var filterToggle = document.querySelector('[data-filter-toggle]');
-  var filterMenu = document.querySelector('.na-filter-menu');
-  if (filterToggle && filterMenu) {
-    var filterOptions = filterMenu.querySelectorAll('.na-filter-option');
-    var updateItems = document.querySelectorAll('.na-updates .na-update-item');
-
-    filterToggle.addEventListener('click', function (e) {
-      e.stopPropagation();
-      filterMenu.classList.toggle('hidden');
-      filterToggle.classList.toggle('active');
-    });
-
-    // close when clicking outside the menu
-    document.addEventListener('click', function (e) {
-      if (!filterMenu.classList.contains('hidden') &&
-          !filterMenu.contains(e.target) &&
-          e.target !== filterToggle) {
-        filterMenu.classList.add('hidden');
-        filterToggle.classList.remove('active');
-      }
-    });
-
-    filterOptions.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        filterOptions.forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-
-        var value = btn.getAttribute('data-filter');
-        updateItems.forEach(function (item) {
-          var status = item.getAttribute('data-status');
-          var show = (value === 'all') || (status === value);
-          item.classList.toggle('na-hide', !show);
-        });
-
-        filterMenu.classList.add('hidden');
-        filterToggle.classList.remove('active');
-      });
-    });
-  }
-
-  // ---- Calendar dropdown ----
-  var calendarToggle = document.getElementById('calendar-toggle');
-  var calendarPanel = document.getElementById('calendar-panel');
-  if (calendarToggle && calendarPanel) {
-
-    var calendarDays = document.getElementById('calendar-days');
-    var monthYear = document.getElementById('month-year');
-    var prevBtn = document.getElementById('prev-month');
-    var nextBtn = document.getElementById('next-month');
-    var eventsEl = document.getElementById('events');
-    var currentDate = new Date();
-
-    calendarToggle.addEventListener('click', function (e) {
-      e.stopPropagation();
-      calendarPanel.classList.toggle('hidden');
-    });
-
-    // close when clicking outside the panel
-    document.addEventListener('click', function (e) {
-      if (!calendarPanel.classList.contains('hidden') &&
-          !calendarPanel.contains(e.target) &&
-          e.target !== calendarToggle) {
-        calendarPanel.classList.add('hidden');
-      }
-    });
-
-    function renderCalendar(date) {
-      var year = date.getFullYear();
-      var month = date.getMonth();
-      var monthNames = ["January","February","March","April","May","June",
-        "July","August","September","October","November","December"];
-      monthYear.textContent = monthNames[month] + " " + year;
-
-      calendarDays.innerHTML = "";
-
-      var firstDay = new Date(year, month, 1).getDay();
-      var lastDate = new Date(year, month + 1, 0).getDate();
-
-      for (var i = 0; i < firstDay; i++) {
-        calendarDays.appendChild(document.createElement('div'));
-      }
-
-      for (var d = 1; d <= lastDate; d++) {
-        var day = document.createElement('div');
-        day.textContent = d;
-        day.classList.add('day');
-
-        if (d === new Date().getDate() &&
-            month === new Date().getMonth() &&
-            year === new Date().getFullYear()) {
-          day.classList.add('today');
-        }
-
-        (function (dNum) {
-          day.addEventListener('click', function () {
-            eventsEl.textContent = "Events for " + dNum + " " + monthNames[month] + " " + year + ": None";
-          });
-        })(d);
-
-        calendarDays.appendChild(day);
-      }
+  const wrap = document.createElement("div");
+  wrap.className = "attachment-grid";
+  files.forEach(file => {
+    const url = file.url;
+    const type = file.type || "";
+    if(type.startsWith("image/")){
+      const img = document.createElement("img"); img.src=url; img.alt=file.name; img.className="attachment-image"; wrap.appendChild(img);
+    }else if(type.startsWith("video/")){
+      const video = document.createElement("video"); video.src=url; video.controls=true; video.className="attachment-video"; wrap.appendChild(video);
+    }else if(type.startsWith("audio/")){
+      const audio = document.createElement("audio"); audio.src=url; audio.controls=true; audio.className="attachment-audio"; wrap.appendChild(audio);
+    }else if(type === "application/pdf"){
+      const link = document.createElement("a"); link.href=url; link.target="_blank"; link.className="file-link"; link.innerHTML=`<i class="fa-solid fa-file-pdf"></i><span>${escapeHTML(file.name)}</span>`; wrap.appendChild(link);
+    }else{
+      const link = document.createElement("a"); link.href=url; link.download=file.name; link.className="file-link"; link.innerHTML=`<i class="fa-solid fa-paperclip"></i><span>${escapeHTML(file.name)}</span>`; wrap.appendChild(link);
     }
+  });
+  holder.innerHTML = "";
+  holder.appendChild(wrap);
+}
 
-    prevBtn.addEventListener('click', function () {
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar(currentDate);
-    });
-    nextBtn.addEventListener('click', function () {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar(currentDate);
-    });
+document.querySelectorAll(".complaint-tab").forEach(tab => tab.addEventListener("click", () => {
+  document.querySelectorAll(".complaint-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".form-panel").forEach(p=>p.classList.remove("active"));
+  tab.classList.add("active");
+  document.getElementById(tab.dataset.tab+"-panel").classList.add("active");
+}));
 
-    renderCalendar(currentDate);
-  }
+document.querySelectorAll(".status-filter").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".status-filter").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentFilter = btn.dataset.status;
+  renderComplaints();
+}));
 
+list.addEventListener("click", e => {
+  const row = e.target.closest(".complaint-row");
+  if(row) openPreview(row.dataset.id);
 });
 
-/* ============================================================
-   Complaint form logic
-   ============================================================ */
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  const presetCategory = params.get("category");
-  const categorySelect = document.getElementById("c-category");
+document.querySelectorAll("#normal-form, #anonymous-form").forEach(form => form.addEventListener("submit", e => {
+  e.preventDefault();
+  const fd = new FormData(form);
+  const anonymous = form.id === "anonymous-form";
+  const attachments = [...form.querySelector('input[type="file"]').files].map(file => ({name:file.name,type:file.type,url:URL.createObjectURL(file)}));
+  const complaint = {
+    id:"RGUKT-CMP-"+Math.floor(100000+Math.random()*899999),
+    title:fd.get("title"), category:fd.get("category"), priority:fd.get("priority"),
+    status:"new", description:fd.get("description"), date:"Just now", anonymous,
+    name:anonymous ? "" : fd.get("name"), roll:anonymous ? "" : fd.get("roll"),
+    phone:anonymous ? "" : fd.get("phone"), attachments
+  };
+  complaints.unshift(complaint);
+  currentFilter="all";
+  document.querySelectorAll(".status-filter").forEach(b=>b.classList.toggle("active",b.dataset.status==="all"));
+  renderComplaints();
+  form.reset();
+  const msg=document.getElementById("form-message");
+  msg.textContent=`Your complaint has been submitted successfully. Reference ID: ${complaint.id}`;
+  msg.className="form-message show success";
+  setTimeout(()=>msg.className="form-message",5000);
+}));
 
-  if (presetCategory && categorySelect) {
-    const match = Array.from(categorySelect.options).find(
-      (opt) => opt.value.toLowerCase() === presetCategory.toLowerCase()
-    );
-    if (match) categorySelect.value = match.value;
-  }
+document.getElementById("preview-close").addEventListener("click",closePreview);
+backdrop.addEventListener("click",e=>{if(e.target===backdrop)closePreview()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!backdrop.classList.contains("hidden"))closePreview()});
 
-  const form = document.getElementById("complaint-form");
-  const successBox = document.getElementById("complaint-success");
-  const refIdSpan = document.getElementById("ref-id");
-
-  if (form) {
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      // NOTE: no backend wired up yet — this just confirms submission
-      // client-side. Replace with a real fetch()/API call when the
-      // complaints backend is ready.
-      const refId = "RG" + Math.floor(100000 + Math.random() * 900000);
-      if (refIdSpan) refIdSpan.textContent = refId;
-      if (successBox) successBox.classList.remove("hidden");
-      form.reset();
-    });
-  }
-})();
+renderComplaints();

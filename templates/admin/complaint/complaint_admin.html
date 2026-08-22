@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <link rel="stylesheet" href="../../static/css/complaint.css">
+  <link rel="stylesheet" href="../../../static/css/complaint_admin.css">
 </head>
 <body>
   <nav class="navbar">
@@ -23,7 +23,7 @@
   <main class="page">
     <section class="page-heading">
       <div class="heading-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
-      <div><p class="eyebrow">COMPLAINT PORTAL</p><h1>Raise a Complaint</h1><p>Let us know what went wrong — we'll route it to the right department.</p></div>
+      <div><p class="eyebrow">COMPLAINT PORTAL</p><h1>Raise a Complaint</h1><p>Let us know what went wrong — we'll route it to the right department.</p></div><button class="admin-gear heading-gear" id="editHeading" title="Edit logo, title and description"><i class="fa-solid fa-gear"></i></button>
     </section>
 
     <section class="complaint-form-card">
@@ -67,6 +67,14 @@
       <div id="form-message" class="form-message" role="status"></div>
     </section>
 
+    <section class="admin-management-section">
+      <div class="admin-section-head"><div><p class="eyebrow">ADMIN MANAGEMENT</p><h2>Manage Requests</h2><p>Open complaints or applications management without changing the student page layout.</p></div><button class="admin-gear" id="editManagement" title="Edit management buttons"><i class="fa-solid fa-gear"></i></button></div>
+      <div class="admin-management-buttons">
+        <button class="admin-manage-card" data-management="complaints"><span class="manage-symbol"><i class="fa-solid fa-comments"></i></span><span><strong>Complaints</strong><small>Review submitted complaints and attached proof.</small></span><b id="complaintsAdminCount">5</b></button>
+        <button class="admin-manage-card" data-management="applications"><span class="manage-symbol"><i class="fa-solid fa-file-circle-check"></i></span><span><strong>Applications</strong><small>Review student applications and submitted documents.</small></span><b id="applicationsAdminCount">4</b></button>
+      </div>
+    </section>
+
     <section class="existing-section">
       <div class="section-top">
         <div><p class="eyebrow">TRACK YOUR REQUESTS</p><h2>Existing Complaints</h2><p>Click a complaint to view its complete details and current status.</p></div>
@@ -87,7 +95,7 @@
     <section class="contact-card">
       <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
       <div class="contact-main"><p class="eyebrow">COMPLAINT SUPPORT</p><h2>Student Support Desk</h2><p>Complaint Resolution & Student Welfare</p></div>
-      <div class="contact-info"><div><span>Email</span><strong>support@rgukt.ac.in</strong></div><div><span>Location</span><strong>Administrative Block</strong></div></div>
+      <div class="contact-info"><div><span>Email</span><strong id="supportEmail">support@rgukt.ac.in</strong></div><div><span>Location</span><strong id="supportLocation">Administrative Block</strong></div></div><button class="admin-gear contact-gear" id="editSupport" title="Edit Student Support Desk"><i class="fa-solid fa-gear"></i></button>
     </section>
   </main>
 
@@ -96,6 +104,14 @@
     <div><h4>University Links</h4><a href="#">RGUKT Official Website</a><a href="#">Admissions</a><a href="#">Academic Programmes</a></div>
     <div><h4>Quick Navigation</h4><a href="#">Home</a><a href="#">Contact</a><a href="#top">Back to top ↑</a></div>
   </footer>
+
+  <div id="management-backdrop" class="management-backdrop hidden">
+    <section class="management-page" role="dialog" aria-modal="true">
+      <div class="management-top"><div><p class="eyebrow" id="managementEyebrow">COMPLAINT MANAGEMENT</p><h2 id="managementTitle">Complaints</h2><p id="managementDescription">Click an item to view all submitted data and attachments.</p></div><button class="close-management" id="closeManagement"><i class="fa-solid fa-xmark"></i> Close</button></div>
+      <div class="management-layout"><aside class="management-list-wrap"><div class="management-filters" id="managementFilters"></div><div class="management-list" id="managementList"></div></aside><main class="management-preview" id="managementPreview"><div class="empty-management"><i class="fa-regular fa-folder-open"></i><h3>Select an item</h3><p>Choose a complaint or application from the list to view its complete details.</p></div></main></div>
+    </section>
+  </div>
+  <div id="edit-backdrop" class="edit-backdrop hidden"><section class="edit-modal"><button class="edit-close" id="editClose">×</button><div id="editContent"></div></section></div>
 
   <div id="preview-backdrop" class="preview-backdrop hidden">
     <article class="preview-modal" role="dialog" aria-modal="true">
@@ -112,6 +128,6 @@
     </article>
   </div>
 
-  <script src="../../static/js/complaint.js"></script>
+  <script src="../../../static/js/complaint_admin.js"></script>
 </body>
 </html>
