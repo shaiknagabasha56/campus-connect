@@ -46,13 +46,13 @@
     </nav>
 
     <!-- Right Side Actions -->
-    <div class="top-actions">
-      <!-- Calculator -->
-      <a href="cgpa_calc.html">
-        <button style="background:var(--accent); color:#fff; border:none; padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:500;">
-          Calculator
-        </button>
-      </a>
+    {% if session.get("role") == "admin" %}
+    <a href="{{ url_for('admin.admin_redirect') }}"
+    class="admin-panel-btn">
+      Admin
+    </a>
+
+{% endif %}
 
       <!-- Calendar -->
       <button id="calendar-toggle" class="icon-btn">
@@ -393,9 +393,7 @@
     <button class="dash-btn" data-panel="recordingsPanel">Recordings</button>
     <button class="dash-btn" data-panel="settingsPanel">Settings</button>
     <button class="dash-btn" data-panel="helpPanel">Help & Support</button>
-    <a href="{{ url_for('auth.login') }}">
-    <button class="dash-btn logout">Logout</button>
-    </a>
+    <button class="dash-btn logout" onclick="logoutUser()">Logout</button>
   </div>
 </div>
 

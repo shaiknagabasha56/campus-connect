@@ -7,6 +7,9 @@ academic_bp=Blueprint(
     url_prefix="/academic"
 )
 
+
+
+
 @academic_bp.route("/")
 def academic_homepage():
     return render_template("academic/academic.html")
@@ -42,3 +45,11 @@ def chemical_homepage():
 @academic_bp.route("/ai-ml")
 def ai_ml_homepage():
     return render_template("academic-pages/ai-ml.html")
+
+
+#Dynamic routes for academic admin pages
+@academic_bp.route("/<department_slug>/admin")
+def academic_admin(department_slug):
+    return render_template(
+        f"admin/academic/{department_slug}_admin.html"
+    )

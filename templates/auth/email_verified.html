@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Email Verified | Campus Connect</title>
+
+
+    <!-- ==================================================
+         GOOGLE FONT
+    ================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        /* ==================================================
+           GLOBAL
+        ================================================== */
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+
+        body {
+
+            font-family: "Poppins", sans-serif;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e8f4ff,
+                    #cfe9ff,
+                    #eef8ff
+                );
+
+            overflow: hidden;
+
+        }
+
+
+        /* ==================================================
+           BACKGROUND DECORATION
+        ================================================== */
+
+        .background-circle {
+
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(2px);
+
+            opacity: 0.45;
+
+        }
+
+
+        .circle-one {
+
+            width: 350px;
+
+            height: 350px;
+
+            background: #4da3ff;
+
+            top: -150px;
+
+            left: -100px;
+
+        }
+
+
+        .circle-two {
+
+            width: 450px;
+
+            height: 450px;
+
+            background: #1976d2;
+
+            bottom: -250px;
+
+            right: -150px;
+
+        }
+
+
+        /* ==================================================
+           MAIN CARD
+        ================================================== */
+
+        .verification-card {
+
+            position: relative;
+
+            z-index: 2;
+
+            width: min(90%, 430px);
+
+            padding: 50px 40px;
+
+            text-align: center;
+
+            background: rgba(255, 255, 255, 0.9);
+
+            border-radius: 25px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(0, 0, 0, 0.15);
+
+            animation:
+                cardEntrance
+                0.6s
+                ease;
+
+        }
+
+
+        /* ==================================================
+           SUCCESS ICON
+        ================================================== */
+
+        .success-icon {
+
+            width: 85px;
+
+            height: 85px;
+
+            margin: 0 auto 25px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #22c55e,
+                    #16a34a
+                );
+
+            color: white;
+
+            font-size: 42px;
+
+            font-weight: bold;
+
+            box-shadow:
+                0 10px 25px
+                rgba(34, 197, 94, 0.35);
+
+            animation:
+                successPop
+                0.7s
+                ease;
+
+        }
+
+
+        /* ==================================================
+           TEXT
+        ================================================== */
+
+        h1 {
+
+            font-size: 27px;
+
+            color: #1f2937;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .message {
+
+            color: #6b7280;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        /* ==================================================
+           LOADING SECTION
+        ================================================== */
+
+        .loading-container {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            color: #2563eb;
+
+            font-size: 13px;
+
+            font-weight: 500;
+
+        }
+
+
+        .loader {
+
+            width: 22px;
+
+            height: 22px;
+
+            border-radius: 50%;
+
+            border: 3px solid #dbeafe;
+
+            border-top-color: #2563eb;
+
+            animation:
+                spin
+                0.8s
+                linear
+                infinite;
+
+        }
+
+
+        /* ==================================================
+           PROGRESS BAR
+        ================================================== */
+
+        .progress-container {
+
+            width: 100%;
+
+            height: 5px;
+
+            margin-top: 28px;
+
+            overflow: hidden;
+
+            border-radius: 20px;
+
+            background: #e5e7eb;
+
+        }
+
+
+        .progress-bar {
+
+            width: 0%;
+
+            height: 100%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #60a5fa
+                );
+
+            animation:
+                progress
+                3s
+                linear
+                forwards;
+
+        }
+
+
+        /* ==================================================
+           ANIMATIONS
+        ================================================== */
+
+        @keyframes spin {
+
+            to {
+
+                transform: rotate(360deg);
+
+            }
+
+        }
+
+
+        @keyframes progress {
+
+            from {
+
+                width: 0%;
+
+            }
+
+            to {
+
+                width: 100%;
+
+            }
+
+        }
+
+
+        @keyframes successPop {
+
+            0% {
+
+                transform: scale(0);
+
+            }
+
+            70% {
+
+                transform: scale(1.15);
+
+            }
+
+            100% {
+
+                transform: scale(1);
+
+            }
+
+        }
+
+
+        @keyframes cardEntrance {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(30px)
+                    scale(0.95);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+
+            }
+
+        }
+
+
+        /* ==================================================
+           RESPONSIVE
+        ================================================== */
+
+        @media (max-width: 480px) {
+
+            .verification-card {
+
+                padding: 40px 25px;
+
+            }
+
+
+            h1 {
+
+                font-size: 23px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ==================================================
+         BACKGROUND DECORATION
+    ================================================== -->
+
+    <div class="background-circle circle-one"></div>
+
+    <div class="background-circle circle-two"></div>
+
+
+    <!-- ==================================================
+         VERIFICATION CARD
+    ================================================== -->
+
+    <main class="verification-card">
+
+
+        <!-- SUCCESS ICON -->
+
+        <div class="success-icon">
+
+            ✓
+
+        </div>
+
+
+        <!-- HEADING -->
+
+        <h1>
+
+            Email Verified!
+
+        </h1>
+
+
+        <!-- MESSAGE -->
+
+        <p class="message">
+
+            Your email has been successfully verified.
+            You can now log in to your Campus Connect account.
+
+        </p>
+
+
+        <!-- LOADING -->
+
+        <div class="loading-container">
+
+            <div class="loader"></div>
+
+            <span>
+
+                Redirecting to login...
+
+            </span>
+
+        </div>
+
+
+        <!-- PROGRESS BAR -->
+
+        <div class="progress-container">
+
+            <div class="progress-bar"></div>
+
+        </div>
+
+
+    </main>
+
+
+    <!-- ==================================================
+         AUTO REDIRECT
+    ================================================== -->
+
+    <script>
+    // Wait for 3 seconds
+    setTimeout(() => {
+        // Redirect using the URL generated by Flask
+        window.location.href = "{{ login_url }}";
+    }, 3000);
+    </script>
+
+</body>
+
+</html>

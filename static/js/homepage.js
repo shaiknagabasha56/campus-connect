@@ -1,11 +1,30 @@
 async function logoutUser() {
-        try {
-          await fetch("/api/logout", { method: "POST" });
-        } catch (e) {
-          // ignore network errors, still send the user back to login
+
+    try {
+
+        const response = await fetch("/auth/logout", {
+            method: "POST"
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            window.location.href = "/auth/login";
+
+        } else {
+
+            console.error("Logout failed.");
+
         }
-        window.location.href = "/login";
-      }
+
+    } catch (error) {
+
+        console.error("Logout error:", error);
+
+    }
+
+}
 
 (function(){
       const slides = Array.from(document.querySelectorAll('.slide'));

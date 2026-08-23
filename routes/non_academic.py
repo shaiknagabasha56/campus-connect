@@ -1,11 +1,16 @@
 from flask import Blueprint,url_for,render_template
 #from services.non_academic_services import get_non_academic
 
+
+
 non_academic_bp=Blueprint(
     "non_academic",
     __name__,
-    url_prefix="/non_academic"
+    url_prefix="/non-academic"
 )
+
+
+
 
 @non_academic_bp.route("/")
 def non_academic_homepage():
@@ -43,3 +48,11 @@ def scholorship_homepage():
 @non_academic_bp.route("/financial-office")
 def financial_homepage():
     return render_template("non-academic-pages/financial.html")
+
+
+#Dynamic admin routes for non academic pages
+@non_academic_bp.route("/<department_slug>/admin")
+def non_academic_admin(department_slug):
+    return render_template(
+        f"admin/non-academic/{department_slug}_admin.html"
+    )

@@ -17,6 +17,7 @@
       <a href="#">Home</a><a href="#">Contact</a>
       <button class="calendar-btn" aria-label="Calendar"><i class="fa-regular fa-calendar"></i></button>
       <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search categories..."></div>
+      <button class="admin-dashboard-btn" id="openDashboard" title="Admin Dashboard"><i class="fa-solid fa-user-gear"></i><span>Dashboard</span></button>
     </div>
   </nav>
 
@@ -25,6 +26,11 @@
       <div class="heading-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
       <div><p class="eyebrow">COMPLAINT PORTAL</p><h1>Raise a Complaint</h1><p>Let us know what went wrong — we'll route it to the right department.</p></div><button class="admin-gear heading-gear" id="editHeading" title="Edit logo, title and description"><i class="fa-solid fa-gear"></i></button>
     </section>
+    
+    <div class="admin-management-buttons">
+        <button class="admin-manage-card" data-management="complaints"><span class="manage-symbol"><i class="fa-solid fa-comments"></i></span><span><strong>Complaints</strong><small>Review submitted complaints and attached proof.</small></span><b id="complaintsAdminCount">5</b></button>
+        <button class="admin-manage-card" data-management="applications"><span class="manage-symbol"><i class="fa-solid fa-file-circle-check"></i></span><span><strong>Applications</strong><small>Review student applications and submitted documents.</small></span><b id="applicationsAdminCount">4</b></button>
+      </div>
 
     <section class="complaint-form-card">
       <div class="complaint-tabs">
@@ -67,13 +73,6 @@
       <div id="form-message" class="form-message" role="status"></div>
     </section>
 
-    <section class="admin-management-section">
-      <div class="admin-section-head"><div><p class="eyebrow">ADMIN MANAGEMENT</p><h2>Manage Requests</h2><p>Open complaints or applications management without changing the student page layout.</p></div><button class="admin-gear" id="editManagement" title="Edit management buttons"><i class="fa-solid fa-gear"></i></button></div>
-      <div class="admin-management-buttons">
-        <button class="admin-manage-card" data-management="complaints"><span class="manage-symbol"><i class="fa-solid fa-comments"></i></span><span><strong>Complaints</strong><small>Review submitted complaints and attached proof.</small></span><b id="complaintsAdminCount">5</b></button>
-        <button class="admin-manage-card" data-management="applications"><span class="manage-symbol"><i class="fa-solid fa-file-circle-check"></i></span><span><strong>Applications</strong><small>Review student applications and submitted documents.</small></span><b id="applicationsAdminCount">4</b></button>
-      </div>
-    </section>
 
     <section class="existing-section">
       <div class="section-top">
@@ -86,6 +85,8 @@
           <button class="status-filter" data-status="resolved">Resolved</button>
         </div>
       </div>
+
+      
 
       <div class="complaints-card">
         <div id="complaints-list" class="complaints-list"></div>
@@ -126,6 +127,54 @@
       <div class="preview-attachments"><h4>ATTACHMENTS</h4><div id="attachment-preview"></div></div>
       <div class="preview-ref"><span>Reference ID</span><strong id="preview-reference"></strong></div>
     </article>
+  </div>
+
+
+
+  <div id="dashboard-backdrop" class="dashboard-backdrop hidden"></div>
+  <aside id="dashboard-sidebar" class="dashboard-sidebar" aria-label="Admin Dashboard">
+    <button class="dashboard-close" id="dashboardClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <h2>Admin Profile</h2>
+    <div class="dashboard-divider"></div>
+
+    <div class="dashboard-profile-summary">
+      <div class="dashboard-avatar">C</div>
+      <div>
+        <strong id="dashboardUsername">Complaint Admin</strong>
+        <a id="dashboardEmail" href="mailto:admin@rgukt.ac.in">admin@rgukt.ac.in</a>
+        <span>Administrator</span>
+      </div>
+    </div>
+
+    <div class="dashboard-options">
+      <button class="dashboard-option" id="changeUsername">
+        <i class="fa-solid fa-user-pen"></i>
+        <span class="dashboard-option-copy"><b>Change Profile</b><small>Update your display name and account details</small></span>
+        <i class="fa-solid fa-chevron-right dashboard-chevron"></i>
+      </button>
+      <button class="dashboard-option" id="changePassword">
+        <i class="fa-solid fa-key"></i>
+        <span class="dashboard-option-copy"><b>Change Password</b><small>Send a secure reset link to your registered email</small></span>
+        <i class="fa-solid fa-chevron-right dashboard-chevron"></i>
+      </button>
+      <button class="dashboard-option" id="changeEmail">
+        <i class="fa-solid fa-envelope"></i>
+        <span class="dashboard-option-copy"><b>Account Settings</b><small>Manage the email connected to this admin account</small></span>
+        <i class="fa-solid fa-chevron-right dashboard-chevron"></i>
+      </button>
+    </div>
+
+    <div class="dashboard-note">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span>Your changes will be connected to the Complaint Admin account when backend integration is enabled.</span>
+    </div>
+  </aside>
+
+  <div id="dashboard-editor-backdrop" class="dashboard-editor-backdrop hidden">
+    <section class="dashboard-editor-modal" role="dialog" aria-modal="true">
+      <button class="dashboard-editor-close" id="dashboardEditorClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <div id="dashboardEditor"></div>
+    </section>
   </div>
 
   <script src="../../../static/js/complaint_admin.js"></script>

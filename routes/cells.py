@@ -7,6 +7,8 @@ cells_bp=Blueprint(
     url_prefix="/cells"
 )
 
+
+
 @cells_bp.route("/")
 def cells_homepage():
     return render_template("cells/cells.html")
@@ -23,3 +25,11 @@ def cdpc_homepage():
 def hec_homepage():
     return render_template("cells-pages/hec.html")
 
+
+#Dynamic Routes for admin pages for cells:-
+@cells_bp.route("/<organization_slug>/admin")
+def cell_admin(organization_slug):
+
+    return render_template(
+        f"admin/cells/{organization_slug}_admin.html"
+    )

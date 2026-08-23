@@ -166,5 +166,111 @@ managementPreview.addEventListener('click',e=>{const b=e.target.closest('.admin-
 function openAttachmentViewer(file){const box=document.createElement('div');box.className='attachment-viewer-backdrop';let content='';if(file.type?.startsWith('image/'))content=`<img src="${file.url}" alt="${escapeHTML(file.name)}">`;else if(file.type?.startsWith('video/'))content=`<video src="${file.url}" controls autoplay></video>`;else if(file.type?.startsWith('audio/'))content=`<audio src="${file.url}" controls autoplay></audio>`;else if(file.type==='application/pdf')content=`<iframe src="${file.url}" style="width:100%;height:65vh;border:0;border-radius:10px"></iframe>`;else content=`<div class="doc-preview"><div><i class="fa-solid fa-file-lines"></i><h3>${escapeHTML(file.name)}</h3><p>Document preview/download available.</p>${file.url?`<a class="file-link" href="${file.url}" target="_blank" download>Open / Download</a>`:''}</div></div>`;box.innerHTML=`<div class="attachment-viewer"><button class="preview-close">×</button><h2 style="font-size:19px;margin:0 45px 14px 0;color:#334155">${escapeHTML(file.name)}</h2>${content}</div>`;document.body.appendChild(box);box.querySelector('.preview-close').onclick=()=>box.remove();box.onclick=e=>{if(e.target===box)box.remove()}}
 document.querySelectorAll('.admin-manage-card').forEach(b=>b.addEventListener('click',()=>openManagement(b.dataset.management)));document.getElementById('closeManagement').onclick=closeManagement;managementBackdrop.addEventListener('click',e=>{if(e.target===managementBackdrop)closeManagement()});
 function openEdit(kind){const b=document.getElementById('edit-backdrop'),c=document.getElementById('editContent');let title='',desc='',fields='';if(kind==='heading'){title='Edit Complaint Page';desc='Update the logo letter, page title and description.';fields=`<label>Logo Letter<input id="editLogo" value="R"></label><label>Title<input id="editTitle" value="${document.querySelector('.page-heading h1').textContent}"></label><label>Description<textarea id="editDesc">${document.querySelector('.page-heading p:not(.eyebrow)').textContent}</textarea></label>`}else if(kind==='management'){title='Manage Admin Buttons';desc='Edit the two management button labels and descriptions.';fields=`<label>Complaints Label<input id="editComplaintsLabel" value="Complaints"></label><label>Complaints Description<input id="editComplaintsDesc" value="Review submitted complaints and attached proof."></label><label>Applications Label<input id="editApplicationsLabel" value="Applications"></label><label>Applications Description<input id="editApplicationsDesc" value="Review student applications and submitted documents."></label>`}else{title='Edit Student Support Desk';desc='Update the support name, designation, email and location.';fields=`<label>Support Name<input id="editSupportName" value="Student Support Desk"></label><label>Designation<input id="editSupportDesignation" value="Complaint Resolution & Student Welfare"></label><label>Email<input id="editSupportEmail" value="${document.getElementById('supportEmail').textContent}"></label><label>Location<input id="editSupportLocation" value="${document.getElementById('supportLocation').textContent}"></label>`}c.innerHTML=`<h2>${title}</h2><p>${desc}</p><div class="edit-form">${fields}<button class="edit-save" id="editSave">Save Changes</button></div>`;b.classList.remove('hidden');document.body.style.overflow='hidden';document.getElementById('editSave').onclick=()=>{if(kind==='heading'){document.querySelector('.brand-mark').textContent=document.getElementById('editLogo').value||'R';document.querySelector('.page-heading h1').textContent=document.getElementById('editTitle').value;document.querySelector('.page-heading p:not(.eyebrow)').textContent=document.getElementById('editDesc').value}else if(kind==='management'){const cards=document.querySelectorAll('.admin-manage-card');cards[0].querySelector('strong').textContent=document.getElementById('editComplaintsLabel').value;cards[0].querySelector('small').textContent=document.getElementById('editComplaintsDesc').value;cards[1].querySelector('strong').textContent=document.getElementById('editApplicationsLabel').value;cards[1].querySelector('small').textContent=document.getElementById('editApplicationsDesc').value}else{document.querySelector('.contact-main h2').textContent=document.getElementById('editSupportName').value;document.querySelector('.contact-main p:not(.eyebrow)').textContent=document.getElementById('editSupportDesignation').value;document.getElementById('supportEmail').textContent=document.getElementById('editSupportEmail').value;document.getElementById('supportLocation').textContent=document.getElementById('editSupportLocation').value}b.classList.add('hidden');document.body.style.overflow=''}}
-document.getElementById('editHeading').onclick=()=>openEdit('heading');document.getElementById('editManagement').onclick=()=>openEdit('management');document.getElementById('editSupport').onclick=()=>openEdit('support');document.getElementById('editClose').onclick=()=>{document.getElementById('edit-backdrop').classList.add('hidden');document.body.style.overflow=''};
+const editHeadingBtn=document.getElementById('editHeading');
+const editManagementBtn=document.getElementById('editManagement');
+const editSupportBtn=document.getElementById('editSupport');
+const editCloseBtn=document.getElementById('editClose');
+if(editHeadingBtn) editHeadingBtn.addEventListener('click',()=>openEdit('heading'));
+if(editManagementBtn) editManagementBtn.addEventListener('click',()=>openEdit('management'));
+if(editSupportBtn) editSupportBtn.addEventListener('click',()=>openEdit('support'));
+if(editCloseBtn) editCloseBtn.addEventListener('click',()=>{document.getElementById('edit-backdrop').classList.add('hidden');document.body.style.overflow=''});
 function updateAdminCounts(){document.getElementById('complaintsAdminCount').textContent=complaints.length;document.getElementById('applicationsAdminCount').textContent=applicationSeed.length}updateAdminCounts();
+
+
+// Admin dashboard — AWS-style right-side profile panel.
+const dashboardBackdrop=document.getElementById('dashboard-backdrop');
+const dashboardSidebar=document.getElementById('dashboard-sidebar');
+const dashboardEditorBackdrop=document.getElementById('dashboard-editor-backdrop');
+const dashboardEditor=document.getElementById('dashboardEditor');
+
+const adminAccount={username:'Complaint Admin',email:'admin@rgukt.ac.in',password:'admin123'};
+
+function refreshDashboard(){
+  document.getElementById('dashboardUsername').textContent=adminAccount.username;
+  const email=document.getElementById('dashboardEmail');
+  email.textContent=adminAccount.email;
+  email.href='mailto:'+adminAccount.email;
+}
+
+function openDashboard(){
+  refreshDashboard();
+  dashboardBackdrop.classList.remove('hidden');
+  dashboardSidebar.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeDashboard(){
+  dashboardSidebar.classList.remove('show');
+  dashboardBackdrop.classList.add('hidden');
+  document.body.style.overflow='';
+}
+function closeDashboardEditor(){
+  dashboardEditorBackdrop.classList.add('hidden');
+  dashboardEditor.innerHTML='';
+}
+
+document.getElementById('openDashboard').addEventListener('click',openDashboard);
+document.getElementById('dashboardClose').addEventListener('click',closeDashboard);
+dashboardBackdrop.addEventListener('click',closeDashboard);
+document.getElementById('dashboardEditorClose').addEventListener('click',closeDashboardEditor);
+dashboardEditorBackdrop.addEventListener('click',e=>{if(e.target===dashboardEditorBackdrop)closeDashboardEditor()});
+
+function openEditor(mode){
+  dashboardEditorBackdrop.classList.remove('hidden');
+
+  if(mode==='profile'){
+    dashboardEditor.innerHTML=`
+      <p class="eyebrow">PROFILE</p>
+      <h2>Change Profile</h2>
+      <label>Display Name</label>
+      <input id="dashboardNameInput" value="${adminAccount.username}">
+      <label>Email</label>
+      <input id="dashboardEmailInput" type="email" value="${adminAccount.email}">
+      <button class="dashboard-save" id="dashboardSave">Save Changes</button>`;
+    document.getElementById('dashboardSave').onclick=()=>{
+      const name=document.getElementById('dashboardNameInput').value.trim();
+      const email=document.getElementById('dashboardEmailInput').value.trim();
+      if(!name||!email)return;
+      adminAccount.username=name;adminAccount.email=email;refreshDashboard();closeDashboardEditor();
+    };
+  }
+
+  if(mode==='password'){
+    const registeredEmail=adminAccount.email;
+    dashboardEditor.innerHTML=`
+      <p class="eyebrow">SECURITY</p>
+      <h2>Change Password</h2>
+      <p>For security, the password cannot be changed directly here. A secure password reset link will be sent to the registered email address below.</p>
+      <div class="registered-email-card">
+        <i class="fa-solid fa-envelope-circle-check"></i>
+        <div><span>REGISTERED EMAIL</span><strong>${registeredEmail}</strong></div>
+      </div>
+      <div id="resetNotice" class="reset-notice"></div>
+      <button class="dashboard-save" id="dashboardSave"><i class="fa-solid fa-paper-plane"></i> Send Reset Link</button>`;
+    document.getElementById('dashboardSave').onclick=()=>{
+      const notice=document.getElementById('resetNotice');
+      notice.innerHTML=`<i class="fa-solid fa-circle-check"></i> Password reset link has been sent to <strong>${registeredEmail}</strong>.`;
+      notice.classList.add('show');
+    };
+  }
+
+  if(mode==='settings'){
+    dashboardEditor.innerHTML=`
+      <p class="eyebrow">ACCOUNT SETTINGS</p>
+      <h2>Update Email</h2>
+      <p>Use this email for account notifications and password recovery.</p>
+      <label>Email Address</label>
+      <input id="dashboardEmailInput" type="email" value="${adminAccount.email}">
+      <button class="dashboard-save" id="dashboardSave">Save Email</button>`;
+    document.getElementById('dashboardSave').onclick=()=>{
+      const email=document.getElementById('dashboardEmailInput').value.trim();
+      if(!email)return;
+      adminAccount.email=email;refreshDashboard();closeDashboardEditor();
+    };
+  }
+}
+
+document.getElementById('changeUsername').addEventListener('click',()=>openEditor('profile'));
+document.getElementById('changePassword').addEventListener('click',()=>openEditor('password'));
+document.getElementById('changeEmail').addEventListener('click',()=>openEditor('settings'));
+
+refreshDashboard();

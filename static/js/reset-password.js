@@ -9,8 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmBtn = document.getElementById("confirmBtn");
     const resetMessage = document.getElementById("resetMessage");
 
+
     /*==================================================
-        SHOW / HIDE TOGGLES
+        SHOW / HIDE PASSWORD
     ==================================================*/
 
     function bindToggle(button, input) {
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const isHidden = input.type === "password";
 
             input.type = isHidden ? "text" : "password";
+
             button.textContent = isHidden ? "HIDE" : "SHOW";
 
         });
@@ -29,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bindToggle(toggleNew, newPassword);
     bindToggle(toggleConfirm, confirmPassword);
 
+
     /*==================================================
         MESSAGE HELPER
     ==================================================*/
@@ -36,67 +39,150 @@ document.addEventListener("DOMContentLoaded", () => {
     function showMessage(type, message) {
 
         resetMessage.className = "form-message";
+
         resetMessage.classList.add(type, "show");
-        resetMessage.innerHTML = message;
+
+        resetMessage.textContent = message;
 
         clearTimeout(resetMessage.hideTimer);
 
         resetMessage.hideTimer = setTimeout(() => {
+
             resetMessage.classList.remove("show");
+
         }, 4000);
 
     }
 
+
     /*==================================================
-        CONFIRM
-        Wire this fetch call to your actual endpoint,
-        e.g. POST /api/reset-password with { password }
-        (plus a token if you're using the emailed-link flow).
+        RESET PASSWORD
     ==================================================*/
 
     confirmBtn.addEventListener("click", async () => {
 
-        const pass = newPassword.value.trim();
-        const confirm = confirmPassword.value.trim();
+        const password = newPassword.value.trim();
 
-        if (pass === "" || confirm === "") {
-            showMessage("error", "Please fill in both fields.");
+        const confirm_password = confirmPassword.value.trim();
+
+
+        // CHECK EMPTY FIELDS
+        if (!password || !confirm_password) {
+
+            showMessage(
+                "error",
+                "Please fill in both fields."
+            );
+
             return;
+
         }
 
-        if (pass.length < 8) {
-            showMessage("error", "Password must be at least 8 characters.");
+
+        // CHECK PASSWORD LENGTH
+        if (password.length < 6) {
+
+            showMessage(
+                "error",
+                "Password must be at least 6 characters."
+            );
+
             return;
+
         }
 
-        if (pass !== confirm) {
-            showMessage("error", "Passwords do not match.");
+
+        // CHECK PASSWORD MATCH
+        if (password !== confirm_password) {
+
+            showMessage(
+                "error",
+                "Passwords do not match."
+            );
+
             return;
+
         }
 
+
+        // DISABLE BUTTON WHILE REQUEST IS PROCESSING
         confirmBtn.disabled = true;
+
 
         try {
 
-            const response = await fetch("/api/reset-password", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password: pass })
-            });
+            const response = await fetch(
+
+                `/auth/reset-password/${resetToken}`,
+
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        password: password,
+
+                        confirm_password: confirm_password
+
+                    })
+
+                }
+
+            );
+
 
             const data = await response.json();
 
+
+            // PASSWORD RESET SUCCESS
             if (data.success) {
-                showMessage("success", "Password updated successfully.");
-            } else {
-                showMessage("error", data.message || "Could not update password.");
+
+                showMessage(
+                    "success",
+                    data.message || "Password updated successfully."
+                );
+
+
+                // REDIRECT TO LOGIN AFTER SUCCESS
+                setTimeout(() => {
+
+                    window.location.href = "/auth/login";
+
+                }, 1500);
+
             }
 
-        } catch (err) {
+            // PASSWORD RESET FAILED
+            else {
 
-            showMessage("error", "Could not reach the server. Please try again.");
+                showMessage(
+                    "error",
+                    data.message || "Could not update password."
+                );
 
-        } finally {
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Reset password error:",
+                error
+            );
+
+            showMessage(
+                "error",
+                "Could not reach the server. Please try again."
+            );
+
+        }
+
+        finally {
 
             confirmBtn.disabled = false;
 

@@ -22,14 +22,3 @@ def get_db_connection():
 
     return None
 
-
-# Test database connection
-if __name__ == "__main__":
-    connection = get_db_connection()
-
-    if connection:
-        print("✅ MySQL database connected successfully!")
-        connection.close()
-    else:
-        print("❌ MySQL database connection failed.")
-    
