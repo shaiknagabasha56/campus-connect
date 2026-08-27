@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>E-Cell — Clubs & Cells — RGUKT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../../static/css/ecell.css">
+  <style>:root{ --cat: #4f46e5; }</style>
+</head>
+<body class="na-body">
+
+  <header class="na-topbar na-topbar-simple">
+    <div class="container">
+      <a href="../index.html" class="na-brand">
+        <img src="../rgukt.png" onerror="this.style.display='none'"/>
+        RGUKT
+      </a>
+
+      <div class="na-right-group">
+        <nav class="na-nav-simple">
+          <a href="{{ url_for('cells.cells_homepage') }}">Home</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <button id="calendar-toggle" class="icon-btn" aria-label="Toggle calendar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"/>
+          </svg>
+        </button>
+
+        <div class="na-search-wrap" role="search">
+          <svg class="na-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/></svg>
+          <input id="na-search-input" type="text" placeholder="Search cells..." aria-label="Search"/>
+        </div>
+      </div>
+
+      <div id="calendar-panel" class="calendar hidden">
+        <div class="calendar-header">
+          <button id="prev-month">◀</button>
+          <span id="month-year"></span>
+          <button id="next-month">▶</button>
+        </div>
+        <div class="calendar-body">
+          <div class="day-names"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+          <div id="calendar-days" class="days-grid"></div>
+        </div>
+        <div class="calendar-footer">
+          <div class="event-input-wrap">
+            <input type="text" id="event-input" placeholder="Add new event..." />
+            <button id="add-event-btn">＋</button>
+          </div>
+          <div class="event-list"><p id="events">No Events</p></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="na-breadcrumb">
+    <a href="../index.html">Home</a>
+    <span class="sep">›</span>
+    <a href="clubs-and-cells.html">Clubs &amp; Cells</a>
+    <span class="sep">›</span>
+    <span class="current">E-Cell</span>
+  </div>
+
+  <div class="na-catwrap">
+
+    <div class="na-cat-header">
+      <div class="na-cat-icon"><i class="fa-solid fa-briefcase"></i></div>
+      <div>
+        <h1>E-Cell</h1>
+        <p>Entrepreneurship Cell — startup mentorship, pitch events and networking.</p>
+      </div>
+    </div>
+
+    <div class="na-updates" data-org-slug="ecell">
+      <div class="na-updates-head">
+        <h2>Latest Updates</h2>
+        <div class="na-filter">
+          <button class="na-filter-toggle" data-filter-toggle aria-label="Filter updates"><i class="fa-solid fa-filter"></i></button>
+          <div class="na-filter-menu hidden">
+            <button class="na-filter-option active" data-filter="all">All</button>
+            <button class="na-filter-option" data-filter="new">New</button>
+            <button class="na-filter-option" data-filter="old">Old</button>
+          </div>
+        </div>
+      </div>
+      <div class="na-updates-list">
+      <button class="na-update-item na-update-clickable" type="button"
+        data-status="new"
+        data-title="Startup pitch day announced"
+        data-upload-date="15-07-2026"
+        data-upload-time="3:00 PM"
+        data-uploaded-by="E-Cell Team"
+        data-category="Pitch Event"
+        data-category-color="#4f46e5"
+        data-apply="true"
+        data-image="../../static/images/frds.jpeg"
+        data-description="Student teams can register to pitch their startup ideas to a panel of mentors."
+        data-email=""
+      >
+        <span class="na-update-marker"></span>
+        <span class="na-update-content">
+          <span class="na-update-date">15-07-2026<span class="na-time">3:00 PM</span></span>
+          <span class="na-update-title">Startup pitch day announced</span>
+          <span class="na-update-body">Student teams can register to pitch their startup ideas to a panel of mentors.</span>
+          <span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+        </span>
+      </button>
+
+      <button class="na-update-item na-update-clickable" type="button"
+        data-status="old"
+        data-title="Mentorship sign-ups open"
+        data-upload-date="05-07-2026"
+        data-upload-time="2:00 PM"
+        data-uploaded-by="E-Cell Team"
+        data-category="Mentorship"
+        data-category-color="#4f46e5"
+        data-image="../../static/images/ravan.jpg"
+        data-description="One-on-one mentorship slots with industry mentors are now open for booking."
+        data-email=""
+      >
+        <span class="na-update-marker"></span>
+        <span class="na-update-content">
+          <span class="na-update-date">05-07-2026<span class="na-time">2:00 PM</span></span>
+          <span class="na-update-title">Mentorship sign-ups open</span>
+          <span class="na-update-body">One-on-one mentorship slots with industry mentors are now open for booking.</span>
+          <span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+        </span>
+      </button>
+
+
+      <button class="na-update-item na-update-clickable" type="button"
+        data-status="old"
+        data-title="Mentorship sign-ups open"
+        data-upload-date="05-07-2026"
+        data-upload-time="2:00 PM"
+        data-uploaded-by="E-Cell Team"
+        data-category="Mentorship"
+        data-category-color="#4f46e5"
+        data-description="One-on-one mentorship slots with industry mentors are now open for booking."
+        data-email=""
+      >
+        <span class="na-update-marker"></span>
+        <span class="na-update-content">
+          <span class="na-update-date">05-07-2026<span class="na-time">2:00 PM</span></span>
+          <span class="na-update-title">Mentorship sign-ups open</span>
+          <span class="na-update-body">One-on-one mentorship slots with industry mentors are now open for booking.</span>
+          <span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+        </span>
+      </button>
+
+
+
+      <button class="na-update-item na-update-clickable" type="button"
+        data-status="old"
+        data-title="Mentorship sign-ups open"
+        data-upload-date="05-07-2026"
+        data-upload-time="2:00 PM"
+        data-uploaded-by="E-Cell Team"
+        data-category="Mentorship"
+        data-category-color="#4f46e5"
+        data-description="One-on-one mentorship slots with industry mentors are now open for booking."
+        data-email=""
+      >
+        <span class="na-update-marker"></span>
+        <span class="na-update-content">
+          <span class="na-update-date">05-07-2026<span class="na-time">2:00 PM</span></span>
+          <span class="na-update-title">Mentorship sign-ups open</span>
+          <span class="na-update-body">One-on-one mentorship slots with industry mentors are now open for booking.</span>
+          <span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+        </span>
+      </button>
+
+
+      <button class="na-update-item na-update-clickable" type="button"
+        data-status="old"
+        data-title="Mentorship sign-ups open"
+        data-upload-date="05-07-2026"
+        data-upload-time="2:00 PM"
+        data-uploaded-by="E-Cell Team"
+        data-category="Mentorship"
+        data-category-color="#4f46e5"
+        data-description="One-on-one mentorship slots with industry mentors are now open for booking."
+        data-email=""
+      >
+        <span class="na-update-marker"></span>
+        <span class="na-update-content">
+          <span class="na-update-date">05-07-2026<span class="na-time">2:00 PM</span></span>
+          <span class="na-update-title">Mentorship sign-ups open</span>
+          <span class="na-update-body">One-on-one mentorship slots with industry mentors are now open for booking.</span>
+          <span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+        </span>
+      </button>
+
+
+      <button class="na-update-item na-update-clickable" type="button"
+        data-status="old"
+        data-title="Mentorship sign-ups open"
+        data-upload-date="05-07-2026"
+        data-upload-time="2:00 PM"
+        data-uploaded-by="E-Cell Team"
+        data-category="Mentorship"
+        data-category-color="#4f46e5"
+        data-description="One-on-one mentorship slots with industry mentors are now open for booking."
+        data-email=""
+      >
+        <span class="na-update-marker"></span>
+        <span class="na-update-content">
+          <span class="na-update-date">05-07-2026<span class="na-time">2:00 PM</span></span>
+          <span class="na-update-title">Mentorship sign-ups open</span>
+          <span class="na-update-body">One-on-one mentorship slots with industry mentors are now open for booking.</span>
+          <span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+        </span>
+      </button>
+
+      </div>
+    </div>
+
+    <aside>
+      <div class="na-side-card">
+        <h4>Quick Info</h4>
+        <div class="na-info-row"><i class="fa-solid fa-user"></i><div><span class="na-info-label">Convener</span>[E-Cell Convener Name]</div></div>
+        <div class="na-info-row"><i class="fa-solid fa-phone"></i><div><span class="na-info-label">Contact</span>[Contact Number]</div></div>
+        <div class="na-info-row"><i class="fa-solid fa-location-dot"></i><div><span class="na-info-label">Location</span>[E-Cell Office / Block]</div></div>
+        <div class="na-info-row"><i class="fa-solid fa-clock"></i><div><span class="na-info-label">Office Hours</span>[e.g. Mon–Fri, 3:00–5:00 PM]</div></div>
+      </div>
+
+      <div class="na-side-card">
+        <h4>Need Something Resolved?</h4>
+        <button class="na-complaint-btn" id="openComplaintForm" type="button">
+          <i class="fa-solid fa-circle-exclamation"></i> Raise a Complaint
+        </button>
+        <p class="na-side-note">Report an issue related to a E-Cell update or activity.</p>
+      </div>
+    </aside>
+  </div>
+
+  <section class="aws-club-heads" aria-labelledby="cell-heads-title">
+    <div class="aws-section-heading">
+      <span class="aws-section-kicker">Leadership</span>
+      <h2 id="cell-heads-title">Cell Heads</h2>
+    </div>
+    <div class="aws-heads-grid">
+      <article class="aws-head-card">
+        <img src="../../static/images/ecell-head-1.svg" alt="Cell Head profile placeholder">
+        <h3>[E-Cell Head Name]</h3>
+        <p>Cell Head</p>
+      </article>
+
+      <article class="aws-head-card">
+        <img src="../../static/images/ecell-head-2.svg" alt="Startup &amp; Innovation Lead profile placeholder">
+        <h3>[Startup Lead Name]</h3>
+        <p>Startup &amp; Innovation Lead</p>
+      </article>
+
+      <article class="aws-head-card">
+        <img src="../../static/images/ecell-head-3.svg" alt="Events Lead profile placeholder">
+        <h3>[Events Lead Name]</h3>
+        <p>Events Lead</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="aws-join-section" id="join-club" aria-labelledby="join-club-title">
+    <div class="aws-join-inner">
+      <div>
+        <span class="aws-section-kicker">Get involved</span>
+        <h2 id="join-club-title">Ready to explore entrepreneurship with E-Cell?</h2>
+        <p>Join E-Cell and take part in startup mentoring, pitch events, networking activities and entrepreneurship opportunities.</p>
+      </div>
+      <button type="button" class="aws-join-main-btn" id="openJoinForm"><i class="fa-solid fa-user-plus"></i> Join the Cell</button>
+    </div>
+  </section>
+
+  <section class="aws-contact-section" id="contact" aria-labelledby="contact-title">
+    <div class="aws-contact-inner">
+      <div class="aws-contact-heading">
+        <span class="aws-section-kicker">Contact</span>
+        <h2 id="contact-title">Contact E-Cell</h2>
+        <p>Have a question about an entrepreneurship update, pitch event or E-Cell activity? Reach out through the available channels.</p>
+      </div>
+      <div class="aws-contact-grid">
+        <a class="aws-contact-item" href="#">
+          <span class="aws-contact-icon"><i class="fa-solid fa-envelope"></i></span>
+          <span><small>Email</small><strong>[E-Cell Email Address]</strong></span>
+        </a>
+        <a class="aws-contact-item" href="#">
+          <span class="aws-contact-icon"><i class="fa-solid fa-phone"></i></span>
+          <span><small>Phone</small><strong>[Contact Number]</strong></span>
+        </a>
+        <div class="aws-contact-item">
+          <span class="aws-contact-icon"><i class="fa-solid fa-location-dot"></i></span>
+          <span><small>Location</small><strong>RGUKT Campus</strong></span>
+        </div>
+      </div>
+      <div class="aws-socials">
+        <span>Follow E-Cell</span>
+        <div class="aws-social-links">
+          <a href="https://www.instagram.com/ecell_rgukt_ongole/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="action-form-overlay" id="joinFormOverlay" aria-hidden="true">
+    <div class="action-form-card" role="dialog" aria-modal="true" aria-labelledby="joinFormTitle">
+      <button type="button" class="action-form-close" data-close-form="joinFormOverlay" aria-label="Close">&times;</button>
+      <div class="action-form-heading">
+        <span class="action-form-kicker">E-Cell</span>
+        <h2 id="joinFormTitle">Join the Cell</h2>
+        <p>Fill in your details to express your interest in joining E-Cell.</p>
+      </div>
+      <form id="joinClubForm" class="action-form">
+        <div class="form-field"><label for="joinId">ID No.</label><input id="joinId" name="id_no" type="text" required placeholder="Enter your ID number"></div>
+        <div class="form-field"><label for="joinName">Name</label><input id="joinName" name="name" type="text" required placeholder="Full name"></div>
+        <div class="form-field"><label for="joinEmail">Email</label><input id="joinEmail" name="email" type="email" required placeholder="name@example.com"></div>
+        <div class="form-field"><label for="joinBranch">Branch</label><input id="joinBranch" name="branch" type="text" required placeholder="e.g. CSE"></div>
+        <div class="form-field"><label for="joinYear">Year</label><select id="joinYear" name="year" required><option value="" selected disabled>Select year</option><option>PUC1</option><option>PUC2</option><option>E1</option><option>E2</option><option>E3</option><option>E4</option></select></div>
+        <div class="form-field"><label for="joinSem">Current Sem</label><select id="joinSem" name="current_sem" required><option value="" selected disabled>Select semester</option><option>Sem1</option><option>Sem2</option></select></div>
+        <div class="form-field"><label for="joinPhone">Phone Number</label><input id="joinPhone" name="phone" type="tel" inputmode="numeric" required placeholder="10-digit phone number" pattern="[0-9]{10}"></div>
+        <div class="form-field form-field-full"><label for="joinWhy">Why do you want to join?</label><textarea id="joinWhy" name="reason" rows="3" required maxlength="500" placeholder="Tell us briefly why you want to join E-Cell..."></textarea></div>
+        <div class="action-form-actions form-field-full"><button type="submit" class="action-form-submit"><i class="fa-solid fa-paper-plane"></i> Submit Application</button></div>
+        <p class="form-success" id="joinFormSuccess" role="status"></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="action-form-overlay" id="complaintFormOverlay" aria-hidden="true">
+    <div class="action-form-card" role="dialog" aria-modal="true" aria-labelledby="complaintFormTitle">
+      <button type="button" class="action-form-close" data-close-form="complaintFormOverlay" aria-label="Close">&times;</button>
+      <div class="action-form-heading">
+        <span class="action-form-kicker">E-Cell</span>
+        <h2 id="complaintFormTitle">Raise a Complaint</h2>
+        <p>Provide your details and describe the issue so it can be reviewed by the appropriate E-Cell team.</p>
+      </div>
+      <form id="complaintForm" class="action-form">
+        <div class="form-field"><label for="complaintId">ID No.</label><input id="complaintId" name="id_no" type="text" required placeholder="Enter your ID number"></div>
+        <div class="form-field"><label for="complaintName">Name</label><input id="complaintName" name="name" type="text" required placeholder="Full name"></div>
+        <div class="form-field"><label for="complaintEmail">Email</label><input id="complaintEmail" name="email" type="email" required placeholder="name@example.com"></div>
+        <div class="form-field"><label for="complaintBranch">Branch</label><input id="complaintBranch" name="branch" type="text" required placeholder="e.g. CSE"></div>
+        <div class="form-field"><label for="complaintYear">Year</label><select id="complaintYear" name="year" required><option value="" selected disabled>Select year</option><option>PUC1</option><option>PUC2</option><option>E1</option><option>E2</option><option>E3</option><option>E4</option></select></div>
+        <div class="form-field"><label for="complaintSem">Current Sem</label><select id="complaintSem" name="current_sem" required><option value="" selected disabled>Select semester</option><option>Sem1</option><option>Sem2</option></select></div>
+        <div class="form-field"><label for="complaintPhone">Phone Number</label><input id="complaintPhone" name="phone" type="tel" inputmode="numeric" required placeholder="10-digit phone number" pattern="[0-9]{10}"></div>
+        <div class="form-field"><label for="complaintSubject">Complaint Subject</label><input id="complaintSubject" name="subject" type="text" required placeholder="Short subject"></div>
+        <div class="form-field form-field-full"><label for="complaintMessage">Complaint Details</label><textarea id="complaintMessage" name="complaint" rows="3" required maxlength="1000" placeholder="Describe the issue clearly..."></textarea></div>
+        <div class="action-form-actions form-field-full"><button type="submit" class="action-form-submit"><i class="fa-solid fa-paper-plane"></i> Submit Complaint</button></div>
+        <p class="form-success" id="complaintFormSuccess" role="status"></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="update-modal-overlay" id="updateModalOverlay" aria-hidden="true">
+    <div class="update-modal" role="dialog" aria-modal="true" aria-labelledby="updateModalTitle">
+      <button type="button" class="update-modal-close" id="updateModalClose" aria-label="Close">&times;</button>
+      <div class="update-modal-image-wrap" id="updateModalImageWrap"><img id="updateModalImage" src="" alt=""></div>
+      <div class="update-modal-body">
+        <span class="update-modal-tag" id="updateModalCategory"></span>
+        <h2 id="updateModalTitle"></h2>
+        <div class="update-modal-meta">
+          <div class="update-modal-meta-row"><i class="fa-solid fa-user"></i><span id="updateModalUploader"></span></div>
+          <div class="update-modal-meta-row"><i class="fa-regular fa-calendar"></i><span id="updateModalDate"></span></div>
+          <div class="update-modal-meta-row update-modal-deadline" id="updateModalDeadlineRow"><i class="fa-solid fa-hourglass-half"></i><span id="updateModalDeadline"></span></div>
+        </div>
+        <p class="update-modal-desc" id="updateModalDesc"></p>
+        <div class="update-modal-contact" id="updateModalContactRow">
+          <span>Have a query?</span>
+          <a id="updateModalEmail" href="#"><i class="fa-solid fa-envelope"></i><span id="updateModalEmailText"></span></a>
+        </div>
+        <button class="update-modal-apply" id="updateModalApply" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="na-footer-rich">
+    <div class="na-footer-rich-inner">
+      <div class="na-footer-brand">
+        <h3>RGUKT Campus Connect</h3>
+        <p>One central place for students to discover campus updates, events, opportunities and announcements.</p>
+      </div>
+      <div class="na-footer-links-section">
+        <h3>University Links</h3>
+        <div class="na-footer-links-grid">
+          <a href="https://www.rgukt.ac.in/" target="_blank" rel="noopener">RGUKT Official Website</a>
+          <a href="https://www.rgukt.ac.in/admissions.html" target="_blank" rel="noopener">Admissions</a>
+          <a href="https://www.rgukt.ac.in/academicprogrammes.html" target="_blank" rel="noopener">Academic Programmes</a>
+          <a href="https://www.rgukt.ac.in/notices-downloads" target="_blank" rel="noopener">Notices &amp; Downloads</a>
+          <a href="https://hub.rgukt.ac.in/hub/default" target="_blank" rel="noopener">RGUKT Student Hub</a>
+          <a href="https://www.rgukt.ac.in/careers.html" target="_blank" rel="noopener">Careers</a>
+        </div>
+      </div>
+      <div class="na-footer-contact">
+        <h3>Campus Connect</h3>
+        <p><i class="fa-solid fa-envelope"></i> <a href="#">Contact through Campus Connect</a></p>
+        <p><i class="fa-solid fa-globe"></i> <a href="https://www.rgukt.ac.in/" target="_blank" rel="noopener">University Website</a></p>
+        <div class="na-social">
+          <a href="https://www.rgukt.ac.in/" target="_blank" rel="noopener" aria-label="RGUKT Website"><i class="fa-solid fa-globe"></i></a>
+          <a href="https://www.rgukt.ac.in/notices-downloads" target="_blank" rel="noopener" aria-label="RGUKT Notices"><i class="fa-solid fa-bullhorn"></i></a>
+          <a href="https://hub.rgukt.ac.in/hub/default" target="_blank" rel="noopener" aria-label="RGUKT Hub"><i class="fa-solid fa-link"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="na-footer-bottom">&copy; 2026 RGUKT Campus Connect. All Rights Reserved.</div>
+  </footer>
+
+  <script src="../../static/js/ecell.js"></script>
+  <script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
+</body>
+</html>

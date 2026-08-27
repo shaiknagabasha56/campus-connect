@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>AI & ML Admin — Academic — RGUKT</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>:root{ --cat: #0891B2; }</style>
+<link href="../../../static/css/ai-ml_admin.css" rel="stylesheet"/>
+</head>
+<body class="na-body"><div class="admin-mode-bar">
+<span><i class="fa-solid fa-shield-halved"></i> AI & ML Admin Mode</span>
+<small>Changes are previewed here and will later connect to the shared database.</small>
+</div>
+<header class="na-topbar na-topbar-simple">
+<div class="container">
+<a class="na-brand" href="../index.html">
+<span class="cse-brand-mark">A</span>
+        RGUKT
+      </a>
+<div class="na-right-group">
+<nav class="na-nav-simple">
+<a href="#">Home</a>
+<a href="#">Contact</a>
+</nav>
+<!-- Calendar -->
+<button aria-label="Toggle calendar" class="icon-btn" id="calendar-toggle">
+<svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"></path>
+</svg>
+</button>
+<div class="na-search-wrap" role="search">
+<svg class="na-search-icon" fill="currentColor" height="14" viewbox="0 0 16 16" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"></path></svg>
+<input aria-label="Search" id="na-search-input" placeholder="Search categories..." type="text"/>
+</div>
+
+<button class="cse-admin-profile-btn" id="cseAdminProfileBtn" type="button" aria-label="Open admin profile">
+  <span class="cse-admin-avatar">A</span>
+  <span class="cse-admin-profile-name">AI & ML Admin</span>
+  <i class="fa-solid fa-chevron-down"></i>
+</button>
+</div>
+<!-- Calendar Panel (kept outside the group; absolutely positioned) -->
+<div class="calendar hidden" id="calendar-panel">
+<div class="calendar-header">
+<button id="prev-month">◀</button>
+<span id="month-year"></span>
+<button id="next-month">▶</button>
+</div>
+<div class="calendar-body">
+<div class="day-names">
+<span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+</div>
+<div class="days-grid" id="calendar-days"></div>
+</div>
+<div class="calendar-footer">
+<div class="event-input-wrap">
+<input id="event-input" placeholder="Add new event..." type="text"/>
+<button id="add-event-btn">＋</button>
+</div>
+<div class="event-list">
+<p id="events">No Events</p>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="na-breadcrumb">
+<a href="../index.html">Home</a>
+<span class="sep">›</span>
+<a href="clubs-and-cells.html">Clubs &amp; Cells</a>
+<span class="sep">›</span>
+<span class="current">AI & ML</span>
+</div>
+<section class="cse-admin-dashboard" id="adminDashboard">
+  <div class="cse-admin-dashboard-copy">
+    <div>
+      <span class="cse-admin-eyebrow">ADMIN DASHBOARD</span>
+      <h2>Manage AI & ML</h2>
+      <p>Review student submissions and manage department content without leaving this page.</p>
+    </div>
+    <div class="cse-admin-summary">
+      <span><b id="complaintCount">3</b> Complaints</span>
+      <span><b id="applicationCount">4</b> Applications</span>
+    </div>
+  </div>
+  <div class="cse-admin-actions">
+    <button class="admin-inbox-btn" data-admin-view="complaints">
+      <span class="admin-inbox-icon"><i class="fa-solid fa-message"></i></span>
+      <span><strong>Complaints</strong><small>Student issues and requests</small></span><b class="admin-badge">3</b>
+    </button>
+    <button class="admin-inbox-btn" data-admin-view="applications">
+      <span class="admin-inbox-icon"><i class="fa-solid fa-file-circle-check"></i></span>
+      <span><strong>Applications</strong><small>Academic event registrations</small></span><b class="admin-badge">4</b>
+    </button>
+  </div>
+</section>
+<div class="na-catwrap">
+<div class="na-cat-header admin-section">
+<div class="na-cat-icon"><i class="fa-solid fa-brain"></i></div>
+<div>
+<h1>AI & ML</h1>
+<p>Department of AI & ML.</p>
+</div>
+<button aria-label="Edit club identity" class="admin-gear" data-edit-section="identity" type="button"><i class="fa-solid fa-gear"></i></button></div>
+<!-- Primary content: updates feed -->
+
+
+
+<div class="na-updates">
+<div class="na-updates-head admin-section">
+<h2>Latest Updates</h2>
+<div class="na-filter">
+<button aria-label="Filter updates" class="na-filter-toggle" data-filter-toggle="">
+<i class="fa-solid fa-filter"></i>
+</button>
+<div class="na-filter-menu hidden">
+<button class="na-filter-option active" data-filter="all">All</button>
+<button class="na-filter-option" data-filter="new">New</button>
+<button class="na-filter-option" data-filter="old">Old</button>
+</div>
+</div>
+<button aria-label="Manage updates" class="admin-gear" data-edit-section="updates" type="button"><i class="fa-solid fa-gear"></i></button></div>
+<!--
+        Update cards:
+        data-apply="true"  -> Apply Now button is enabled
+        data-apply="false" -> Applications Closed button is disabled
+        no data-apply      -> Apply button is hidden
+      -->
+<div class="na-updates-list">
+<button class="na-update-item na-update-clickable admin-update-item" data-apply="true" data-apply-link="/clubs/artix/apply" data-category="Competition" data-category-color="#EC4899" data-deadline="25-08-2026" data-description="A campus-wide sketching competition is being planned for next month. Students can participate individually and showcase their sketching skills." data-email="artix@rgukt.ac.in" data-image="images/students.jpg" data-status="new" data-title="Lab schedule updated" data-upload-date="12-07-2026" data-upload-time="10:00 AM" data-uploaded-by="AI & ML Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">12-07-2026<span class="na-time">10:00 AM</span></span>
+<span class="na-update-title">Lab schedule updated</span>
+<span class="na-update-body">Updated laboratory schedule is available for students.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+<span class="admin-update-pencil" role="button" tabindex="0" title="Edit or delete this update"><i class="fa-solid fa-pen"></i></span></span>
+</button>
+<button class="na-update-item na-update-clickable admin-update-item" data-apply="true" data-category="Announcement" data-category-color="#EC4899" data-description="CSE welcomed a new batch of members after the open call for artists." data-email="artix@rgukt.ac.in" data-image="images/sunset.png" data-status="old" data-title="Guest lecture on AI" data-upload-date="01-07-2026" data-upload-time="11:00 AM" data-uploaded-by="AI & ML Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">01-07-2026<span class="na-time">11:00 AM</span></span>
+<span class="na-update-title">Guest lecture on AI</span>
+<span class="na-update-body">CSE welcomed a new batch of members after the open call for artists.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+<span class="admin-update-pencil" role="button" tabindex="0" title="Edit or delete this update"><i class="fa-solid fa-pen"></i></span></span>
+</button>
+<button class="na-update-item na-update-clickable admin-update-item" data-apply="true" data-apply-link="/clubs/artix/apply" data-category="Competition" data-category-color="#EC4899" data-deadline="25-08-2026" data-description="A campus-wide sketching competition is being planned for next month. Students can participate individually and showcase their sketching skills." data-email="artix@rgukt.ac.in" data-image="images/artix/sketch-a-thon.jpg" data-status="new" data-title="Lab schedule updated" data-upload-date="12-07-2026" data-upload-time="10:00 AM" data-uploaded-by="AI & ML Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">12-07-2026<span class="na-time">10:00 AM</span></span>
+<span class="na-update-title">Lab schedule updated</span>
+<span class="na-update-body">Updated laboratory schedule is available for students.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+<span class="admin-update-pencil" role="button" tabindex="0" title="Edit or delete this update"><i class="fa-solid fa-pen"></i></span></span>
+</button>
+<button class="na-update-item na-update-clickable admin-update-item" data-apply="true" data-apply-link="/clubs/artix/apply" data-category="Competition" data-category-color="#EC4899" data-deadline="25-08-2026" data-description="A campus-wide sketching competition is being planned for next month. Students can participate individually and showcase their sketching skills." data-email="artix@rgukt.ac.in" data-image="images/artix/sketch-a-thon.jpg" data-status="new" data-title="Lab schedule updated" data-upload-date="12-07-2026" data-upload-time="10:00 AM" data-uploaded-by="AI & ML Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">12-07-2026<span class="na-time">10:00 AM</span></span>
+<span class="na-update-title">Lab schedule updated</span>
+<span class="na-update-body">Updated laboratory schedule is available for students.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+<span class="admin-update-pencil" role="button" tabindex="0" title="Edit or delete this update"><i class="fa-solid fa-pen"></i></span></span>
+</button>
+<button class="na-update-item na-update-clickable admin-update-item" data-apply="true" data-apply-link="/clubs/artix/apply" data-category="Competition" data-category-color="#EC4899" data-deadline="25-08-2026" data-description="A campus-wide sketching competition is being planned for next month. Students can participate individually and showcase their sketching skills." data-email="artix@rgukt.ac.in" data-image="images/artix/sketch-a-thon.jpg" data-status="new" data-title="Lab schedule updated" data-upload-date="12-07-2026" data-upload-time="10:00 AM" data-uploaded-by="AI & ML Team" type="button">
+<span class="na-update-marker"></span>
+<span class="na-update-content">
+<span class="na-update-date">12-07-2026<span class="na-time">10:00 AM</span></span>
+<span class="na-update-title">Lab schedule updated</span>
+<span class="na-update-body">Updated laboratory schedule is available for students.</span>
+<span class="na-update-click-hint"><i class="fa-solid fa-arrow-up-right-from-square"></i> Click to view details</span>
+<span class="admin-update-pencil" role="button" tabindex="0" title="Edit or delete this update"><i class="fa-solid fa-pen"></i></span></span>
+</button>
+</div>
+</div> <!-- Sidebar: info + complaint -->
+<aside>
+<div class="na-side-card admin-section">
+<h4>Contact &amp; Info</h4>
+<div class="na-info-row">
+<i class="fa-solid fa-user"></i>
+<div><span class="na-info-label">HOD</span>[HOD Name]</div>
+</div>
+<div class="na-info-row">
+<i class="fa-solid fa-phone"></i>
+<div><span class="na-info-label">Contact</span>[Contact Number]</div>
+</div>
+<div class="na-info-row">
+<i class="fa-solid fa-location-dot"></i>
+<div><span class="na-info-label">Location</span>[CSE Block, Floor]</div>
+</div>
+<div class="na-info-row">
+<i class="fa-solid fa-clock"></i>
+<div><span class="na-info-label">Office Hours</span>[e.g. Mon–Sat, 9:30 AM–4:30 PM]</div>
+</div>
+<button aria-label="Edit quick info" class="admin-gear" data-edit-section="quick-info" type="button"><i class="fa-solid fa-gear"></i></button></div>
+<div class="na-side-card">
+<h4>Need Something Resolved?</h4>
+<button class="na-complaint-btn" id="openComplaintForm" type="button">
+<i class="fa-solid fa-circle-exclamation"></i> Raise a Complaint
+        </button>
+<p class="na-side-note">Report an issue related to an CSE update or activity.</p>
+</div>
+</aside>
+</div>
+<!-- CSE HOD DETAILS -->
+<section class="cse-hod-card admin-section" id="cseHodSection">
+  <div class="cse-hod-photo"><i class="fa-solid fa-user"></i></div>
+  <div class="cse-hod-name"><small>HOD</small><h2>[HOD Name]</h2><b>Head of Department (HOD)</b></div>
+  <div class="cse-hod-detail"><small>Contact</small><b>[Contact Number]</b></div>
+  <div class="cse-hod-detail"><small>Email</small><b>cse@rgukt.ac.in</b></div>
+  <div class="cse-hod-detail"><small>Cabin No.</small><b>[Cabin Number]</b></div>
+  <button class="cse-view-profile" id="cseHodViewProfile" type="button">View Profile</button>
+  <button aria-label="Manage HOD details" class="admin-gear" data-edit-section="hod" type="button"><i class="fa-solid fa-gear"></i></button>
+</section>
+<!-- =========================================================
+       COMPLAINT FORM MODAL
+       ========================================================= -->
+<div aria-hidden="true" class="action-form-overlay" id="complaintFormOverlay">
+<div aria-labelledby="complaintFormTitle" aria-modal="true" class="action-form-card" role="dialog">
+<button aria-label="Close" class="action-form-close" data-close-form="complaintFormOverlay" type="button">×</button>
+<div class="action-form-heading">
+<span class="action-form-kicker">CSE</span>
+<h2 id="complaintFormTitle">Raise a Complaint</h2>
+<p>Provide your details and describe the issue so it can be reviewed by the appropriate club team.</p>
+</div>
+<form class="action-form" id="complaintForm">
+<div class="form-field"><label for="complaintId">ID No.</label><input id="complaintId" name="id_no" placeholder="Enter your ID number" required="" type="text"/></div>
+<div class="form-field"><label for="complaintName">Name</label><input id="complaintName" name="name" placeholder="Full name" required="" type="text"/></div>
+<div class="form-field"><label for="complaintEmail">Email</label><input id="complaintEmail" name="email" placeholder="name@example.com" required="" type="email"/></div>
+<div class="form-field"><label for="complaintBranch">Branch</label><input id="complaintBranch" name="branch" placeholder="e.g. CSE" required="" type="text"/></div>
+<div class="form-field"><label for="complaintYear">Year</label><select id="complaintYear" name="year" required=""><option disabled="" selected="" value="">Select year</option><option>PUC1</option><option>PUC2</option><option>E1</option><option>E2</option><option>E3</option><option>E4</option></select></div>
+<div class="form-field"><label for="complaintSem">Current Sem</label><select id="complaintSem" name="current_sem" required=""><option disabled="" selected="" value="">Select semester</option><option>Sem1</option><option>Sem2</option></select></div>
+<div class="form-field"><label for="complaintPhone">Phone Number</label><input id="complaintPhone" inputmode="numeric" name="phone" pattern="[0-9]{10}" placeholder="10-digit phone number" required="" type="tel"/></div>
+<div class="form-field"><label for="complaintSubject">Complaint Subject</label><input id="complaintSubject" name="subject" placeholder="Short subject" required="" type="text"/></div>
+<div class="form-field form-field-full"><label for="complaintMessage">Complaint Details</label><textarea id="complaintMessage" maxlength="1000" name="complaint" placeholder="Describe the issue clearly..." required="" rows="3"></textarea></div>
+<div class="action-form-actions form-field-full"><button class="action-form-submit" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Complaint</button></div>
+<p class="form-success" id="complaintFormSuccess" role="status"></p>
+</form>
+</div>
+</div>
+<!-- =========================================================
+       UPDATE DETAIL MODAL
+       ========================================================= -->
+<div aria-hidden="true" class="update-modal-overlay" id="updateModalOverlay">
+<div aria-labelledby="updateModalTitle" aria-modal="true" class="update-modal" role="dialog">
+<button aria-label="Close" class="update-modal-close" id="updateModalClose" type="button">×</button>
+<div class="update-modal-image-wrap" id="updateModalImageWrap">
+<img alt="" id="updateModalImage" src=""/>
+</div>
+<div class="update-modal-body">
+<span class="update-modal-tag" id="updateModalCategory"></span>
+<h2 id="updateModalTitle"></h2>
+<div class="update-modal-meta">
+<div class="update-modal-meta-row">
+<i class="fa-solid fa-user"></i>
+<span id="updateModalUploader"></span>
+</div>
+<div class="update-modal-meta-row">
+<i class="fa-regular fa-calendar"></i>
+<span id="updateModalDate"></span>
+</div>
+<div class="update-modal-meta-row update-modal-deadline" id="updateModalDeadlineRow">
+<i class="fa-solid fa-hourglass-half"></i>
+<span id="updateModalDeadline"></span>
+</div>
+</div>
+<p class="update-modal-desc" id="updateModalDesc"></p>
+<div class="update-modal-contact" id="updateModalContactRow">
+<span>Have a query?</span>
+<a href="#" id="updateModalEmail">
+<i class="fa-solid fa-envelope"></i>
+<span id="updateModalEmailText"></span>
+</a>
+</div>
+<button class="update-modal-apply" id="updateModalApply" type="button"></button>
+</div>
+</div>
+</div>
+<footer class="na-footer-rich">
+<div class="na-footer-rich-inner">
+<div class="na-footer-brand">
+<h3>RGUKT Campus Connect</h3>
+<p>One central place for students to discover campus updates, events, opportunities and announcements.</p>
+</div>
+<div class="na-footer-links-section">
+<h3>University Links</h3>
+<div class="na-footer-links-grid">
+<a href="https://www.rgukt.ac.in/" rel="noopener" target="_blank">RGUKT Official Website</a>
+<a href="https://www.rgukt.ac.in/admissions.html" rel="noopener" target="_blank">Admissions</a>
+<a href="https://www.rgukt.ac.in/academicprogrammes.html" rel="noopener" target="_blank">Academic Programmes</a>
+<a href="https://www.rgukt.ac.in/notices-downloads" rel="noopener" target="_blank">Notices &amp; Downloads</a>
+<a href="https://hub.rgukt.ac.in/hub/default" rel="noopener" target="_blank">RGUKT Student Hub</a>
+<a href="https://www.rgukt.ac.in/careers.html" rel="noopener" target="_blank">Careers</a>
+</div>
+</div>
+<div class="na-footer-contact">
+<h3>Campus Connect</h3>
+<p><i class="fa-solid fa-envelope"></i> <a href="mailto:campusconnect@rgukt.ac.in">campusconnect@rgukt.ac.in</a></p>
+<p><i class="fa-solid fa-globe"></i> <a href="https://www.rgukt.ac.in/" rel="noopener" target="_blank">University Website</a></p>
+<div class="na-social">
+<a aria-label="RGUKT Website" href="https://www.rgukt.ac.in/" rel="noopener" target="_blank"><i class="fa-solid fa-globe"></i></a>
+<a aria-label="RGUKT Notices" href="https://www.rgukt.ac.in/notices-downloads" rel="noopener" target="_blank"><i class="fa-solid fa-bullhorn"></i></a>
+<a aria-label="RGUKT Hub" href="https://hub.rgukt.ac.in/hub/default" rel="noopener" target="_blank"><i class="fa-solid fa-link"></i></a>
+</div>
+</div>
+</div>
+<div class="na-footer-bottom">
+      © 2026 RGUKT Campus Connect. All Rights Reserved.
+    </div>
+</footer>
+<script src="../../../static/js/ai-ml_admin.js"></script><div aria-hidden="true" class="admin-modal hidden" id="adminModal">
+<div class="admin-backdrop" data-admin-close=""></div>
+<section aria-modal="true" class="admin-modal-card" role="dialog">
+<div class="admin-modal-header">
+<div><span class="admin-kicker" id="adminKicker">MANAGE</span><h2 id="adminModalTitle">Manage Section</h2></div>
+<button class="admin-close" data-admin-close="" type="button">×</button>
+</div>
+<div id="adminModalBody"></div>
+</section>
+</div><div class="admin-confirm hidden" id="adminConfirm">
+<div class="admin-backdrop"></div>
+<section class="admin-confirm-card">
+<div class="admin-confirm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+<h2 id="confirmTitle">Confirm changes</h2>
+<p id="confirmText">Are you sure you want to continue?</p>
+<div class="admin-confirm-actions">
+<button class="admin-secondary" id="confirmCancel" type="button">Cancel</button>
+<button class="admin-primary" id="confirmOk" type="button">Yes, Continue</button>
+</div>
+</section>
+</div><div class="admin-toast" id="adminToast"></div>
+<div class="cse-admin-sidebar-backdrop" id="adminSidebarBackdrop"></div>
+<aside class="cse-admin-sidebar" id="adminSidebar" aria-label="Admin profile sidebar">
+  <div class="cse-sidebar-top"><div class="cse-sidebar-title">Admin Profile</div>
+    <button id="closeAdminSidebar" class="cse-icon-close" type="button"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="cse-sidebar-profile">
+    <div class="cse-sidebar-avatar">A</div>
+    <div><h3>AI & ML Admin</h3><p>cse@rgukt.ac.in</p><span>Coordinator</span></div>
+  </div>
+  <div class="cse-sidebar-menu">
+    <button data-profile-action="profile"><i class="fa-solid fa-user-pen"></i> Change Profile</button>
+    <button data-profile-action="password"><i class="fa-solid fa-key"></i> Change Password</button>
+    <button data-profile-action="settings"><i class="fa-solid fa-gear"></i> Account Settings</button>
+  </div>
+  <div class="cse-sidebar-note"><i class="fa-solid fa-shield-halved"></i>
+    <span>Your changes will be connected to the CSE admin account when backend integration is enabled.</span></div>
+  <button class="cse-sidebar-logout" type="button"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+</aside>
+
+<section class="admin-data-page" id="adminDataPage" aria-hidden="true">
+  <div class="admin-data-page-inner">
+    <div class="admin-data-page-head">
+      <div><span class="cse-admin-eyebrow" id="dataPageEyebrow">ADMIN</span>
+        <h2 id="dataPageTitle">Complaints</h2><p id="dataPageDesc">Review submissions from students.</p></div>
+      <button id="closeDataPage" class="admin-close-page"><i class="fa-solid fa-xmark"></i> Close</button>
+    </div>
+    <div class="admin-data-layout">
+      <div class="admin-data-list" id="adminDataList"></div>
+      <div class="admin-data-detail" id="adminDataDetail">
+        <div class="admin-empty-detail"><i class="fa-regular fa-folder-open"></i>
+          <h3>Select a submission</h3><p>Click a card on the left to view all submitted information.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cse-admin-dialog-backdrop" id="adminDialogBackdrop"></div>
+<div class="cse-admin-dialog" id="adminProfileDialog">
+  <button class="cse-dialog-close" data-close-dialog><i class="fa-solid fa-xmark"></i></button>
+  <span class="cse-admin-eyebrow">PROFILE</span><h2>Change Profile</h2>
+  <form id="adminProfileForm">
+    <label>Display Name<input value="AI & ML Admin" maxlength="60" required></label>
+    <label>Email<input type="email" value="cse@rgukt.ac.in" required></label>
+    <label>Phone<input value="+91 98765 43210" maxlength="20"></label>
+    <button type="submit" class="cse-dialog-save">Save Changes</button>
+  </form>
+</div>
+<div class="cse-admin-dialog" id="cseHodProfileDialog">
+  <button class="cse-dialog-close" data-close-dialog type="button"><i class="fa-solid fa-xmark"></i></button>
+  <span class="cse-admin-eyebrow">HOD PROFILE</span><h2 id="hodProfileName">[HOD Name]</h2>
+  <p><strong>Head of Department (HOD)</strong></p>
+  <div class="cse-hod-profile-info">
+    <p><i class="fa-solid fa-phone"></i> <span id="hodProfileContact">[Contact Number]</span></p>
+    <p><i class="fa-solid fa-envelope"></i> <span id="hodProfileEmail">cse@rgukt.ac.in</span></p>
+    <p><i class="fa-solid fa-door-open"></i> Cabin No.: <span id="hodProfileCabin">[Cabin Number]</span></p>
+  </div>
+</div>
+<div class="cse-admin-dialog" id="adminPasswordDialog">
+  <button class="cse-dialog-close" data-close-dialog><i class="fa-solid fa-xmark"></i></button>
+  <span class="cse-admin-eyebrow">SECURITY</span><h2>Change Password</h2>
+  <p>A secure password reset link will be sent to <strong>cse@rgukt.ac.in</strong>.</p>
+  <button id="sendResetLink" class="cse-dialog-save"><i class="fa-solid fa-paper-plane"></i> Send Reset Link</button>
+  <div class="cse-reset-message" id="resetMessage"></div>
+</div>
+<div class="cse-admin-toast" id="cseAdminToast"></div>
+<script src="{{ url_for('static', filename='js/updates.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raise a Complaint — RGUKT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="../../../static/css/complaint_admin.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a class="brand" href="#"><span class="brand-mark">R</span><span>RGUKT</span></a>
+    <div class="nav-right">
+      <a href="#">Home</a><a href="#">Contact</a>
+      <button class="calendar-btn" aria-label="Calendar"><i class="fa-regular fa-calendar"></i></button>
+      <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search categories..."></div>
+      <button class="admin-dashboard-btn" id="openDashboard" title="Admin Dashboard"><i class="fa-solid fa-user-gear"></i><span>Dashboard</span></button>
+    </div>
+  </nav>
+
+  <main class="page">
+    <section class="page-heading">
+      <div class="heading-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+      <div><p class="eyebrow">COMPLAINT PORTAL</p><h1>Raise a Complaint</h1><p>Let us know what went wrong — we'll route it to the right department.</p></div><button class="admin-gear heading-gear" id="editHeading" title="Edit logo, title and description"><i class="fa-solid fa-gear"></i></button>
+    </section>
+    
+    <div class="admin-management-buttons">
+        <button class="admin-manage-card" data-management="complaints"><span class="manage-symbol"><i class="fa-solid fa-comments"></i></span><span><strong>Complaints</strong><small>Review submitted complaints and attached proof.</small></span><b id="complaintsAdminCount">5</b></button>
+        <button class="admin-manage-card" data-management="applications"><span class="manage-symbol"><i class="fa-solid fa-file-circle-check"></i></span><span><strong>Applications</strong><small>Review student applications and submitted documents.</small></span><b id="applicationsAdminCount">4</b></button>
+      </div>
+
+    <section class="complaint-form-card">
+      <div class="complaint-tabs">
+        <button class="complaint-tab active" data-tab="normal"><i class="fa-solid fa-user"></i> Normal Complaint</button>
+        <button class="complaint-tab" data-tab="anonymous"><i class="fa-solid fa-user-secret"></i> Anonymous Complaint</button>
+      </div>
+
+      <div id="normal-panel" class="form-panel active">
+        <form id="normal-form">
+          <div class="form-grid">
+            <div class="form-group full"><label>Full Name</label><input name="name" required placeholder="Your full name"></div>
+            <div class="form-group"><label>Roll No / ID</label><input name="roll" required placeholder="e.g. N200123"></div>
+            <div class="form-group"><label>Category</label>
+              <select name="category" required><option value="">Select a category</option><option>Hostel</option><option>Infrastructure</option><option>Academic</option><option>Clubs & Cells</option><option>Transport</option><option>Other</option></select>
+            </div>
+            <div class="form-group"><label>Priority</label><select name="priority"><option>Medium</option><option>Low</option><option>High</option></select></div>
+            <div class="form-group"><label>Contact Number</label><input name="phone" placeholder="+91 XXXXX XXXXX"></div>
+            <div class="form-group full"><label>Complaint Title</label><input name="title" required placeholder="Give a short title for your complaint"></div>
+            <div class="form-group full"><label>Complaint Details</label><textarea name="description" required placeholder="Describe the issue clearly — include location and time if relevant."></textarea></div>
+            <div class="form-group full"><label>Attachments / Proof <span>(optional, multiple files allowed)</span></label><input class="file-input" name="attachments" type="file" multiple></div>
+          </div>
+          <button class="submit-btn" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Complaint</button>
+        </form>
+      </div>
+
+      <div id="anonymous-panel" class="form-panel">
+        <form id="anonymous-form">
+          <div class="form-grid">
+            <div class="form-group full"><label>Complaint Title</label><input name="title" required placeholder="Give a short title for your complaint"></div>
+            <div class="form-group"><label>Category</label>
+              <select name="category" required><option value="">Select a category</option><option>Hostel</option><option>Infrastructure</option><option>Academic</option><option>Clubs & Cells</option><option>Transport</option><option>Other</option></select>
+            </div>
+            <div class="form-group"><label>Priority</label><select name="priority"><option>Medium</option><option>Low</option><option>High</option></select></div>
+            <div class="form-group full"><label>Complaint Details</label><textarea name="description" required placeholder="Describe the issue clearly — include location and time if relevant."></textarea></div>
+            <div class="form-group full"><label>Attachments / Proof <span>(optional, multiple files allowed)</span></label><input class="file-input" name="attachments" type="file" multiple></div>
+          </div>
+          <button class="submit-btn" type="submit"><i class="fa-solid fa-paper-plane"></i> Submit Complaint</button>
+        </form>
+      </div>
+      <div id="form-message" class="form-message" role="status"></div>
+    </section>
+
+
+    <section class="existing-section">
+      <div class="section-top">
+        <div><p class="eyebrow">TRACK YOUR REQUESTS</p><h2>Existing Complaints</h2><p>Click a complaint to view its complete details and current status.</p></div>
+        <div class="status-filters">
+          <button class="status-filter active" data-status="all">All</button>
+          <button class="status-filter" data-status="new">New</button>
+          <button class="status-filter" data-status="under-review">Under Review</button>
+          <button class="status-filter" data-status="in-progress">In Progress</button>
+          <button class="status-filter" data-status="resolved">Resolved</button>
+        </div>
+      </div>
+
+      
+
+      <div class="complaints-card">
+        <div id="complaints-list" class="complaints-list"></div>
+      </div>
+    </section>
+
+    <section class="contact-card">
+      <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
+      <div class="contact-main"><p class="eyebrow">COMPLAINT SUPPORT</p><h2>Student Support Desk</h2><p>Complaint Resolution & Student Welfare</p></div>
+      <div class="contact-info"><div><span>Email</span><strong id="supportEmail">support@rgukt.ac.in</strong></div><div><span>Location</span><strong id="supportLocation">Administrative Block</strong></div></div><button class="admin-gear contact-gear" id="editSupport" title="Edit Student Support Desk"><i class="fa-solid fa-gear"></i></button>
+    </section>
+  </main>
+
+  <footer>
+    <div><h3>RGUKT Campus Connect</h3><p>One central place for students to discover campus updates, opportunities and announcements.</p></div>
+    <div><h4>University Links</h4><a href="#">RGUKT Official Website</a><a href="#">Admissions</a><a href="#">Academic Programmes</a></div>
+    <div><h4>Quick Navigation</h4><a href="#">Home</a><a href="#">Contact</a><a href="#top">Back to top ↑</a></div>
+  </footer>
+
+  <div id="management-backdrop" class="management-backdrop hidden">
+    <section class="management-page" role="dialog" aria-modal="true">
+      <div class="management-top"><div><p class="eyebrow" id="managementEyebrow">COMPLAINT MANAGEMENT</p><h2 id="managementTitle">Complaints</h2><p id="managementDescription">Click an item to view all submitted data and attachments.</p></div><button class="close-management" id="closeManagement"><i class="fa-solid fa-xmark"></i> Close</button></div>
+      <div class="management-layout"><aside class="management-list-wrap"><div class="management-filters" id="managementFilters"></div><div class="management-list" id="managementList"></div></aside><main class="management-preview" id="managementPreview"><div class="empty-management"><i class="fa-regular fa-folder-open"></i><h3>Select an item</h3><p>Choose a complaint or application from the list to view its complete details.</p></div></main></div>
+    </section>
+  </div>
+  <div id="edit-backdrop" class="edit-backdrop hidden"><section class="edit-modal"><button class="edit-close" id="editClose">×</button><div id="editContent"></div></section></div>
+
+  <div id="preview-backdrop" class="preview-backdrop hidden">
+    <article class="preview-modal" role="dialog" aria-modal="true">
+      <button id="preview-close" class="preview-close" aria-label="Close">×</button>
+      <div class="preview-head">
+        <span id="preview-type" class="preview-type">COMPLAINT</span>
+        <h2 id="preview-title"></h2>
+        <div class="preview-status-row"><span id="preview-status" class="status-badge"></span><span id="preview-date"></span></div>
+      </div>
+      <div id="preview-meta" class="preview-meta"></div>
+      <div class="preview-description"><h4>COMPLAINT DETAILS</h4><p id="preview-description"></p></div>
+      <div class="preview-attachments"><h4>ATTACHMENTS</h4><div id="attachment-preview"></div></div>
+      <div class="preview-ref"><span>Reference ID</span><strong id="preview-reference"></strong></div>
+    </article>
+  </div>
+
+
+
+  <div id="dashboard-backdrop" class="dashboard-backdrop hidden"></div>
+  <aside id="dashboard-sidebar" class="dashboard-sidebar" aria-label="Admin Dashboard">
+    <button class="dashboard-close" id="dashboardClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <h2>Admin Profile</h2>
+    <div class="dashboard-divider"></div>
+
+    <div class="dashboard-profile-summary">
+      <div class="dashboard-avatar">C</div>
+      <div>
+        <strong id="dashboardUsername">Complaint Admin</strong>
+        <a id="dashboardEmail" href="mailto:admin@rgukt.ac.in">admin@rgukt.ac.in</a>
+        <span>Administrator</span>
+      </div>
+    </div>
+
+    <div class="dashboard-options">
+      <button class="dashboard-option" id="changeUsername">
+        <i class="fa-solid fa-user-pen"></i>
+        <span class="dashboard-option-copy"><b>Change Profile</b><small>Update your display name and account details</small></span>
+        <i class="fa-solid fa-chevron-right dashboard-chevron"></i>
+      </button>
+      <button class="dashboard-option" id="changePassword">
+        <i class="fa-solid fa-key"></i>
+        <span class="dashboard-option-copy"><b>Change Password</b><small>Send a secure reset link to your registered email</small></span>
+        <i class="fa-solid fa-chevron-right dashboard-chevron"></i>
+      </button>
+      <button class="dashboard-option" id="changeEmail">
+        <i class="fa-solid fa-envelope"></i>
+        <span class="dashboard-option-copy"><b>Account Settings</b><small>Manage the email connected to this admin account</small></span>
+        <i class="fa-solid fa-chevron-right dashboard-chevron"></i>
+      </button>
+    </div>
+
+    <div class="dashboard-note">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span>Your changes will be connected to the Complaint Admin account when backend integration is enabled.</span>
+    </div>
+  </aside>
+
+  <div id="dashboard-editor-backdrop" class="dashboard-editor-backdrop hidden">
+    <section class="dashboard-editor-modal" role="dialog" aria-modal="true">
+      <button class="dashboard-editor-close" id="dashboardEditorClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      <div id="dashboardEditor"></div>
+    </section>
+  </div>
+
+  <script src="../../../static/js/complaint_admin.js"></script>
+  <script src="{{ url_for('static', filename='js/updates.js') }}"></script>
+
+</body>
+</html>
