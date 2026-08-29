@@ -100,6 +100,10 @@ body.na-body{
 .na-breadcrumb .sep{ margin:0 6px; color:#cbd5e1; }
 .na-breadcrumb .current{ color:#334155; font-weight:600; }
 
+.add-emergency-nav:hover {
+    background:#0b1724;
+}
+
 /* ---------- Hub page: header + grid ---------- */
 .na-hero{
   max-width:1300px;
@@ -839,4 +843,359 @@ body.na-body{
   margin:0;
   font-size:12.5px;
   color:#64748b;
+}
+
+
+/* ============================= */
+/* ADD EMERGENCY BUTTON */
+/* ============================= */
+
+.add-emergency-btn {
+    background: #e5252a;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.add-emergency-btn:hover {
+    background: #c91d22;
+}
+
+
+/* ============================= */
+/* MODAL BACKGROUND */
+/* ============================= */
+
+.emergency-modal {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(10, 20, 30, 0.45);
+
+    backdrop-filter: blur(3px);
+
+    z-index: 9999;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+
+/* ============================= */
+/* FORM CARD */
+/* ============================= */
+
+.emergency-form {
+    width: 100%;
+    max-width: 650px;
+
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    padding: 28px 30px;
+
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+
+    animation: slideUp 0.25s ease;
+}
+
+
+/* Small slide animation */
+
+@keyframes slideUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ============================= */
+/* FORM HEADER */
+/* ============================= */
+
+.form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.form-title h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #172033;
+}
+
+.emergency-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffe8e8;
+
+    border-radius: 10px;
+
+    font-size: 21px;
+}
+
+
+/* Close */
+
+.close-btn {
+    width: 35px;
+    height: 35px;
+
+    border: none;
+    background: transparent;
+
+    font-size: 28px;
+    color: #555;
+
+    cursor: pointer;
+
+    border-radius: 50%;
+}
+
+.close-btn:hover {
+    background: #f2f2f2;
+}
+
+
+/* Red line */
+
+.red-line {
+    width: 25px;
+    height: 3px;
+
+    background: #e5252a;
+
+    margin: 17px 0 22px;
+}
+
+
+/* ============================= */
+/* FORM */
+/* ============================= */
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #172033;
+}
+
+.form-group label span {
+    color: #e5252a;
+}
+
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+
+    padding: 12px 13px;
+
+    border: 1px solid #d8dde5;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+
+    color: #263238;
+
+    outline: none;
+
+    background: white;
+}
+
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #e5252a;
+
+    box-shadow: 0 0 0 2px rgba(229, 37, 42, 0.08);
+}
+
+
+.form-group textarea {
+    height: 115px;
+
+    resize: vertical;
+}
+
+
+/* ============================= */
+/* TWO COLUMNS */
+/* ============================= */
+
+.form-row {
+    display: flex;
+
+    gap: 18px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+
+/* ============================= */
+/* IMPORTANT CHECKBOX */
+/* ============================= */
+
+.important-option {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin: 5px 0 22px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #172033;
+
+    cursor: pointer;
+}
+
+.important-option input {
+    width: 17px;
+    height: 17px;
+
+    accent-color: #e5252a;
+
+    cursor: pointer;
+}
+
+.important-option small {
+    color: #777;
+
+    font-weight: normal;
+}
+
+
+/* ============================= */
+/* BUTTONS */
+/* ============================= */
+
+.form-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    border-top: 1px solid #eeeeee;
+
+    padding-top: 20px;
+}
+
+
+.reset-btn,
+.publish-btn {
+    padding: 11px 20px;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.reset-btn {
+    background: white;
+
+    color: #263238;
+
+    border: 1px solid #d5d9df;
+}
+
+.reset-btn:hover {
+    background: #f5f5f5;
+}
+
+
+.publish-btn {
+    background: #e5252a;
+
+    color: white;
+
+    border: none;
+}
+
+.publish-btn:hover {
+    background: #c91d22;
+}
+
+
+/* ============================= */
+/* MOBILE */
+/* ============================= */
+
+@media (max-width: 600px) {
+
+    .emergency-form {
+        padding: 22px;
+    }
+
+    .form-row {
+        flex-direction: column;
+
+        gap: 0;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .reset-btn,
+    .publish-btn {
+        width: 100%;
+    }
+
+    .form-title h2 {
+        font-size: 19px;
+    }
 }
