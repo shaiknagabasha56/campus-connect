@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RGUKT Emergency Management</title>
+
+    <link rel="stylesheet" href="../../static/css/emergency_admin.css">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<!-- =========================================================
+     TOP NAVIGATION
+========================================================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="brand-logo"> R</div>
+        <span>RGUKT</span>
+    </div>
+
+    <nav class="main-nav">
+	
+	<a href="#" class="nav-link">
+            Home
+        </a>
+        
+        <a href="#" class="nav-link active">
+            Dashboard
+        </a>
+
+    </nav>
+
+    <div class="top-actions">
+
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+                type="text"
+                placeholder="Search emergencies..."
+                id="searchInput">
+        </div>
+
+        <!-- Admin profile trigger -->
+        <button class="admin-trigger" id="adminTrigger">
+
+            <div class="admin-avatar">
+                A
+            </div>
+
+            <div class="admin-name">
+                <strong>Admin</strong>
+                <span>Administrator</span>
+            </div>
+
+            <i class="fa-solid fa-chevron-down"></i>
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     MAIN PAGE
+========================================================= -->
+
+<main class="main-content">
+
+    <section class="page-heading">
+
+        <div>
+            <div class="eyebrow">
+            </div>
+
+            <h1>EMERGENCY MANAGEMENT</h1>
+
+            <p>
+                Overview of all emergency reports and their status.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+
+    <section class="summary-grid">
+
+        <!-- Total Reports -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon blue">
+                <i class="fa-solid fa-file-lines"></i>
+            </div>
+
+            <div>
+                <span>Total Reports</span>
+                <strong>23</strong>
+                <small>All time reports</small>
+            </div>
+
+        </div>
+
+
+        <!-- Pending -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon orange">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div>
+                <span>Pending Review</span>
+                <strong>8</strong>
+                <small>Awaiting approval</small>
+            </div>
+
+        </div>
+
+
+        <!-- Approved -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon green">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <div>
+                <span>Approved</span>
+                <strong>12</strong>
+                <small>Visible to users</small>
+            </div>
+
+        </div>
+
+
+        <!-- Rejected -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon red">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+
+            <div>
+                <span>Rejected</span>
+                <strong>3</strong>
+                <small>Not approved</small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         REPORT SECTION
+    ====================================================== -->
+
+    <section class="reports-container">
+
+        <div class="report-tabs">
+
+            <button class="tab active">
+                All Reports
+            </button>
+
+            <div class="filter-area">
+
+                <select>
+                    <option>All Categories</option>
+                    <option>Infrastructure</option>
+                    <option>Facilities</option>
+                    <option>Food & Mess</option>
+                    <option>IT Services</option>
+                    <option>Others</option>
+                </select>
+
+                <!-- SETTINGS / APPROVED EMERGENCIES BUTTON -->
+
+                <button
+                    class="settings-button"
+                    id="approvedButton"
+                    title="Manage Approved Emergencies">
+
+                    <i class="fa-solid fa-gear"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             MAIN REPORT TABLE
+        ================================================== -->
+
+        <div class="table-wrapper">
+
+            <table class="report-table">
+
+                <thead>
+
+                <tr>
+
+                    <th>REPORT DETAILS</th>
+                    <th>CATEGORY</th>
+                    <th>PRIORITY</th>
+                    <th>DATE</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody id="reportTableBody">
+
+                <tr>
+
+                    <td>
+                        <div class="report-title">
+
+                            <div class="report-icon danger">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+
+                            <div>
+                                <strong>Hostel Water Supply Issue</strong>
+                                <span>
+                                    No water supply in boys hostel for 2 days...
+                                </span>
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="category">
+                            <i class="fa-solid fa-building"></i>
+                            Infrastructure
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="priority high">
+                            High
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="date">
+                            30 Aug 2025
+                            <span>10:30 AM</span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="status pending">
+                            Pending
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="action-buttons">
+
+                            <button class="approve">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+
+                            <button class="reject">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+
+                            <button class="view">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+
+                        </div>
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        <div class="report-title">
+
+                            <div class="report-icon warning">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+
+                            <div>
+                                <strong>Library AC Not Working</strong>
+                                <span>
+                                    AC not working in digital library section...
+                                </span>
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="category">
+                            <i class="fa-solid fa-sliders"></i>
+                            Facilities
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="priority medium">
+                            Medium
+                        </span>
+                    </td>
+
+
+                    <td>
+                        <div class="date">
+                            30 Aug 2025
+                            <span>09:15 AM</span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="status pending">
+                            Pending
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            <button class="approve">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+
+                            <button class="reject">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+
+                            <button class="view">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        <div class="report-title">
+
+                            <div class="report-icon info">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </div>
+
+                            <div>
+                                <strong>Mess Food Quality</strong>
+                                <span>
+                                    Food quality is not good in the mess...
+                                </span>
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="category">
+                            <i class="fa-solid fa-utensils"></i>
+                            Food & Mess
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="priority medium">
+                            Medium
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="date">
+                            29 Aug 2025
+                            <span>08:45 PM</span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="status approved">
+                            Approved
+                        </span>
+                    </td>
+
+                    <td>
+                        <button class="view single">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        <div class="report-title">
+
+                            <div class="report-icon danger">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+
+                            <div>
+                                <strong>Street Light Not Working</strong>
+                                <span>
+                                    Street lights not working near main gate...
+                                </span>
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="category">
+                            <i class="fa-solid fa-building"></i>
+                            Infrastructure
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="priority high">
+                            High
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="date">
+                            29 Aug 2025
+                            <span>07:20 PM</span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="status approved">
+                            Approved
+                        </span>
+                    </td>
+
+                    <td>
+                        <button class="view single">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        <div class="report-title">
+
+                            <div class="report-icon info">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </div>
+
+                            <div>
+                                <strong>WiFi Connectivity Issue</strong>
+                                <span>
+                                    WiFi not working in academic block...
+                                </span>
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="category">
+                            <i class="fa-solid fa-wifi"></i>
+                            IT Services
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="priority low">
+                            Low
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="date">
+                            28 Aug 2025
+                            <span>06:10 PM</span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="status rejected">
+                            Rejected
+                        </span>
+                    </td>
+
+                    <td>
+                        <button class="view single">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SUPPORT
+    ====================================================== -->
+
+    <section class="support-card">
+
+        <div class="support-person">
+
+            <div class="support-avatar">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <div>
+                <h3>Emergency Support Desk</h3>
+                <p>24/7 Support for Emergency Management</p>
+
+                <span class="online">
+                    <i class="fa-solid fa-circle"></i>
+                    Online
+                </span>
+            </div>
+
+        </div>
+
+        <div class="support-info">
+
+            <div>
+                <span>EMAIL</span>
+                <strong>emergency@rgukt.ac.in</strong>
+            </div>
+
+            <div>
+                <span>PHONE</span>
+                <strong>+91 12345 67890</strong>
+            </div>
+
+            <button class="contact-support">
+                <i class="fa-solid fa-headset"></i>
+                Contact Support
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     ADMIN PROFILE RIGHT PANEL
+========================================================= -->
+
+<div class="overlay" id="profileOverlay"></div>
+
+<aside class="admin-panel" id="adminPanel">
+
+    <div class="panel-header">
+
+        <h2>Admin Profile</h2>
+
+        <button
+            class="close-button"
+            id="closeProfile">
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+    </div>
+
+
+    <div class="profile-user">
+
+        <div class="large-avatar">
+            A
+        </div>
+
+        <div>
+
+            <h3>Emergency approval Admin</h3>
+
+            <p>emergency@rgukt.ac.in</p>
+
+            <span>Coordinator</span>
+
+        </div>
+
+    </div>
+
+
+    <div class="profile-options">
+
+        <button>
+            <i class="fa-solid fa-user-pen"></i>
+            <span>Change Profile</span>
+        </button>
+
+        <button>
+            <i class="fa-solid fa-key"></i>
+            <span>Change Password</span>
+        </button>
+
+        <button>
+            <i class="fa-solid fa-gear"></i>
+            <span>Account Settings</span>
+        </button>
+
+    </div>
+
+
+    <div class="profile-notice">
+
+    </div>
+
+
+    <button class="logout-button">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        Logout
+
+    </button>
+
+</aside>
+
+
+<!-- =========================================================
+     MANAGE APPROVED EMERGENCIES MODAL
+========================================================= -->
+
+<div class="approved-overlay" id="approvedOverlay">
+
+    <div class="approved-modal">
+
+        <div class="approved-header">
+
+            <div>
+
+                <h2>
+                    Manage Approved Emergencies
+                </h2>
+
+                <p>
+                    12 approved emergencies
+                </p>
+
+            </div>
+
+            <button
+                class="close-approved"
+                id="closeApproved">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- Approved table -->
+
+        <div class="approved-table-wrapper">
+
+            <table class="approved-table">
+
+                <thead>
+
+                <tr>
+
+                    <th>REPORT DETAILS</th>
+
+                    <th>CATEGORY</th>
+
+                    <th>PRIORITY</th>
+
+                    <th>APPROVED BY</th>
+
+                    <th>DATE</th>
+
+                    <th>ACTIONS</th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="approvedTableBody">
+
+                <!-- Row 1 -->
+
+                <tr>
+
+                    <td>
+
+                        <div class="approved-report">
+
+                            <div class="report-icon info">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Mess Food Quality
+                                </strong>
+
+                                <span>
+                                    Food quality is not good in the mess...
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="category">
+
+                            <i class="fa-solid fa-utensils"></i>
+
+                            Food & Mess
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="priority medium">
+                            Medium
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="approved-by">
+
+                            <strong>
+                                Arjun Reddy
+                            </strong>
+
+                            <span>
+                                N200789
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="date">
+
+                            29 Aug 2025
+
+                            <span>
+                                08:45 PM
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <button class="delete-button">
+
+                            <i class="fa-regular fa-trash-can"></i>
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <!-- Row 2 -->
+
+                <tr>
+
+                    <td>
+
+                        <div class="approved-report">
+
+                            <div class="report-icon danger">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Street Light Not Working
+                                </strong>
+
+                                <span>
+                                    Street lights not working near main gate...
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="category">
+
+                            <i class="fa-solid fa-building"></i>
+
+                            Infrastructure
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="priority high">
+                            High
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="approved-by">
+
+                            <strong>
+                                Sneha Patel
+                            </strong>
+
+                            <span>
+                                N200321
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="date">
+
+                            29 Aug 2025
+
+                            <span>
+                                07:20 PM
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <button class="delete-button">
+
+                            <i class="fa-regular fa-trash-can"></i>
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <!-- Row 3 -->
+
+                <tr>
+
+                    <td>
+
+                        <div class="approved-report">
+
+                            <div class="report-icon warning">
+
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Library AC Not Working
+                                </strong>
+
+                                <span>
+                                    AC not working in digital library section...
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="category">
+
+                            <i class="fa-solid fa-sliders"></i>
+
+                            Facilities
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="priority medium">
+                            Medium
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="approved-by">
+
+                            <strong>
+                                Priya Sharma
+                            </strong>
+
+                            <span>
+                                N200456
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="date">
+
+                            28 Aug 2025
+
+                            <span>
+                                04:30 PM
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <button class="delete-button">
+
+                            <i class="fa-regular fa-trash-can"></i>
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <!-- Row 4 -->
+
+                <tr>
+
+                    <td>
+
+                        <div class="approved-report">
+
+                            <div class="report-icon green-icon">
+
+                                <i class="fa-solid fa-wrench"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Garden Maintenance Required
+                                </strong>
+
+                                <span>
+                                    Garden area needs immediate cleaning...
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="category">
+
+                            <i class="fa-solid fa-leaf"></i>
+
+                            Maintenance
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="priority low">
+                            Low
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="approved-by">
+
+                            <strong>
+                                Karthik M
+                            </strong>
+
+                            <span>
+                                N200654
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="date">
+
+                            27 Aug 2025
+
+                            <span>
+                                11:15 AM
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <button class="delete-button">
+
+                            <i class="fa-regular fa-trash-can"></i>
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <!-- Row 5 -->
+
+                <tr>
+
+                    <td>
+
+                        <div class="approved-report">
+
+                            <div class="report-icon blue-icon">
+
+                                <i class="fa-solid fa-droplet"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Clean Drinking Water Issue
+                                </strong>
+
+                                <span>
+                                    Water in taps has bad smell...
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="category">
+
+                            <i class="fa-solid fa-arrows-rotate"></i>
+
+                            Facilities
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="priority medium">
+                            Medium
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="approved-by">
+
+                            <strong>
+                                Ravi Kumar
+                            </strong>
+
+                            <span>
+                                N200123
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="date">
+
+                            26 Aug 2025
+
+                            <span>
+                                10:00 AM
+                            </span>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        <button class="delete-button">
+
+                            <i class="fa-regular fa-trash-can"></i>
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+
+        <div class="pagination">
+
+            <button>
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <button class="page-active">
+                1
+            </button>
+
+            <button>
+                2
+            </button>
+
+            <button>
+                3
+            </button>
+
+            <button>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <select>
+                <option>5 per page</option>
+                <option>10 per page</option>
+                <option>20 per page</option>
+            </select>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="../../static/js/emergency_admin.js"></script>
+
+</body>
+</html>

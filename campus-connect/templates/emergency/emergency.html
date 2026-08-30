@@ -20,11 +20,14 @@
 
       <div class="na-right-group">
         <nav class="na-nav-simple">
-          <a href="{{ url_for('homepage.homepage') }}">Home</a>
+          <a href="../../templates/home/homepage.html">Home</a>
           <a href="index.html#about">About</a>
           <a href="index.html#contact">Contact</a>
+          <!-- Add Emergency Button -->
+<button class="add-emergency-btn" onclick="openEmergencyForm()">
+    + Add Emergency
+</button>
         </nav>
-
         <button id="calendar-toggle" class="icon-btn" aria-label="Toggle calendar">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"/>
@@ -72,11 +75,6 @@
     </div>
   </div>
 
-  <div class="na-breadcrumb">
-    <a href="index.html">Home</a>
-    <span class="sep">›</span>
-    <span class="current">Emergency</span>
-  </div>
 
   <!-- MAJOR CARD: live scrolling list of currently active emergencies -->
   <section class="na-ann-card">
@@ -220,5 +218,175 @@
   </footer>
 
   <script src="../../static/js/emergency.js"></script>
+  
+  
+
+<!-- Create New Emergency Form -->
+
+<div class="emergency-modal" id="emergencyModal">
+
+    <div class="emergency-form">
+
+        <!-- Form Header -->
+        <div class="form-header">
+            <div class="form-title">
+                <span class="emergency-icon">🚨</span>
+                <h2>Create New Emergency</h2>
+            </div>
+
+            <button class="close-btn" onclick="closeEmergencyForm()">×</button>
+        </div>
+
+
+        <div class="red-line"></div>
+
+
+        <form id="emergencyForm">
+
+            <!-- Emergency Title -->
+            <div class="form-group">
+                <label>
+                    Emergency Title <span>*</span>
+                </label>
+
+                <input
+                    type="text"
+                    placeholder="Enter emergency title"
+                    required
+                >
+            </div>
+
+
+            <!-- Emergency Message -->
+            <div class="form-group">
+                <label>
+                    Emergency Message(includes date & time) <span>*</span>
+                </label>
+
+                <textarea
+                    placeholder="Enter emergency details / description"
+                    required
+                ></textarea>
+            </div>
+
+
+            <!-- Category + Priority -->
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label>
+                        Category / Type <span>*</span>
+                    </label>
+
+                    <select required>
+                        <option value="">Select Category</option>
+                        <option>Weather</option>
+                        <option>Medical</option>
+                        <option>Security</option>
+                        <option>Fire</option>
+                        <option>Electrical</option>
+                        <option>Water</option>
+                        <option>General</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>
+                        Priority <span>*</span>
+                    </label>
+
+                    <select required>
+                        <option value="">Select Priority</option>
+                        <option>Critical</option>
+                        <option>Warning</option>
+                        <option>Info</option>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <!-- Important -->
+            <label class="important-option">
+
+                <input type="checkbox">
+
+                <span>
+                    Mark as Important
+                    <small>(Show in Live Ticker)</small>
+                </span>
+
+            </label>
+
+
+            <!-- Buttons -->
+            <div class="form-actions">
+
+                <button
+                    type="reset"
+                    class="reset-btn">
+                    Reset
+                </button>
+
+                <button
+                    type="submit"
+                    class="publish-btn">
+                    🚀 Publish Emergency
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+function openEmergencyForm() {
+
+    const modal = document.getElementById("emergencyModal");
+
+    modal.style.display = "flex";
+
+    document.body.style.overflow = "hidden";
+}
+
+
+function closeEmergencyForm() {
+
+    const modal = document.getElementById("emergencyModal");
+
+    modal.style.display = "none";
+
+    document.body.style.overflow = "auto";
+}
+
+
+/* Close when clicking outside the form */
+
+document.getElementById("emergencyModal").addEventListener("click", function(event) {
+
+    if (event.target === this) {
+        closeEmergencyForm();
+    }
+
+});
+
+
+/* Prevent page reload for now */
+
+document.getElementById("emergencyForm").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    alert("Emergency published successfully!");
+
+    closeEmergencyForm();
+
+});
+</script>
+
 </body>
 </html>
