@@ -50,6 +50,9 @@ def createApp():
         # ALLOW LANDING PAGE
         if request.endpoint == "landing_page":
             return None
+        # ALLOW TEMP DEV PREVIEW (remove before merging)
+        if request.endpoint == "admin.admin_dev_preview":
+            return None
         # ALLOW AUTH ROUTES
         if request.endpoint and request.endpoint.startswith("auth."):
             return None

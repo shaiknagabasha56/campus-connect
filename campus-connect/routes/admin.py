@@ -1,4 +1,4 @@
-from flask import Blueprint, session, redirect, abort
+from flask import Blueprint, session, redirect, abort, render_template
 from database.queries import get_organization_by_id
 
 
@@ -87,3 +87,11 @@ def admin_redirect():
     return redirect(
         f"/{url_category}/{slug}/admin"
     )
+
+@admin_bp.route("/dev-preview")
+def admin_dev_preview():
+    mock_organization = {
+        "name": "Artix",
+        "category": "clubs"
+    }
+    return render_template("admin/dashboard.html", organization=mock_organization)
