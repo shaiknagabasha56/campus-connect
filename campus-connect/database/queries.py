@@ -690,3 +690,179 @@ def get_published_updates_by_organization(
 
         cursor.close()
         connection.close()
+# ============================================================
+# COMPLAINT FUNCTIONS
+# ============================================================
+
+def create_complaint(
+    reference_id,
+    title,
+    category,
+    priority,
+    description,
+    anonymous,
+    name=None,
+    roll=None,
+    phone=None
+):
+
+    connection = get_db_connection()
+
+    if connection is None:
+        return False
+
+    cursor = connection.cursor()
+
+    try:
+
+        query = """
+            INSERT INTO complaints (
+                reference_id,
+                title,
+                category,
+                priority,
+                status,
+                description,
+                anonymous,
+                name,
+                roll,
+                phone
+            )
+            VALUES (
+                %s,
+                %s,
+                %s,
+                %s,
+                'new',
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+            )
+        """
+
+        cursor.execute(
+            query,
+            (
+                reference_id,
+                title,
+                category,
+                priority,
+                description,
+                anonymous,
+                name,
+                roll,
+                phone
+            )
+        )
+
+        connection.commit()
+
+        return True
+
+    except Exception as error:
+
+        connection.rollback()
+
+        print("Complaint database error:", error)
+
+        return False
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+
+def get_all_complaints():
+
+    connection = get_db_connection()
+
+    if connection is None:
+        return []
+
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        query = """
+            SELECT
+                id,
+                reference_id,
+                title,
+                category,
+                priority,
+                status,
+                description,
+                anonymous,
+                name,
+                roll,
+                phone,
+                created_at
+            FROM complaints
+            ORDER BY created_at DESC
+        """
+
+        cursor.execute(query)
+
+        complaints = cursor.fetchall()
+
+        return complaints
+
+    except Exception as error:
+
+        print("Complaint fetch error:", error)
+
+        return []
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+
+def get_complaint_by_reference(reference_id):
+
+    connection = get_db_connection()
+
+    if connection is None:
+        return None
+
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        query = """
+            SELECT
+                id,
+                reference_id,
+                title,
+                category,
+                priority,
+                status,
+                description,
+                anonymous,
+                name,
+                roll,
+                phone,
+                created_at
+            FROM complaints
+            WHERE reference_id = %s
+        """
+
+        cursor.execute(query, (reference_id,))
+
+        return cursor.fetchone()
+
+    except Exception as error:
+
+        print("Complaint fetch error:", error)
+
+        return None
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
