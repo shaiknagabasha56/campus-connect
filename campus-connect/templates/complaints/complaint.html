@@ -14,9 +14,13 @@
   <nav class="navbar">
     <a class="brand" href="#"><span class="brand-mark">R</span><span>RGUKT</span></a>
     <div class="nav-right">
-      <a href="#">Home</a><a href="#">Contact</a>
+      <a href="/homepage/home">Home</a><a href="#contact">Contact</a>
       <button class="calendar-btn" aria-label="Calendar"><i class="fa-regular fa-calendar"></i></button>
-      <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input placeholder="Search categories..."></div>
+      <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input
+    id="complaint-search"
+    type="text"
+    placeholder="Search complaints..."
+></div>
     </div>
   </nav>
 
@@ -84,17 +88,45 @@
       </div>
     </section>
 
-    <section class="contact-card">
+    <section class="contact-card" id="contact">
       <div class="profile-avatar"><i class="fa-solid fa-user"></i></div>
       <div class="contact-main"><p class="eyebrow">COMPLAINT SUPPORT</p><h2>Student Support Desk</h2><p>Complaint Resolution & Student Welfare</p></div>
-      <div class="contact-info"><div><span>Email</span><strong>support@rgukt.ac.in</strong></div><div><span>Location</span><strong>Administrative Block</strong></div></div>
+      <div class="contact-info">
+  <div>
+    <span>Email</span>
+    <strong>
+      <a href="mailto:dsw@rguktong.ac.in">dsw@rguktong.ac.in</a>
+    </strong>
+  </div>
+
+  <div>
+    <span>Location</span>
+    <strong>Administrative Block</strong>
+  </div>
+</div>
     </section>
   </main>
 
   <footer>
     <div><h3>RGUKT Campus Connect</h3><p>One central place for students to discover campus updates, opportunities and announcements.</p></div>
-    <div><h4>University Links</h4><a href="#">RGUKT Official Website</a><a href="#">Admissions</a><a href="#">Academic Programmes</a></div>
-    <div><h4>Quick Navigation</h4><a href="#">Home</a><a href="#">Contact</a><a href="#top">Back to top ↑</a></div>
+    <div>
+    <h4>University Links</h4>
+
+    <a href="https://www.rguktong.ac.in/" target="_blank" rel="noopener noreferrer">
+        RGUKT Official Website Ongole
+    </a>
+
+    <a href="https://admissions.rgukt.in/" target="_blank" rel="noopener noreferrer">
+    Admissions
+</a>
+
+    <a href="https://www.rguktong.ac.in/instituteinfo.php?data=AcademicPrograms"
+   target="_blank"
+   rel="noopener noreferrer">
+    Academic Programmes
+</a>
+</div>
+    <div><h4>Quick Navigation</h4><a href="/homepage/home">Home</a><a href="#contact">Contact</a><a href="#top">Back to top ↑</a></div>
   </footer>
 
   <div id="preview-backdrop" class="preview-backdrop hidden">
@@ -113,5 +145,6 @@
   </div>
 
   <script src="../../static/js/complaint.js"></script>
+<script src="../../static/js/complaint_db.js"></script>
 </body>
 </html>
