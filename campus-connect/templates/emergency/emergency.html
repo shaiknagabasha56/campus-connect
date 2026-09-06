@@ -1,392 +1,1090 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+
   <title>Emergency — RGUKT</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="../../static/css/emergency.css">
-  <style>:root{ --cat: #dc2626; }</style>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/emergency.css') }}"
+  >
+
+  <style>
+    :root {
+      --cat: #dc2626;
+    }
+  </style>
 </head>
+
+
 <body class="na-body">
 
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
   <header class="na-topbar na-topbar-simple">
+
     <div class="container">
-      <a href="index.html" class="na-brand">
-        <img src="rgukt.png" onerror="this.style.display='none'"/>
+
+      <a href="{{ url_for('homepage.homepage') }}" class="na-brand">
+
+        <img
+          src="{{ url_for('static', filename='images/rgukt.png') }}"
+          onerror="this.style.display='none'"
+        />
+
         RGUKT
+
       </a>
 
+
       <div class="na-right-group">
+
         <nav class="na-nav-simple">
-          <a href="../../templates/home/homepage.html">Home</a>
-          <a href="index.html#about">About</a>
-          <a href="index.html#contact">Contact</a>
+
+          <a href="{{ url_for('homepage.homepage') }}">
+            Home
+          </a>
+
+          <a href="{{ url_for('homepage.homepage') }}#about">
+            About
+          </a>
+
+          <a href="{{ url_for('homepage.homepage') }}#contact">
+            Contact
+          </a>
+
+
           <!-- Add Emergency Button -->
-<button class="add-emergency-btn" onclick="openEmergencyForm()">
-    + Add Emergency
-</button>
+
+          <button
+            type="button"
+            class="add-emergency-btn"
+            onclick="openEmergencyForm()"
+          >
+            + Add Emergency
+          </button>
+
         </nav>
-        <button id="calendar-toggle" class="icon-btn" aria-label="Toggle calendar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"/>
+
+
+        <!-- Calendar Button -->
+
+        <button
+          id="calendar-toggle"
+          class="icon-btn"
+          aria-label="Toggle calendar"
+          type="button"
+        >
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+
+            <path
+              d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"
+            />
+
           </svg>
+
         </button>
 
-        <div class="na-search-wrap" role="search">
-          <svg class="na-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/></svg>
-          <input id="na-search-input" type="text" placeholder="Search categories..." aria-label="Search"/>
+
+        <!-- Search -->
+
+        <div
+          class="na-search-wrap"
+          role="search"
+        >
+
+          <svg
+            class="na-search-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+
+            <path
+              d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 9 0z"
+            />
+
+          </svg>
+
+
+          <input
+            id="na-search-input"
+            type="text"
+            placeholder="Search categories..."
+            aria-label="Search"
+          />
+
         </div>
+
       </div>
 
-      <div id="calendar-panel" class="calendar hidden">
+
+      <!-- =================================================
+           CALENDAR PANEL
+      ================================================== -->
+
+      <div
+        id="calendar-panel"
+        class="calendar hidden"
+      >
+
         <div class="calendar-header">
-          <button id="prev-month">◀</button>
+
+          <button
+            id="prev-month"
+            type="button"
+          >
+            ◀
+          </button>
+
           <span id="month-year"></span>
-          <button id="next-month">▶</button>
+
+          <button
+            id="next-month"
+            type="button"
+          >
+            ▶
+          </button>
+
         </div>
+
+
         <div class="calendar-body">
+
           <div class="day-names">
-            <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+
+            <span>S</span>
+            <span>M</span>
+            <span>T</span>
+            <span>W</span>
+            <span>T</span>
+            <span>F</span>
+            <span>S</span>
+
           </div>
-          <div id="calendar-days" class="days-grid"></div>
+
+          <div
+            id="calendar-days"
+            class="days-grid"
+          ></div>
+
         </div>
+
+
         <div class="calendar-footer">
+
           <div class="event-input-wrap">
-            <input type="text" id="event-input" placeholder="Add new event..." />
-            <button id="add-event-btn">＋</button>
+
+            <input
+              type="text"
+              id="event-input"
+              placeholder="Add new event..."
+            />
+
+            <button
+              id="add-event-btn"
+              type="button"
+            >
+              ＋
+            </button>
+
           </div>
+
+
           <div class="event-list">
-            <p id="events">No Events</p>
+
+            <p id="events">
+              No Events
+            </p>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </header>
 
-  <!-- NEWS-STYLE MARQUEE: scrolls right to left, continuous loop -->
-  <div class="emergency-ticker" role="marquee" aria-label="Emergency headlines">
-    <span class="emergency-ticker-label"><i class="fa-solid fa-triangle-exclamation"></i> LIVE</span>
-    <div class="emergency-ticker-track" id="emergency-ticker-track">
-      <div class="emergency-ticker-content" id="emergency-ticker-content">
-        <!-- items injected by emergency.js, duplicated for seamless loop -->
+
+  <!-- =====================================================
+       EMERGENCY TICKER
+  ====================================================== -->
+
+  <div
+    class="emergency-ticker"
+    role="marquee"
+    aria-label="Emergency headlines"
+  >
+
+    <span class="emergency-ticker-label">
+
+      <i class="fa-solid fa-triangle-exclamation"></i>
+
+      LIVE
+
+    </span>
+
+
+    <div
+      class="emergency-ticker-track"
+      id="emergency-ticker-track"
+    >
+
+      <div
+        class="emergency-ticker-content"
+        id="emergency-ticker-content"
+      >
+
+        <!-- Items injected by emergency.js -->
+
       </div>
+
     </div>
+
   </div>
 
 
-  <!-- MAJOR CARD: live scrolling list of currently active emergencies -->
+  <!-- =====================================================
+       ACTIVE EMERGENCIES
+  ====================================================== -->
+
   <section class="na-ann-card">
+
     <div class="na-ann-inner">
+
       <div class="na-ann-header">
-        <h2>🚨 Active Emergencies</h2>
+
+        <h2>
+          🚨 Active Emergencies
+        </h2>
+
+
         <div class="na-filter">
-          <button class="na-filter-toggle" data-emergency-filter-toggle aria-label="Filter emergencies">
+
+          <button
+            class="na-filter-toggle"
+            data-emergency-filter-toggle
+            aria-label="Filter emergencies"
+            type="button"
+          >
+
             <i class="fa-solid fa-filter"></i>
+
           </button>
-          <div class="na-filter-menu hidden" id="emergency-filter-menu">
-            <button class="na-filter-option active" data-emergency-filter="all">All</button>
-            <button class="na-filter-option" data-emergency-filter="critical">Critical</button>
-            <button class="na-filter-option" data-emergency-filter="warning">Warning</button>
-            <button class="na-filter-option" data-emergency-filter="info">Info</button>
+
+
+          <div
+            class="na-filter-menu hidden"
+            id="emergency-filter-menu"
+          >
+
+            <button
+              class="na-filter-option active"
+              data-emergency-filter="all"
+              type="button"
+            >
+              All
+            </button>
+
+            <button
+              class="na-filter-option"
+              data-emergency-filter="critical"
+              type="button"
+            >
+              Critical
+            </button>
+
+            <button
+              class="na-filter-option"
+              data-emergency-filter="warning"
+              type="button"
+            >
+              Warning
+            </button>
+
+            <button
+              class="na-filter-option"
+              data-emergency-filter="info"
+              type="button"
+            >
+              Info
+            </button>
+
           </div>
+
         </div>
+
       </div>
+
+
       <div class="na-ann-scroll">
-        <ul class="na-ann-list" id="active-emergency-list">
+
+        <ul
+          class="na-ann-list"
+          id="active-emergency-list"
+        >
 
           <li data-severity="critical">
-            <span class="na-ann-marker" style="background:#dc2626;"></span>
+
+            <span
+              class="na-ann-marker"
+              style="background:#dc2626;"
+            ></span>
+
+
             <div class="na-ann-body">
-              <span class="na-ann-date">15-08-2026<span class="na-ann-time">9:10 AM</span><span class="na-ann-cat" style="background:#dc2626;">Hostel</span></span>
-              <p class="na-ann-text">Water supply disruption in Boys Hostel Block C — tankers arranged, repair in progress.</p>
+
+              <span class="na-ann-date">
+
+                15-08-2026
+
+                <span class="na-ann-time">
+                  9:10 AM
+                </span>
+
+                <span
+                  class="na-ann-cat"
+                  style="background:#dc2626;"
+                >
+                  Hostel
+                </span>
+
+              </span>
+
+
+              <p class="na-ann-text">
+                Water supply disruption in Boys Hostel Block C — tankers arranged, repair in progress.
+              </p>
+
             </div>
+
           </li>
+
 
           <li data-severity="warning">
-            <span class="na-ann-marker" style="background:#ea580c;"></span>
+
+            <span
+              class="na-ann-marker"
+              style="background:#ea580c;"
+            ></span>
+
+
             <div class="na-ann-body">
-              <span class="na-ann-date">14-08-2026<span class="na-ann-time">6:45 PM</span><span class="na-ann-cat" style="background:#ea580c;">Electrical</span></span>
-              <p class="na-ann-text">Minor electrical fault reported near ECE building — area cordoned off, technician on site.</p>
+
+              <span class="na-ann-date">
+
+                14-08-2026
+
+                <span class="na-ann-time">
+                  6:45 PM
+                </span>
+
+                <span
+                  class="na-ann-cat"
+                  style="background:#ea580c;"
+                >
+                  Electrical
+                </span>
+
+              </span>
+
+
+              <p class="na-ann-text">
+                Minor electrical fault reported near ECE building — area cordoned off, technician on site.
+              </p>
+
             </div>
+
           </li>
+
 
           <li data-severity="warning">
-            <span class="na-ann-marker" style="background:#1d4ed8;"></span>
+
+            <span
+              class="na-ann-marker"
+              style="background:#1d4ed8;"
+            ></span>
+
+
             <div class="na-ann-body">
-              <span class="na-ann-date">14-08-2026<span class="na-ann-time">4:00 PM</span><span class="na-ann-cat" style="background:#1d4ed8;">Weather</span></span>
-              <p class="na-ann-text">Heavy rainfall alert issued for the next 24 hours — avoid low-lying pathways near the lake road.</p>
+
+              <span class="na-ann-date">
+
+                14-08-2026
+
+                <span class="na-ann-time">
+                  4:00 PM
+                </span>
+
+                <span
+                  class="na-ann-cat"
+                  style="background:#1d4ed8;"
+                >
+                  Weather
+                </span>
+
+              </span>
+
+
+              <p class="na-ann-text">
+                Heavy rainfall alert issued for the next 24 hours — avoid low-lying pathways near the lake road.
+              </p>
+
             </div>
+
           </li>
 
-          <li data-severity="info">
-            <span class="na-ann-marker" style="background:#65a30d;"></span>
-            <div class="na-ann-body">
-              <span class="na-ann-date">13-08-2026<span class="na-ann-time">11:30 AM</span><span class="na-ann-cat" style="background:#65a30d;">Drill</span></span>
-              <p class="na-ann-text">Mock fire evacuation drill active near Gate 2 — first aid camp set up for the duration.</p>
-            </div>
-          </li>
 
           <li data-severity="info">
-            <span class="na-ann-marker" style="background:#7c3aed;"></span>
+
+            <span
+              class="na-ann-marker"
+              style="background:#65a30d;"
+            ></span>
+
+
             <div class="na-ann-body">
-              <span class="na-ann-date">12-08-2026<span class="na-ann-time">8:00 PM</span><span class="na-ann-cat" style="background:#7c3aed;">Hostel</span></span>
-              <p class="na-ann-text">Chief Warden on-call for hostel emergencies tonight due to ongoing maintenance work.</p>
+
+              <span class="na-ann-date">
+
+                13-08-2026
+
+                <span class="na-ann-time">
+                  11:30 AM
+                </span>
+
+                <span
+                  class="na-ann-cat"
+                  style="background:#65a30d;"
+                >
+                  Drill
+                </span>
+
+              </span>
+
+
+              <p class="na-ann-text">
+                Mock fire evacuation drill active near Gate 2 — first aid camp set up for the duration.
+              </p>
+
             </div>
+
+          </li>
+
+
+          <li data-severity="info">
+
+            <span
+              class="na-ann-marker"
+              style="background:#7c3aed;"
+            ></span>
+
+
+            <div class="na-ann-body">
+
+              <span class="na-ann-date">
+
+                12-08-2026
+
+                <span class="na-ann-time">
+                  8:00 PM
+                </span>
+
+                <span
+                  class="na-ann-cat"
+                  style="background:#7c3aed;"
+                >
+                  Hostel
+                </span>
+
+              </span>
+
+
+              <p class="na-ann-text">
+                Chief Warden on-call for hostel emergencies tonight due to ongoing maintenance work.
+              </p>
+
+            </div>
+
           </li>
 
         </ul>
+
       </div>
+
     </div>
+
   </section>
+
+
+  <!-- =====================================================
+       EMERGENCY CONTACTS
+  ====================================================== -->
 
   <div class="emergency-wrap">
 
     <div class="na-cat-header">
-      <div class="na-cat-icon"><i class="fa-solid fa-kit-medical"></i></div>
-      <div>
-        <h1>Emergency Contacts</h1>
-        <p>Save these numbers — call directly in case of a genuine emergency.</p>
+
+      <div class="na-cat-icon">
+
+        <i class="fa-solid fa-kit-medical"></i>
+
       </div>
+
+
+      <div>
+
+        <h1>
+          Emergency Contacts
+        </h1>
+
+        <p>
+          Save these numbers — call directly in case of a genuine emergency.
+        </p>
+
+      </div>
+
     </div>
+
 
     <div class="emergency-grid">
 
-      <div class="emergency-card" style="--e-color:#dc2626;">
-        <div class="emergency-card-icon"><i class="fa-solid fa-truck-medical"></i></div>
-        <h4>Ambulance</h4>
-        <a href="tel:108" class="emergency-number">108</a>
-        <p>24/7 campus ambulance service</p>
+
+      <div
+        class="emergency-card"
+        style="--e-color:#dc2626;"
+      >
+
+        <div class="emergency-card-icon">
+          <i class="fa-solid fa-truck-medical"></i>
+        </div>
+
+        <h4>
+          Ambulance
+        </h4>
+
+        <a
+          href="tel:108"
+          class="emergency-number"
+        >
+          108
+        </a>
+
+        <p>
+          24/7 campus ambulance service
+        </p>
+
       </div>
 
-      <div class="emergency-card" style="--e-color:#ea580c;">
-        <div class="emergency-card-icon"><i class="fa-solid fa-fire-extinguisher"></i></div>
-        <h4>Fire Brigade</h4>
-        <a href="tel:101" class="emergency-number">101</a>
-        <p>Fire & rescue services</p>
+
+      <div
+        class="emergency-card"
+        style="--e-color:#ea580c;"
+      >
+
+        <div class="emergency-card-icon">
+          <i class="fa-solid fa-fire-extinguisher"></i>
+        </div>
+
+        <h4>
+          Fire Brigade
+        </h4>
+
+        <a
+          href="tel:101"
+          class="emergency-number"
+        >
+          101
+        </a>
+
+        <p>
+          Fire & rescue services
+        </p>
+
       </div>
 
-      <div class="emergency-card" style="--e-color:#1d4ed8;">
-        <div class="emergency-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
-        <h4>Campus Security</h4>
-        <a href="tel:+919876500000" class="emergency-number">[Security Number]</a>
-        <p>On-campus security control room</p>
+
+      <div
+        class="emergency-card"
+        style="--e-color:#1d4ed8;"
+      >
+
+        <div class="emergency-card-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <h4>
+          Campus Security
+        </h4>
+
+        <a
+          href="tel:+919876500000"
+          class="emergency-number"
+        >
+          [Security Number]
+        </a>
+
+        <p>
+          On-campus security control room
+        </p>
+
       </div>
 
-      <div class="emergency-card" style="--e-color:#0f172a;">
-        <div class="emergency-card-icon"><i class="fa-solid fa-user-shield"></i></div>
-        <h4>Police</h4>
-        <a href="tel:100" class="emergency-number">100</a>
-        <p>Local police station</p>
+
+      <div
+        class="emergency-card"
+        style="--e-color:#0f172a;"
+      >
+
+        <div class="emergency-card-icon">
+          <i class="fa-solid fa-user-shield"></i>
+        </div>
+
+        <h4>
+          Police
+        </h4>
+
+        <a
+          href="tel:100"
+          class="emergency-number"
+        >
+          100
+        </a>
+
+        <p>
+          Local police station
+        </p>
+
       </div>
 
-      <div class="emergency-card" style="--e-color:#0d9488;">
-        <div class="emergency-card-icon"><i class="fa-solid fa-house-medical"></i></div>
-        <h4>Campus Health Centre</h4>
-        <a href="tel:+919876500001" class="emergency-number">[Health Centre Number]</a>
-        <p>On-campus doctor & first aid</p>
+
+      <div
+        class="emergency-card"
+        style="--e-color:#0d9488;"
+      >
+
+        <div class="emergency-card-icon">
+          <i class="fa-solid fa-house-medical"></i>
+        </div>
+
+        <h4>
+          Campus Health Centre
+        </h4>
+
+        <a
+          href="tel:+919876500001"
+          class="emergency-number"
+        >
+          [Health Centre Number]
+        </a>
+
+        <p>
+          On-campus doctor & first aid
+        </p>
+
       </div>
 
-      <div class="emergency-card" style="--e-color:#7c3aed;">
-        <div class="emergency-card-icon"><i class="fa-solid fa-house-flag"></i></div>
-        <h4>Chief Warden</h4>
-        <a href="tel:+919876500002" class="emergency-number">[Chief Warden Number]</a>
-        <p>Hostel emergencies & escalations</p>
+
+      <div
+        class="emergency-card"
+        style="--e-color:#7c3aed;"
+      >
+
+        <div class="emergency-card-icon">
+          <i class="fa-solid fa-house-flag"></i>
+        </div>
+
+        <h4>
+          Chief Warden
+        </h4>
+
+        <a
+          href="tel:+919876500002"
+          class="emergency-number"
+        >
+          [Chief Warden Number]
+        </a>
+
+        <p>
+          Hostel emergencies & escalations
+        </p>
+
       </div>
 
-      <div class="emergency-card" style="--e-color:#db2777;">
-        <div class="emergency-card-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
-        <h4>Women's Helpline</h4>
-        <a href="tel:1091" class="emergency-number">1091</a>
-        <p>24/7 women's safety helpline</p>
+
+      <div
+        class="emergency-card"
+        style="--e-color:#db2777;"
+      >
+
+        <div class="emergency-card-icon">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+        </div>
+
+        <h4>
+          Women's Helpline
+        </h4>
+
+        <a
+          href="tel:1091"
+          class="emergency-number"
+        >
+          1091
+        </a>
+
+        <p>
+          24/7 women's safety helpline
+        </p>
+
       </div>
 
-      <div class="emergency-card" style="--e-color:#65a30d;">
-        <div class="emergency-card-icon"><i class="fa-solid fa-bolt"></i></div>
-        <h4>Electrical Emergency</h4>
-        <a href="tel:+919876500003" class="emergency-number">[Electrical On-call Number]</a>
-        <p>Short circuits, power outages, wiring hazards</p>
+
+      <div
+        class="emergency-card"
+        style="--e-color:#65a30d;"
+      >
+
+        <div class="emergency-card-icon">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+
+        <h4>
+          Electrical Emergency
+        </h4>
+
+        <a
+          href="tel:+919876500003"
+          class="emergency-number"
+        >
+          [Electrical On-call Number]
+        </a>
+
+        <p>
+          Short circuits, power outages, wiring hazards
+        </p>
+
       </div>
 
     </div>
 
   </div>
 
+
+  <!-- =====================================================
+       FOOTER
+  ====================================================== -->
+
   <footer class="na-footer">
+
     &copy; 2025 RGUKT Website. All Rights Reserved.
+
   </footer>
 
-  <script src="../../static/js/emergency.js"></script>
-  
-  
 
-<!-- Create New Emergency Form -->
+  <!-- =====================================================
+       EMERGENCY JAVASCRIPT
+  ====================================================== -->
 
-<div class="emergency-modal" id="emergencyModal">
+  <script src="{{ url_for('static', filename='js/emergency.js') }}"></script>
+
+
+  <!-- =====================================================
+       CREATE NEW EMERGENCY MODAL
+  ====================================================== -->
+
+  <div
+    class="emergency-modal"
+    id="emergencyModal"
+  >
 
     <div class="emergency-form">
 
-        <!-- Form Header -->
-        <div class="form-header">
-            <div class="form-title">
-                <span class="emergency-icon">🚨</span>
-                <h2>Create New Emergency</h2>
-            </div>
 
-            <button class="close-btn" onclick="closeEmergencyForm()">×</button>
+      <!-- Form Header -->
+
+      <div class="form-header">
+
+        <div class="form-title">
+
+          <span class="emergency-icon">
+            🚨
+          </span>
+
+          <h2>
+            Create New Emergency
+          </h2>
+
         </div>
 
 
-        <div class="red-line"></div>
+        <button
+          type="button"
+          class="close-btn"
+          onclick="closeEmergencyForm()"
+        >
+          ×
+        </button>
+
+      </div>
 
 
-        <form id="emergencyForm">
-
-            <!-- Emergency Title -->
-            <div class="form-group">
-                <label>
-                    Emergency Title <span>*</span>
-                </label>
-
-                <input
-                    type="text"
-                    placeholder="Enter emergency title"
-                    required
-                >
-            </div>
+      <div class="red-line"></div>
 
 
-            <!-- Emergency Message -->
-            <div class="form-group">
-                <label>
-                    Emergency Message(includes date & time) <span>*</span>
-                </label>
+      <!-- =================================================
+           ACTUAL FLASK FORM
+      ================================================== -->
 
-                <textarea
-                    placeholder="Enter emergency details / description"
-                    required
-                ></textarea>
-            </div>
+      <form
+        id="emergencyForm"
+        method="POST"
+        action="{{ url_for('emergency.create_emergency_route') }}"
+      >
 
 
-            <!-- Category + Priority -->
-            <div class="form-row">
+        <!-- Emergency Title -->
 
-                <div class="form-group">
-                    <label>
-                        Category / Type <span>*</span>
-                    </label>
+        <div class="form-group">
 
-                    <select required>
-                        <option value="">Select Category</option>
-                        <option>Weather</option>
-                        <option>Medical</option>
-                        <option>Security</option>
-                        <option>Fire</option>
-                        <option>Electrical</option>
-                        <option>Water</option>
-                        <option>General</option>
-                    </select>
-                </div>
+          <label>
+            Emergency Title <span>*</span>
+          </label>
 
 
-                <div class="form-group">
-                    <label>
-                        Priority <span>*</span>
-                    </label>
+          <input
+            type="text"
+            name="title"
+            placeholder="Enter emergency title"
+            required
+          >
 
-                    <select required>
-                        <option value="">Select Priority</option>
-                        <option>Critical</option>
-                        <option>Warning</option>
-                        <option>Info</option>
-                    </select>
-                </div>
-
-            </div>
+        </div>
 
 
-            <!-- Important -->
-            <label class="important-option">
+        <!-- Emergency Message -->
 
-                <input type="checkbox">
+        <div class="form-group">
 
-                <span>
-                    Mark as Important
-                    <small>(Show in Live Ticker)</small>
-                </span>
+          <label>
+            Emergency Message (includes date & time) <span>*</span>
+          </label>
 
+
+          <textarea
+            name="message"
+            placeholder="Enter emergency details / description"
+            required
+          ></textarea>
+
+        </div>
+
+
+        <!-- Category + Priority -->
+
+        <div class="form-row">
+
+
+          <!-- Category -->
+
+          <div class="form-group">
+
+            <label>
+              Category / Type <span>*</span>
             </label>
 
 
-            <!-- Buttons -->
-            <div class="form-actions">
+            <select
+              name="category"
+              required
+            >
 
-                <button
-                    type="reset"
-                    class="reset-btn">
-                    Reset
-                </button>
+              <option value="">
+                Select Category
+              </option>
 
-                <button
-                    type="submit"
-                    class="publish-btn">
-                    🚀 Publish Emergency
-                </button>
+              <option value="Weather">
+                Weather
+              </option>
 
-            </div>
+              <option value="Medical">
+                Medical
+              </option>
 
-        </form>
+              <option value="Security">
+                Security
+              </option>
+
+              <option value="Fire">
+                Fire
+              </option>
+
+              <option value="Electrical">
+                Electrical
+              </option>
+
+              <option value="Water">
+                Water
+              </option>
+
+              <option value="General">
+                General
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- Priority -->
+
+          <div class="form-group">
+
+            <label>
+              Priority <span>*</span>
+            </label>
+
+
+            <select
+              name="priority"
+              required
+            >
+
+              <option value="">
+                Select Priority
+              </option>
+
+              <option value="critical">
+                Critical
+              </option>
+
+              <option value="warning">
+                Warning
+              </option>
+
+              <option value="info">
+                Info
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- Important -->
+
+        <label class="important-option">
+
+
+          <input
+            type="checkbox"
+            name="is_important"
+            value="1"
+          >
+
+
+          <span>
+
+            Mark as Important
+
+            <small>
+              (Show in Live Ticker)
+            </small>
+
+          </span>
+
+
+        </label>
+
+
+        <!-- Buttons -->
+
+        <div class="form-actions">
+
+
+          <button
+            type="reset"
+            class="reset-btn"
+          >
+            Reset
+          </button>
+
+
+          <button
+            type="submit"
+            class="publish-btn"
+          >
+            🚀 Publish Emergency
+          </button>
+
+
+        </div>
+
+      </form>
 
     </div>
 
-</div>
-
-<script>
-function openEmergencyForm() {
-
-    const modal = document.getElementById("emergencyModal");
-
-    modal.style.display = "flex";
-
-    document.body.style.overflow = "hidden";
-}
+  </div>
 
 
-function closeEmergencyForm() {
+  <!-- =====================================================
+       MODAL FUNCTIONS
+  ====================================================== -->
 
-    const modal = document.getElementById("emergencyModal");
+  <script>
 
-    modal.style.display = "none";
+    function openEmergencyForm() {
 
-    document.body.style.overflow = "auto";
-}
+      const modal =
+        document.getElementById("emergencyModal");
 
+      modal.style.display = "flex";
 
-/* Close when clicking outside the form */
+      document.body.style.overflow = "hidden";
 
-document.getElementById("emergencyModal").addEventListener("click", function(event) {
-
-    if (event.target === this) {
-        closeEmergencyForm();
     }
 
-});
+
+    function closeEmergencyForm() {
+
+      const modal =
+        document.getElementById("emergencyModal");
+
+      modal.style.display = "none";
+
+      document.body.style.overflow = "auto";
+
+    }
 
 
-/* Prevent page reload for now */
+    /* Close when clicking outside the form */
 
-document.getElementById("emergencyForm").addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    alert("Emergency published successfully!");
-
-    closeEmergencyForm();
-
-});
-</script>
-
-</body>
-</html>
+    document
+      .getElementByI

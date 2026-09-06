@@ -1,215 +1,268 @@
-/* =========================================================
-   ADMIN PROFILE PANEL
-========================================================= */
+document.addEventListener("DOMContentLoaded", function () {
 
-const adminTrigger = document.getElementById("adminTrigger");
+    /* =========================
+       ADMIN PROFILE PANEL
+    ========================= */
 
-const adminPanel = document.getElementById("adminPanel");
+    const adminTrigger = document.getElementById("adminTrigger");
+    const adminPanel = document.getElementById("adminPanel");
+    const profileOverlay = document.getElementById("profileOverlay");
+    const closeProfile = document.getElementById("closeProfile");
 
-const closeProfile = document.getElementById("closeProfile");
-
-const profileOverlay = document.getElementById("profileOverlay");
-
-
-/* Open Admin Profile */
-
-adminTrigger.addEventListener("click", function () {
-
-    adminPanel.classList.add("open");
-
-    profileOverlay.classList.add("show");
-
-});
-
-
-/* Close Admin Profile */
-
-closeProfile.addEventListener("click", function () {
-
-    adminPanel.classList.remove("open");
-
-    profileOverlay.classList.remove("show");
-
-});
-
-
-/* Close by clicking outside */
-
-profileOverlay.addEventListener("click", function () {
-
-    adminPanel.classList.remove("open");
-
-    profileOverlay.classList.remove("show");
-
-});
-
-
-/* =========================================================
-   MANAGE APPROVED EMERGENCIES
-========================================================= */
-
-const approvedButton =
-    document.getElementById("approvedButton");
-
-const approvedOverlay =
-    document.getElementById("approvedOverlay");
-
-const closeApproved =
-    document.getElementById("closeApproved");
-
-
-/* Open approved emergency page/modal */
-
-approvedButton.addEventListener("click", function () {
-
-    approvedOverlay.classList.add("show");
-
-});
-
-
-/* Close modal */
-
-closeApproved.addEventListener("click", function () {
-
-    approvedOverlay.classList.remove("show");
-
-});
-
-
-/* Click outside modal */
-
-approvedOverlay.addEventListener("click", function (event) {
-
-    if (event.target === approvedOverlay) {
-
-        approvedOverlay.classList.remove("show");
-
+    function openProfile() {
+        adminPanel.classList.add("open");
+        profileOverlay.classList.add("show");
+        document.body.style.overflow = "hidden";
     }
 
-});
+    function closeProfilePanel() {
+        adminPanel.classList.remove("open");
+        profileOverlay.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    if (adminTrigger) {
+        adminTrigger.addEventListener("click", openProfile);
+    }
+
+    if (closeProfile) {
+        closeProfile.addEventListener("click", closeProfilePanel);
+    }
+
+    if (profileOverlay) {
+        profileOverlay.addEventListener("click", closeProfilePanel);
+    }
 
 
-/* =========================================================
-   DELETE APPROVED EMERGENCY
-========================================================= */
+    /* =========================
+       APPROVED EMERGENCIES MODAL
+    ========================= */
 
-const deleteButtons =
-    document.querySelectorAll(".delete-button");
+    const approvedButton = document.getElementById("approvedButton");
+    const approvedOverlay = document.getElementById("approvedOverlay");
+    const closeApproved = document.getElementById("closeApproved");
 
+    function openApprovedModal() {
+        approvedOverlay.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
 
-deleteButtons.forEach(function (button) {
+    function closeApprovedModal() {
+        approvedOverlay.classList.remove("show");
+        document.body.style.overflow = "";
+    }
 
-    button.addEventListener("click", function () {
+    if (approvedButton) {
+        approvedButton.addEventListener("click", openApprovedModal);
+    }
 
-        const row = button.closest("tr");
+    if (closeApproved) {
+        closeApproved.addEventListener("click", closeApprovedModal);
+    }
 
-        const emergencyName =
-            row.querySelector("strong").textContent;
+    if (approvedOverlay) {
+        approvedOverlay.addEventListener("click", function (event) {
 
-        const confirmDelete =
-            confirm(
-                `Are you sure you want to delete "${emergencyName}"?`
-            );
+            if (event.target === approvedOverlay) {
+                closeApprovedModal();
+            }
 
-
-        if (confirmDelete) {
-
-            row.style.opacity = "0";
-
-            row.style.transform = "translateX(20px)";
-
-            row.style.transition = "0.25s";
-
-
-            setTimeout(function () {
-
-                row.remove();
-
-            }, 250);
-
-        }
-
-    });
-
-});
+        });
+    }
 
 
-/* =========================================================
-   SEARCH
-========================================================= */
+    /* =========================
+       CATEGORY FILTER
+    ========================= */
 
-const searchInput =
-    document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const reportTableBody = document.getElementById("reportTableBody");
 
-const reportRows =
-    document.querySelectorAll("#reportTableBody tr");
+    if (categoryFilter && reportTableBody) {
 
+        categoryFilter.addEventListener("change", function () {
 
-searchInput.addEventListener("input", function () {
+            const selectedCategory = this.value;
+            const rows = reportTableBody.querySelectorAll("tr");
 
-    const searchValue =
-        searchInput.value.toLowerCase().trim();
+            rows.forEach(function (row) {
 
+                const rowCategory = row.getAttribute("data-category");
 
-    reportRows.forEach(function (row) {
+                /*
+                 * Keep empty-state row visible.
+                 */
+                if (!rowCategory) {
+                    return;
+                }
 
-        const rowText =
-            row.textContent.toLowerCase();
+                if (
+                    selectedCategory === "all" ||
+                    rowCategory === selectedCategory
+                ) {
 
+                    row.style.display = "";
 
-        if (rowText.includes(searchValue)) {
+                } else {
 
-            row.style.display = "";
+                    row.style.display = "none";
 
-        } else {
+                }
 
-            row.style.display = "none";
-
-        }
-
-    });
-
-});
-
-
-/* =========================================================
-   TABS
-========================================================= */
-
-const tabs =
-    document.querySelectorAll(".tab");
-
-
-tabs.forEach(function (tab) {
-
-    tab.addEventListener("click", function () {
-
-        tabs.forEach(function (item) {
-
-            item.classList.remove("active");
+            });
 
         });
 
-        tab.classList.add("active");
+    }
+
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    const searchInput = document.getElementById("searchInput");
+
+    if (searchInput && reportTableBody) {
+
+        searchInput.addEventListener("input", function () {
+
+            const searchText = this.value.toLowerCase().trim();
+
+            const rows = reportTableBody.querySelectorAll("tr");
+
+            rows.forEach(function (row) {
+
+                const rowText = row.textContent.toLowerCase();
+
+                if (!row.getAttribute("data-category")) {
+                    return;
+                }
+
+                if (rowText.includes(searchText)) {
+
+                    row.style.display = "";
+
+                } else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
+
+        });
+
+    }
+
+
+    /* =========================
+       ESCAPE KEY
+    ========================= */
+
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") {
+
+            closeProfilePanel();
+            closeApprovedModal();
+
+        }
 
     });
 
-});
+
+    /* =========================
+       DELETE CONFIRMATION
+    ========================= */
+
+    const deleteForms = document.querySelectorAll(
+        ".approved-table form"
+    );
+
+    deleteForms.forEach(function (form) {
+
+        form.addEventListener("submit", function (event) {
+
+            const confirmed = confirm(
+                "Are you sure you want to delete this approved emergency?"
+            );
+
+            if (!confirmed) {
+                event.preventDefault();
+            }
+
+        });
+
+    });
 
 
-/* =========================================================
-   ESC KEY
-========================================================= */
+    /* =========================
+       CONTACT SUPPORT
+    ========================= */
 
-document.addEventListener("keydown", function (event) {
+    const contactSupport =
+        document.querySelector(".contact-support");
 
-    if (event.key === "Escape") {
+    if (contactSupport) {
 
-        adminPanel.classList.remove("open");
+        contactSupport.addEventListener("click", function () {
 
-        profileOverlay.classList.remove("show");
+            window.location.href =
+                "mailto:emergency@rgukt.ac.in";
 
-        approvedOverlay.classList.remove("show");
+        });
+
+    }
+
+
+    /* =========================
+       PROFILE OPTION BUTTONS
+    ========================= */
+
+    const profileOptions =
+        document.querySelectorAll(".profile-options button");
+
+    profileOptions.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            alert(
+                button.innerText.trim() +
+                " feature is coming soon."
+            );
+
+        });
+
+    });
+
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    const logoutButton =
+        document.querySelector(".logout-button");
+
+    if (logoutButton) {
+
+        logoutButton.addEventListener("click", function () {
+
+            const confirmed = confirm(
+                "Are you sure you want to logout?"
+            );
+
+            if (confirmed) {
+
+                /*
+                 * Change this URL if your Flask
+                 * logout route has a different name.
+                 */
+
+                window.location.href = "/logout";
+
+            }
+
+        });
 
     }
 
