@@ -1,6 +1,14 @@
+const seedComplaints = [
+  {id:"RGUKT-CMP-2401", title:"Hostel water supply issue", category:"Hostel", priority:"High", status:"in-progress", description:"Water supply has been irregular in the residential block since yesterday evening. The issue affects students during morning and evening hours.", date:"Today, 10:42 AM", anonymous:false, name:"Student", roll:"N200123", phone:"+91 XXXXX XXXXX", attachments:[]},
+  {id:"RGUKT-CMP-2402", title:"Campus maintenance concern", category:"Infrastructure", priority:"Medium", status:"under-review", description:"A maintenance issue has been noticed near the academic block and requires inspection by the concerned department.", date:"Yesterday, 6:15 PM", anonymous:false, name:"Student", roll:"N200456", phone:"+91 XXXXX XXXXX", attachments:[]},
+  {id:"RGUKT-CMP-2403", title:"Anonymous infrastructure report", category:"Infrastructure", priority:"High", status:"new", description:"This complaint was submitted anonymously. The reported issue requires attention and supporting evidence may be attached below.", date:"20 Aug, 4:30 PM", anonymous:true, attachments:[]},
+  {id:"RGUKT-CMP-2404", title:"Library access concern", category:"Academic", priority:"Low", status:"resolved", description:"The reported issue regarding access timings has been reviewed and resolved by the concerned department.", date:"18 Aug, 11:20 AM", anonymous:false, name:"Student", roll:"N200789", phone:"+91 XXXXX XXXXX", attachments:[]},
+  {id:"RGUKT-CMP-2405", title:"Transport schedule issue", category:"Transport", priority:"Medium", status:"in-progress", description:"Students reported an inconsistency in the published transport schedule and requested clarification.", date:"16 Aug, 8:05 AM", anonymous:false, name:"Student", roll:"N200908", phone:"+91 XXXXX XXXXX", attachments:[]}
+];
 
 let complaints = [];
 let currentFilter = "all";
+let searchTerm = "";
 
 const list = document.getElementById("complaints-list");
 const backdrop = document.getElementById("preview-backdrop");
@@ -9,18 +17,95 @@ function prettyStatus(status){
   return status === "under-review" ? "Under Review" : status.split("-").map(x=>x[0].toUpperCase()+x.slice(1)).join(" ");
 }
 
-function renderComplaints(){
-  const filtered = complaints.filter(c => currentFilter === "all" || c.status === currentFilter);
-  list.innerHTML = filtered.length ? filtered.map((c, i) => `
-    <button class="complaint-row" data-id="${c.id}">
-      <span class="row-marker"></span>
-      <span>
-        <h3>${escapeHTML(c.title)}</h3>
-        <p>${escapeHTML(c.description)}</p>
-        <span class="row-bottom"><i class="fa-solid fa-tag"></i> ${escapeHTML(c.category)} &nbsp; <i class="fa-solid fa-flag"></i> ${escapeHTML(c.priority)} &nbsp; <i class="fa-regular fa-clock"></i> ${escapeHTML(c.date)}</span>
-      </span>
-      <span class="status-badge ${c.status}">${prettyStatus(c.status)}</span>
-    </button>`).join("") : `<div style="padding:45px;text-align:center;color:#8290a1;font-size:14px">No complaints found for this status.</div>`;
+function renderComplaints() {
+
+    const filtered = complaints.filter(c => {
+
+        // Check status filter
+        const matchesStatus =
+            currentFilter === "all" ||
+            c.status === currentFilter;
+
+        // Check search
+        const search = searchTerm.toLowerCase().trim();
+
+        const matchesSearch =
+            !search ||
+
+            // Complaint title
+            c.title.toLowerCase().includes(search) ||
+
+            // Description
+            c.description.toLowerCase().includes(search) ||
+
+            // Category
+            c.category.toLowerCase().includes(search) ||
+
+            // Priority
+            c.priority.toLowerCase().includes(search) ||
+
+            // Status
+            c.status.toLowerCase().includes(search) ||
+
+            // Display status e.g. "Under Review"
+            prettyStatus(c.status).toLowerCase().includes(search) ||
+
+            // Student name
+            (c.name || "").toLowerCase().includes(search) ||
+
+            // Roll number
+            (c.roll || "").toLowerCase().includes(search) ||
+
+            // Complaint reference ID
+            (c.id || "").toLowerCase().includes(search);
+
+        return matchesStatus && matchesSearch;
+    });
+
+    list.innerHTML = filtered.length
+        ? filtered.map(c => `
+            <button class="complaint-row" data-id="${c.id}">
+
+                <span class="row-marker"></span>
+
+                <span>
+                    <h3>${escapeHTML(c.title)}</h3>
+
+                    <p>${escapeHTML(c.description)}</p>
+
+                    <span class="row-bottom">
+                        <i class="fa-solid fa-tag"></i>
+                        ${escapeHTML(c.category)}
+
+                        &nbsp;
+
+                        <i class="fa-solid fa-flag"></i>
+                        ${escapeHTML(c.priority)}
+
+                        &nbsp;
+
+                        <i class="fa-regular fa-clock"></i>
+                        ${escapeHTML(c.date)}
+                    </span>
+                </span>
+
+                <span class="status-badge ${c.status}">
+                    ${prettyStatus(c.status)}
+                </span>
+
+            </button>
+        `).join("")
+
+        : `
+            <div style="
+                padding:45px;
+                text-align:center;
+                color:#8290a1;
+                font-size:14px;
+            ">
+                No complaints found.
+            </div>
+        `;
 }
 
 function escapeHTML(value=""){
@@ -97,6 +182,39 @@ document.querySelectorAll(".status-filter").forEach(btn => btn.addEventListener(
   renderComplaints();
 }));
 
+const complaintSearch = document.getElementById("complaint-search");
+
+if (complaintSearch) {
+
+    complaintSearch.addEventListener("input", function () {
+
+        searchTerm = this.value;
+
+        // First filter and display the matching complaints
+        renderComplaints();
+
+        // If search box is empty, don't scroll
+        if (!searchTerm.trim()) {
+            return;
+        }
+
+        // Get the first complaint currently displayed
+        const firstComplaint = document.querySelector(".complaint-row");
+
+        if (firstComplaint) {
+
+            // Scroll down to the matching complaint
+            firstComplaint.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        }
+
+    });
+
+}
+
 list.addEventListener("click", e => {
   const row = e.target.closest(".complaint-row");
   if(row) openPreview(row.dataset.id);
@@ -115,29 +233,33 @@ async function loadComplaintsFromDatabase() {
 
     if (data.success) {
 
-      complaints = data.complaints.map(c => ({
-        id: c.reference_id,
-        title: c.title,
-        category: c.category,
-        priority: c.priority,
-        status: c.status,
-        description: c.description,
+    complaints = [
+        ...seedComplaints,
 
-        date: c.created_at
-          ? new Date(c.created_at).toLocaleString()
-          : "Unknown",
+        ...data.complaints.map(c => ({
+            id: c.reference_id,
+            title: c.title,
+            category: c.category,
+            priority: c.priority,
+            status: c.status,
+            description: c.description,
 
-        anonymous: Boolean(c.anonymous),
+            date: c.created_at
+                ? new Date(c.created_at).toLocaleString()
+                : "Unknown",
 
-        name: c.name || "",
-        roll: c.roll || "",
-        phone: c.phone || "",
+            anonymous: Boolean(c.anonymous),
 
-        attachments: c.attachments || []
-      }));
+            name: c.name || "",
+            roll: c.roll || "",
+            phone: c.phone || "",
 
-      renderComplaints();
-    }
+            attachments: c.attachments || []
+        }))
+    ];
+
+    renderComplaints();
+}
 
   } catch (error) {
 
@@ -240,3 +362,46 @@ backdrop.addEventListener("click",e=>{if(e.target===backdrop)closePreview()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!backdrop.classList.contains("hidden"))closePreview()});
 
 loadComplaintsFromDatabase();
+// ==========================================
+// CONTACT NAVIGATION HIGHLIGHT
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Get ALL Contact links
+    const contactLinks = document.querySelectorAll('a[href="#contact"]');
+
+    // Get Student Support Desk card
+    const contactCard = document.getElementById("contact");
+
+    if (contactLinks.length && contactCard) {
+
+        // Add click event to every Contact link
+        contactLinks.forEach(function (contactLink) {
+
+            contactLink.addEventListener("click", function (event) {
+
+                // Prevent #contact from appearing in URL
+                event.preventDefault();
+
+                // Scroll to Student Support Desk
+                contactCard.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+                // Highlight Student Support Desk
+                contactCard.classList.add("highlight-contact");
+
+                // Remove highlight after 2 seconds
+                setTimeout(function () {
+                    contactCard.classList.remove("highlight-contact");
+                }, 2000);
+
+            });
+
+        });
+
+    }
+
+});

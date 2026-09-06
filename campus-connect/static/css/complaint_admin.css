@@ -132,3 +132,26 @@
 .reset-notice{display:none;margin-top:14px;padding:12px 13px;border-radius:11px;background:#eef9f2;border:1px solid #b7e3c4;color:#24764d;font-size:12px;line-height:1.55}
 .reset-notice.show{display:block}
 .reset-notice i{margin-right:6px}
+/* Contact navigation highlight */
+.contact-card {
+    transition: border 0.3s ease,
+                box-shadow 0.3s ease,
+                transform 0.3s ease;
+}
+
+.contact-card.highlight-contact {
+    border: 3px solid #159bb5;
+    box-shadow: 0 0 25px rgba(21, 155, 181, 0.35);
+    transform: scale(1.01);
+}
+/* Student Support Desk email color */
+.contact-info a {
+    color: #405068 !important;
+    text-decoration: none !important;
+    font-weight: 700;
+}
+
+.contact-info a:hover {
+    color: #405068 !important;
+    text-decoration: none !important;
+}
