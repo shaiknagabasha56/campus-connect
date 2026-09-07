@@ -142,9 +142,110 @@ def google_callback():
     session["email"] = user["email"]
     session["role"] = user["role"]
     session["organization_id"] = user["organization_id"]
-    # Keep session for configured lifetime
-    session.permanent = True
     # Redirect to homepage
     return redirect(
         url_for("homepage.homepage")
     )
+
+
+# ==================================================
+# PROFILE DATA ENDPOINT
+# ==================================================
+@auth_bp.route("/profile", methods=["GET"])
+def get_profile():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"success": False, "message": "Not logged in."}), 401
+    
+    from database.queries import get_user_by_id
+    user = get_user_by_id(user_id)
+    if not user:
+        return jsonify({"success": False, "message": "User not found."}), 404
+    
+    return jsonify({
+        "success": True,
+        "user": {
+            "id": user["id"],
+            "username": user["username"],
+            "email": user["email"],
+            "phone": user.get("phone") or "",
+            "role": user["role"],
+            "profile_picture": user.get("profile_picture") or "",
+            "organization_id": user.get("organization_id")
+        }
+    })
+
+
+# ==================================================
+# EDIT PROFILE ENDPOINT
+# ==================================================
+@auth_bp.route("/profile/edit", methods=["POST"])
+def edit_profile():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"success": False, "message": "Not logged in."}), 401
+
+    data = request.get_json() or request.form
+    username = data.get("username", "").strip()
+    phone = data.get("phone", "").strip()
+
+    if not username:
+        return jsonify({"success": False, "message": "Username is required."}), 400
+    if len(username) < 3:
+        return jsonify({"success": False, "message": "Username must be at least 3 characters."}), 400
+
+    from database.queries import update_user_profile, get_user_by_id
+    success = update_user_profile(user_id, username, phone)
+    if success:
+        session["username"] = username
+        user = get_user_by_id(user_id)
+        return jsonify({
+            "success": True,
+            "message": "Profile updated successfully.",
+            "user": {
+                "id": user["id"],
+                "username": user["username"],
+                "email": user["email"],
+                "phone": user.get("phone") or "",
+                "role": user["role"]
+            }
+        })
+    return jsonify({"success": False, "message": "Failed to update profile."}), 500
+
+
+# ==================================================
+# CHANGE PASSWORD ENDPOINT
+# ==================================================
+@auth_bp.route("/change-password", methods=["POST"])
+def change_password():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"success": False, "message": "Not logged in."}), 401
+
+    data = request.get_json() or request.form
+    current_password = data.get("current_password", "")
+    new_password = data.get("new_password", "")
+    confirm_password = data.get("confirm_password", "")
+
+    if not current_password or not new_password:
+        return jsonify({"success": False, "message": "Current and new password are required."}), 400
+    if len(new_password) < 6:
+        return jsonify({"success": False, "message": "New password must be at least 6 characters."}), 400
+    if new_password != confirm_password:
+        return jsonify({"success": False, "message": "New passwords do not match."}), 400
+
+    from database.queries import get_user_by_id, update_user_password_by_id
+    from werkzeug.security import check_password_hash, generate_password_hash
+
+    user = get_user_by_id(user_id)
+    if not user or not user.get("password_hash"):
+        return jsonify({"success": False, "message": "Unable to verify current password."}), 400
+
+    if not check_password_hash(user["password_hash"], current_password):
+        return jsonify({"success": False, "message": "Incorrect current password."}), 400
+
+    new_hash = generate_password_hash(new_password)
+    updated = update_user_password_by_id(user_id, new_hash)
+    if updated:
+        return jsonify({"success": True, "message": "Password changed successfully."})
+    return jsonify({"success": False, "message": "Failed to update password."}), 500

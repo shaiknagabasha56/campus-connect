@@ -31,7 +31,7 @@
     <!-- Brand -->
     <div class="brand_1" aria-hidden="false">
       <div>
-        <img src="../static/rgukt.png" class="rgukt-logo"/>
+        <img src="{{ url_for('static', filename='images/campus_connect_logo.png') }}" class="rgukt-logo" alt="Campus Connect Logo"/>
       </div>
       <div style="font-size:20px;letter-spacing:0.6px">CAMPUS CONNECT</div>
     </div>
@@ -94,7 +94,7 @@
 
       <!-- Profile -->
       <div class="profile" title="Profile">
-        <img src="../static/cse-rgukt.png" alt="Profile">
+        <img src="{{ url_for('static', filename='images/cse-rgukt.png') }}" alt="Profile">
       </div>
     </div>
   </div>
@@ -376,10 +376,10 @@
 
   <!-- Profile section -->
   <div class="dashboard-user">
-    <img src="../static/cse-rgukt.png" alt="Profile">
+    <img src="{{ url_for('static', filename='images/cse-rgukt.png') }}" alt="Profile">
     <div>
-      <p><strong>Basha</strong></p>
-      <p class="email">basha@rguktong.ac.in</p>
+      <p><strong>{{ session.get('username', 'Student') }}</strong></p>
+      <p class="email">{{ session.get('email', 'student@rguktong.ac.in') }}</p>
     </div>
   </div>
 

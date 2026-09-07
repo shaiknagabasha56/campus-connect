@@ -1,12 +1,4 @@
-const seedComplaints = [
-  {id:"RGUKT-CMP-2401", title:"Hostel water supply issue", category:"Hostel", priority:"High", status:"in-progress", description:"Water supply has been irregular in the residential block since yesterday evening. The issue affects students during morning and evening hours.", date:"Today, 10:42 AM", anonymous:false, name:"Student", roll:"N200123", phone:"+91 XXXXX XXXXX", attachments:[]},
-  {id:"RGUKT-CMP-2402", title:"Campus maintenance concern", category:"Infrastructure", priority:"Medium", status:"under-review", description:"A maintenance issue has been noticed near the academic block and requires inspection by the concerned department.", date:"Yesterday, 6:15 PM", anonymous:false, name:"Student", roll:"N200456", phone:"+91 XXXXX XXXXX", attachments:[]},
-  {id:"RGUKT-CMP-2403", title:"Anonymous infrastructure report", category:"Infrastructure", priority:"High", status:"new", description:"This complaint was submitted anonymously. The reported issue requires attention and supporting evidence may be attached below.", date:"20 Aug, 4:30 PM", anonymous:true, attachments:[]},
-  {id:"RGUKT-CMP-2404", title:"Library access concern", category:"Academic", priority:"Low", status:"resolved", description:"The reported issue regarding access timings has been reviewed and resolved by the concerned department.", date:"18 Aug, 11:20 AM", anonymous:false, name:"Student", roll:"N200789", phone:"+91 XXXXX XXXXX", attachments:[]},
-  {id:"RGUKT-CMP-2405", title:"Transport schedule issue", category:"Transport", priority:"Medium", status:"in-progress", description:"Students reported an inconsistency in the published transport schedule and requested clarification.", date:"16 Aug, 8:05 AM", anonymous:false, name:"Student", roll:"N200908", phone:"+91 XXXXX XXXXX", attachments:[]}
-];
-
-let complaints = [...seedComplaints];
+let complaints = [];
 let currentFilter = "all";
 
 const list = document.getElementById("complaints-list");
@@ -14,6 +6,19 @@ const backdrop = document.getElementById("preview-backdrop");
 
 function prettyStatus(status){
   return status === "under-review" ? "Under Review" : status.split("-").map(x=>x[0].toUpperCase()+x.slice(1)).join(" ");
+}
+
+async function fetchComplaints(){
+  try {
+    const res = await fetch("/complaints/list");
+    const data = await res.json();
+    if(data.success && Array.isArray(data.complaints)){
+      complaints = data.complaints;
+      renderComplaints();
+    }
+  } catch(err) {
+    console.error("Error fetching complaints:", err);
+  }
 }
 
 function renderComplaints(){
@@ -43,7 +48,7 @@ function openPreview(id){
   badge.className = `status-badge ${c.status}`;
   badge.textContent = prettyStatus(c.status);
   document.getElementById("preview-date").textContent = c.date;
-  document.getElementById("preview-description").textContent = c.description;
+  document.getElementById("preview-description").textContent = c.description + (c.admin_reply ? `\n\n[ADMIN REPLY]: ${c.admin_reply}` : "");
   document.getElementById("preview-reference").textContent = c.id;
 
   const meta = [
@@ -109,31 +114,48 @@ list.addEventListener("click", e => {
   if(row) openPreview(row.dataset.id);
 });
 
-document.querySelectorAll("#normal-form, #anonymous-form").forEach(form => form.addEventListener("submit", e => {
+document.querySelectorAll("#normal-form, #anonymous-form").forEach(form => form.addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(form);
   const anonymous = form.id === "anonymous-form";
-  const attachments = [...form.querySelector('input[type="file"]').files].map(file => ({name:file.name,type:file.type,url:URL.createObjectURL(file)}));
-  const complaint = {
-    id:"RGUKT-CMP-"+Math.floor(100000+Math.random()*899999),
-    title:fd.get("title"), category:fd.get("category"), priority:fd.get("priority"),
-    status:"new", description:fd.get("description"), date:"Just now", anonymous,
-    name:anonymous ? "" : fd.get("name"), roll:anonymous ? "" : fd.get("roll"),
-    phone:anonymous ? "" : fd.get("phone"), attachments
-  };
-  complaints.unshift(complaint);
-  currentFilter="all";
-  document.querySelectorAll(".status-filter").forEach(b=>b.classList.toggle("active",b.dataset.status==="all"));
-  renderComplaints();
-  form.reset();
-  const msg=document.getElementById("form-message");
-  msg.textContent=`Your complaint has been submitted successfully. Reference ID: ${complaint.id}`;
-  msg.className="form-message show success";
-  setTimeout(()=>msg.className="form-message",5000);
+  fd.append("anonymous", anonymous ? "true" : "false");
+
+  const msg = document.getElementById("form-message");
+  msg.textContent = "Submitting complaint...";
+  msg.className = "form-message show";
+
+  try {
+    const res = await fetch("/complaints/submit", {
+      method: "POST",
+      body: fd
+    });
+    const data = await res.json();
+    if(data.success){
+      if(data.complaint){
+        complaints.unshift(data.complaint);
+      }
+      currentFilter = "all";
+      document.querySelectorAll(".status-filter").forEach(b=>b.classList.toggle("active", b.dataset.status==="all"));
+      renderComplaints();
+      form.reset();
+      msg.textContent = `Your complaint has been submitted successfully. Reference ID: ${data.reference_id}`;
+      msg.className = "form-message show success";
+    } else {
+      msg.textContent = data.message || "Failed to submit complaint.";
+      msg.className = "form-message show error";
+    }
+  } catch(err) {
+    console.error("Submission error:", err);
+    msg.textContent = "Error submitting complaint. Please try again.";
+    msg.className = "form-message show error";
+  }
+
+  setTimeout(() => msg.className = "form-message", 6000);
 }));
 
-document.getElementById("preview-close").addEventListener("click",closePreview);
-backdrop.addEventListener("click",e=>{if(e.target===backdrop)closePreview()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!backdrop.classList.contains("hidden"))closePreview()});
+document.getElementById("preview-close").addEventListener("click", closePreview);
+backdrop.addEventListener("click", e => { if(e.target===backdrop) closePreview() });
+document.addEventListener("keydown", e => { if(e.key==="Escape" && !backdrop.classList.contains("hidden")) closePreview() });
 
-renderComplaints();
+fetchComplaints();
+

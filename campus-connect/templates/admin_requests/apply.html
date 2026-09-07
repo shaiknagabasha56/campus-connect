@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Apply to be Club Admin</title>
+</head>
+<body>
+  <h2>Apply to become a Club Admin</h2>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <p style="color: green;">{{ messages[0] }}</p>
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST">
+    <select name="organization_id" required>
+      <option value="">-- Select your club --</option>
+      {% for org in organizations %}
+        <option value="{{ org.id }}">{{ org.name }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Submit Request</button>
+  </form>
+</body>
+</html>

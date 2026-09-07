@@ -289,10 +289,32 @@
                 applyBtn.textContent = "Apply Now";
                 applyBtn.className = "update-modal-apply enabled";
                 applyBtn.disabled = false;
-                applyBtn.onclick = () => {
-                    if (data.applyLink) window.open(data.applyLink, "_blank", "noopener");
+                applyBtn.onclick = async () => {
+                    if (data.applyLink && (data.applyLink.startsWith("http://") || data.applyLink.startsWith("https://"))) {
+                        window.open(data.applyLink, "_blank", "noopener");
+                    }
+                    // Save application to database
+                    try {
+                        const res = await fetch("/applications/apply", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                organization_slug: item.dataset.uploadedBy || "",
+                                reason: `Application for update: ${data.title}`
+                            })
+                        });
+                        const resData = await res.json();
+                        if (resData.success) {
+                            alert(`Application submitted successfully! Reference ID: ${resData.reference_id}`);
+                        } else {
+                            if (!data.applyLink) alert(resData.message || "Could not submit application.");
+                        }
+                    } catch(err) {
+                        console.error("Application error:", err);
+                    }
                 };
             } else if (data.apply === "false") {
+
                 applyBtn.textContent = "Applications Closed";
                 applyBtn.className = "update-modal-apply disabled";
                 applyBtn.disabled = true;

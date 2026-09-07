@@ -1,4 +1,5 @@
 from flask import Flask, render_template, session, redirect, url_for, request,abort
+from routes.admin_requests import admin_requests_bp
 from config import Config
 from database.queries import get_organization_by_slug
 from extensions import oauth
@@ -13,6 +14,9 @@ from routes.complaints import complaints_bp
 from routes.emergency import emergency_bp
 from routes.admin import admin_bp
 from routes.updates import updates_bp
+from routes.applications import applications_bp
+from routes.chatbot import chatbot_bp
+from routes.superadmin import superadmin_bp
 
 
 def createApp():
@@ -41,6 +45,13 @@ def createApp():
     app.register_blueprint(emergency_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(updates_bp)
+    app.register_blueprint(applications_bp)
+    app.register_blueprint(chatbot_bp)
+    app.register_blueprint(superadmin_bp)
+    app.register_blueprint(admin_requests_bp)
+
+
+
 
     @app.before_request
     def require_login():
@@ -50,40 +61,41 @@ def createApp():
         # ALLOW LANDING PAGE
         if request.endpoint == "landing_page":
             return None
-        # ALLOW TEMP DEV PREVIEW (remove before merging)
-        if request.endpoint == "admin.admin_dev_preview":
-            return None
         # ALLOW AUTH ROUTES
         if request.endpoint and request.endpoint.startswith("auth."):
             return None
         # LOGIN CHECK 
         if "user_id" not in session:
             return redirect(url_for("auth.login"))
-        # ADMIN ROUTE CHECK
-    
-        if request.path.endswith("/admin"):
-            # User must be an admin
-            if session.get("role") != "admin":
+
+        # SUPER ADMIN ROUTE CHECK
+        if request.path.startswith("/superadmin"):
+            if session.get("role") != "super_admin":
                 abort(403)
-                # Get organization slug from URL
+            return None
+
+        # ADMIN ROUTE CHECK
+        if request.path.endswith("/admin") or "/admin/" in request.path:
+            role = session.get("role")
+            if role not in ["admin", "super_admin"]:
+                abort(403)
+            
+            # Super admin has unrestricted access to all admin pages
+            if role == "super_admin":
+                return None
+
+            # For organization admin, check organization ownership
             path_parts = request.path.strip("/").split("/")
-            if len(path_parts) >= 3:
-                organization_slug = path_parts[-2]
-                # Get organization from database
-                organization = get_organization_by_slug(
-                    organization_slug
-            )
-                # Organization does not exist
-                if not organization:
-                    abort(404)
-
-
-                # Check organization ownership
-                if session.get("organization_id") != organization["id"]:
-                    abort(403)
-
+            # Patterns like /clubs/artix/admin or /admin/clubs/artix_admin
+            for part in path_parts:
+                org = get_organization_by_slug(part)
+                if org:
+                    if session.get("organization_id") != org["id"]:
+                        abort(403)
+                    break
 
     # LANDING PAGE
+
     @app.route("/")
     def landing_page():
         return render_template("landing.html")

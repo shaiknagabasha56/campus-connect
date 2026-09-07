@@ -84,13 +84,30 @@ async function logoutUser() {
         }
       });
       
-      // PROFILE DASHBOARD TOGGLE
+      // PROFILE DASHBOARD TOGGLE & DATA FETCHING
 const profileIcon = document.querySelector('.profile');
 const dashboard = document.getElementById('profileDashboard');
 const overlay = document.getElementById('dashboardOverlay');
 const closeBtn = document.querySelector('.close-dashboard');
 
+async function fetchUserProfile(){
+  try {
+    const res = await fetch("/auth/profile");
+    const data = await res.json();
+    if(data.success && data.user){
+      const user = data.user;
+      const nameEl = dashboard.querySelector('.dashboard-user strong');
+      const emailEl = dashboard.querySelector('.dashboard-user .email');
+      if(nameEl) nameEl.textContent = user.username;
+      if(emailEl) emailEl.textContent = user.email;
+    }
+  } catch(err) {
+    console.error("Error fetching profile:", err);
+  }
+}
+
 function openDashboard(){
+  fetchUserProfile();
   dashboard.classList.add('active');
   overlay.classList.add('active');
   dashboard.setAttribute('aria-hidden', 'false');
@@ -102,9 +119,9 @@ function closeDashboard(){
   dashboard.setAttribute('aria-hidden', 'true');
 }
 
-profileIcon.addEventListener('click', openDashboard);
-closeBtn.addEventListener('click', closeDashboard);
-overlay.addEventListener('click', closeDashboard);
+if(profileIcon) profileIcon.addEventListener('click', openDashboard);
+if(closeBtn) closeBtn.addEventListener('click', closeDashboard);
+if(overlay) overlay.addEventListener('click', closeDashboard);
 
 // Handle sub-panels
 const optionButtons = document.querySelectorAll('.dash-btn[data-panel]');
@@ -114,7 +131,8 @@ const backButtons = document.querySelectorAll('.back-btn');
 optionButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const panelId = btn.getAttribute('data-panel');
-    document.getElementById(panelId).classList.add('active');
+    const panel = document.getElementById(panelId);
+    if(panel) panel.classList.add('active');
   });
 });
 
@@ -124,7 +142,6 @@ backButtons.forEach(btn => {
   });
 });
 
-// Also close sub-panels if dashboard is closed
 closeBtn.addEventListener('click', () => {
   subPanels.forEach(p => p.classList.remove('active'));
   closeDashboard();
@@ -151,10 +168,8 @@ overlay.addEventListener('click', () => {
       clearInterval(intervalId);
     }
 
-    // Start rotation initially
     startRotation();
 
-    // Pause when mouse enters, resume when mouse leaves
     card.addEventListener("mouseenter", stopRotation);
     card.addEventListener("mouseleave", startRotation);
   }
@@ -164,95 +179,103 @@ overlay.addEventListener('click', () => {
     rotateAnnouncements(card, interval);
   });
 
+  navSearch.addEventListener('input', ()=>{
+    if(navSearch.value.trim()===''){
+      const cards = document.querySelectorAll('#notice-cards .card');
+      cards.forEach(card=> card.style.display = '');
+    }
+  });
 
-      // reset filter when clearing search
-      navSearch.addEventListener('input', ()=>{
-        if(navSearch.value.trim()===''){
-          const cards = document.querySelectorAll('#notice-cards .card');
-          cards.forEach(card=> card.style.display = '');
-        }
+})();
+
+// CHATBOT INTEGRATION
+(function(){
+  const toggleBtn = document.getElementById('rg-chat-toggle');
+  const panel = document.getElementById('rg-chat-panel');
+  const closeBtn = document.getElementById('rg-chat-close');
+  const messagesWrap = document.getElementById('rg-chat-messages');
+  const input = document.getElementById('rg-chat-input');
+  const sendBtn = document.getElementById('rg-send-btn');
+  const emojiBtn = document.getElementById('rg-emoji-btn');
+  const emojiPicker = document.getElementById('rg-emoji-picker');
+  const suggestions = document.getElementById('rg-chat-suggestions');
+
+  let emojiOpen = false;
+
+  function openPanel(){
+    panel.classList.add('rg-open');
+    panel.setAttribute('aria-hidden','false');
+    toggleBtn.style.display = 'none';
+    input.focus();
+  }
+  function closePanel(){
+    panel.classList.remove('rg-open');
+    panel.setAttribute('aria-hidden','true');
+    toggleBtn.style.display = 'flex';
+    hideEmojiPicker();
+  }
+
+  if(toggleBtn) toggleBtn.addEventListener('click', (e) => { openPanel(); });
+  if(closeBtn) closeBtn.addEventListener('click', (e) => { closePanel(); });
+
+  function appendUser(text){
+    const el = document.createElement('div');
+    el.className = 'rg-msg rg-user';
+    el.textContent = text;
+    messagesWrap.appendChild(el);
+    scrollBottom();
+  }
+
+  function appendBot(text){
+    const el = document.createElement('div');
+    el.className = 'rg-msg rg-bot';
+    // Format markdown stars if any
+    el.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    messagesWrap.appendChild(el);
+    scrollBottom();
+  }
+
+  function scrollBottom(){
+    setTimeout(()=> messagesWrap.scrollTop = messagesWrap.scrollHeight, 40);
+  }
+
+  async function sendMessage(textFromSuggestion){
+    const text = (typeof textFromSuggestion === 'string' ? textFromSuggestion : input.value).trim();
+    if(!text) return;
+
+    if(typeof textFromSuggestion !== 'string') input.value = '';
+    hideEmojiPicker();
+    appendUser(text);
+
+    try {
+      const res = await fetch("/api/chatbot/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
       });
-
-    })();
-    
-      (function(){
-    const toggleBtn = document.getElementById('rg-chat-toggle');
-    const panel = document.getElementById('rg-chat-panel');
-    const closeBtn = document.getElementById('rg-chat-close');
-    const messagesWrap = document.getElementById('rg-chat-messages');
-    const input = document.getElementById('rg-chat-input');
-    const sendBtn = document.getElementById('rg-send-btn');
-    const emojiBtn = document.getElementById('rg-emoji-btn');
-    const emojiPicker = document.getElementById('rg-emoji-picker');
-    const suggestions = document.getElementById('rg-chat-suggestions');
-
-    let emojiOpen = false;
-
-    function openPanel(){
-      panel.classList.add('rg-open');
-      panel.setAttribute('aria-hidden','false');
-      toggleBtn.style.display = 'none';
-      input.focus();
+      const data = await res.json();
+      if(data.success && data.reply){
+        appendBot(data.reply);
+      } else {
+        appendBot("Sorry, I encountered an issue processing your request.");
+      }
+    } catch(err) {
+      console.error("Chatbot error:", err);
+      appendBot("Connecting error. Please check your network.");
     }
-    function closePanel(){
-      panel.classList.remove('rg-open');
-      panel.setAttribute('aria-hidden','true');
-      toggleBtn.style.display = 'flex';
-      hideEmojiPicker();
-    }
+  }
 
-    toggleBtn.addEventListener('click', (e) => { openPanel(); });
-    closeBtn.addEventListener('click', (e) => { closePanel(); });
+  if(sendBtn) sendBtn.addEventListener('click', ()=> sendMessage());
 
-    // append message helpers
-    function appendUser(text){
-      const el = document.createElement('div');
-      el.className = 'rg-msg rg-user';
-      el.textContent = text;
-      messagesWrap.appendChild(el);
-      scrollBottom();
-    }
-    function appendBot(text){
-      const el = document.createElement('div');
-      el.className = 'rg-msg rg-bot';
-      el.textContent = text;
-      messagesWrap.appendChild(el);
-      scrollBottom();
-    }
-    function scrollBottom(){
-      // small timeout to allow DOM to render then scroll
-      setTimeout(()=> messagesWrap.scrollTop = messagesWrap.scrollHeight, 40);
-    }
-
-    // central send function (used for button, Enter, and suggested buttons)
-    function sendMessage(textFromSuggestion){
-      const text = (typeof textFromSuggestion === 'string' ? textFromSuggestion : input.value).trim();
-      if(!text) return;
-
-      // if it came from input, clear it
-      if(typeof textFromSuggestion !== 'string') input.value = '';
-
-      // hide emoji picker (so it doesn't block)
-      hideEmojiPicker();
-
-      appendUser(text);
-
-      // placeholder bot reply (simulate)
-      setTimeout(()=>{
-        appendBot("You said: " + text);
-      }, 700);
-    }
-
-    // send on click
-    sendBtn.addEventListener('click', ()=> sendMessage());
-
-    // send on Enter key
+  if(input) {
     input.addEventListener('keydown', function(e){
       if(e.key === "Enter"){
         e.preventDefault();
         sendMessage();
       }
     });
+  }
+
 
     // SUGGESTED BUTTONS: send immediately when clicked
     suggestions.addEventListener('click', function(e){

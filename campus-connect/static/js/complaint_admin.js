@@ -174,7 +174,116 @@ if(editHeadingBtn) editHeadingBtn.addEventListener('click',()=>openEdit('heading
 if(editManagementBtn) editManagementBtn.addEventListener('click',()=>openEdit('management'));
 if(editSupportBtn) editSupportBtn.addEventListener('click',()=>openEdit('support'));
 if(editCloseBtn) editCloseBtn.addEventListener('click',()=>{document.getElementById('edit-backdrop').classList.add('hidden');document.body.style.overflow=''});
-function updateAdminCounts(){document.getElementById('complaintsAdminCount').textContent=complaints.length;document.getElementById('applicationsAdminCount').textContent=applicationSeed.length}updateAdminCounts();
+async function fetchAdminComplaints(){
+  try {
+    const res = await fetch("/complaints/admin/list");
+    const data = await res.json();
+    if(data.success && Array.isArray(data.complaints)){
+      complaints = data.complaints;
+      updateAdminCounts();
+      renderComplaints();
+    }
+  } catch(err) {
+    console.error("Error loading admin complaints:", err);
+  }
+}
+
+async function updateAdminComplaintStatus(id, newStatus, replyText=""){
+  try {
+    const res = await fetch("/complaints/admin/update-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: id,
+        status: newStatus,
+        admin_reply: replyText
+      })
+    });
+    const data = await res.json();
+    if(data.success){
+      const item = complaints.find(c => c.id === id);
+      if(item){
+        item.status = newStatus;
+        if(replyText) item.admin_reply = replyText;
+      }
+      renderManagement();
+      renderManagementPreview(id);
+      renderComplaints();
+      alert("Complaint status updated successfully!");
+    } else {
+      alert(data.message || "Failed to update complaint status.");
+    }
+  } catch(err) {
+    console.error("Error updating complaint status:", err);
+    alert("Error updating status.");
+  }
+}
+
+function renderManagementPreview(id){
+  const item = currentManagementItems().find(x=>x.id===id);
+  if(!item) return;
+  const isComplaint = managementType === 'complaints';
+  const data = isComplaint ? [
+    ['Reference ID', item.id],
+    ['Submission', item.anonymous ? 'Anonymous' : 'Normal'],
+    ['Category', item.category],
+    ['Priority', item.priority],
+    ['Status', prettyStatus(item.status)],
+    ['Date', item.date],
+    ['Name', item.anonymous ? 'Not shared' : (item.name || 'Student')],
+    ['Roll / ID', item.anonymous ? 'Not shared' : (item.roll || 'Not provided')],
+    ['Contact', item.anonymous ? 'Not shared' : (item.phone || 'Not provided')]
+  ] : [
+    ['Application ID', item.id],
+    ['Category', item.category],
+    ['Status', item.status],
+    ['Date', item.date],
+    ['Student', item.student],
+    ['Roll / ID', item.roll]
+  ];
+
+  let statusControlHtml = '';
+  if(isComplaint){
+    statusControlHtml = `
+      <div class="admin-status-updater" style="margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <h4 style="margin-top:0; font-size:14px;">UPDATE COMPLAINT STATUS</h4>
+        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+          <button class="status-btn ${item.status==='new'?'active':''}" onclick="updateAdminComplaintStatus('${item.id}', 'new')" style="padding:6px 12px; border-radius:4px; border:1px solid #cbd5e1; cursor:pointer;">New</button>
+          <button class="status-btn ${item.status==='under-review'?'active':''}" onclick="updateAdminComplaintStatus('${item.id}', 'under-review')" style="padding:6px 12px; border-radius:4px; border:1px solid #cbd5e1; cursor:pointer;">Under Review</button>
+          <button class="status-btn ${item.status==='in-progress'?'active':''}" onclick="updateAdminComplaintStatus('${item.id}', 'in-progress')" style="padding:6px 12px; border-radius:4px; border:1px solid #cbd5e1; cursor:pointer;">In Progress</button>
+          <button class="status-btn ${item.status==='resolved'?'active':''}" onclick="updateAdminComplaintStatus('${item.id}', 'resolved')" style="padding:6px 12px; border-radius:4px; border:1px solid #cbd5e1; cursor:pointer; background:#22c55e; color:white;">Resolved</button>
+        </div>
+        <div style="margin-top:10px;">
+          <textarea id="adminReplyText" placeholder="Add an admin response/reply for the student..." style="width:100%; height:70px; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:inherit;">${escapeHTML(item.admin_reply||'')}</textarea>
+          <button onclick="updateAdminComplaintStatus('${item.id}', '${item.status}', document.getElementById('adminReplyText').value)" style="margin-top:6px; padding:8px 16px; background:#2563eb; color:white; border:none; border-radius:6px; cursor:pointer;">Save Response</button>
+        </div>
+      </div>
+    `;
+  }
+
+  managementPreview.innerHTML = `
+    <div class="admin-preview-head">
+      <p class="eyebrow">${isComplaint?(item.anonymous?'ANONYMOUS COMPLAINT':'COMPLAINT DETAILS'):'APPLICATION DETAILS'}</p>
+      <h3>${escapeHTML(item.title)}</h3>
+      <p>Complete submitted information and supporting attachments.</p>
+    </div>
+    <div class="admin-meta-grid">
+      ${data.map(([k,v])=>`<div class="admin-data-box"><span>${escapeHTML(k)}</span><strong>${escapeHTML(v)}</strong></div>`).join('')}
+    </div>
+    <div class="admin-description">
+      <h4>${isComplaint?'COMPLAINT DETAILS':'APPLICATION DETAILS'}</h4>
+      <p>${escapeHTML(item.description)}</p>
+    </div>
+    ${statusControlHtml}
+    <div class="admin-attachments" style="margin-top:15px;">
+      <h4>ATTACHMENTS</h4>
+      ${renderAdminAttachments(item.attachments||[])}
+    </div>
+  `;
+}
+
+// Fetch complaints from server on load
+fetchAdminComplaints();
 
 
 // Admin dashboard — AWS-style right-side profile panel.

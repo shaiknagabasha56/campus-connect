@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Campus Connect — one connected platform for everything that matters on campus.">
   <title>Campus Connect | RGUKT</title>
-  <link rel="stylesheet" href="../../static/css/landing.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
 </head>
 <body>
 
 <header class="navbar-shell">
   <nav class="navbar">
     <a href="#home" class="brand">
-      <span class="brand-icon">CC</span>
+      <img src="{{ url_for('static', filename='images/campus_connect_logo.png') }}" class="brand-icon" style="width:36px;height:36px;border-radius:8px;vertical-align:middle;margin-right:6px;" alt="Logo"/>
       <span>Campus <b>Connect</b></span>
     </a>
 
@@ -28,10 +28,13 @@
         <a href="#developers">Contact</a>
       </div>
 
-      <a href="{{ url_for('auth.login') }}" class="nav-login">Explore <span>↗</span></a>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <a href="{{ url_for('auth.login') }}" class="nav-login">Login / Sign Up <span>↗</span></a>
+      </div>
     </div>
   </nav>
 </header>
+
 
 <main>
 
@@ -377,6 +380,6 @@
   <div class="footer-bottom"><span>© 2026 Campus Connect. All Rights Reserved.</span><span>Made for the RGUKT community.</span></div>
 </footer>
 
-<script src="../../static/js/landing.js"></script>
+<script src="{{ url_for('static', filename='js/landing.js') }}"></script>
 </body>
 </html>

@@ -88,10 +88,23 @@ def admin_redirect():
         f"/{url_category}/{slug}/admin"
     )
 
-@admin_bp.route("/dev-preview")
-def admin_dev_preview():
-    mock_organization = {
-        "name": "Artix",
-        "category": "clubs"
-    }
-    return render_template("admin/dashboard.html", organization=mock_organization)
+@admin_bp.route("/dashboard")
+def admin_dashboard():
+
+    if session.get("role") != "admin":
+        abort(403)
+
+    organization_id = session.get("organization_id")
+
+    if not organization_id:
+        abort(403)
+
+    organization = get_organization_by_id(organization_id)
+
+    if not organization:
+        abort(404)
+
+    return render_template(
+        "admin/dashboard.html",
+        organization=organization
+    )
