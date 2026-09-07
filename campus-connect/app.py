@@ -20,6 +20,8 @@ def createApp():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    app.secret_key = "campus-connect-secret-key-2026"
+
     oauth.init_app(app)
     oauth.register(
     name="google",
@@ -94,3 +96,4 @@ app = createApp()
 
 if __name__ == "__main__":
     app.run(debug=True, port=5050)
+      #n
