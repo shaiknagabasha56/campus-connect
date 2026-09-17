@@ -16,12 +16,8 @@ from routes.updates import updates_bp
 
 
 def createApp():
-
     app = Flask(__name__)
     app.config.from_object(Config)
-
-    app.secret_key = "campus-connect-secret-key-2026"
-
     oauth.init_app(app)
     oauth.register(
     name="google",
@@ -31,7 +27,7 @@ def createApp():
     client_kwargs={
         "scope": "openid email profile"
     }
-) 
+)
     # REGISTER BLUEPRINTS
     app.register_blueprint(auth_bp)
     app.register_blueprint(homepage_bp)
@@ -96,4 +92,3 @@ app = createApp()
 
 if __name__ == "__main__":
     app.run(debug=True, port=5050)
-      #n

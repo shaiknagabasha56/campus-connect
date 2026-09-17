@@ -1,21 +1,68 @@
-import smtplib
-import ssl
-from email.message import EmailMessage
+import requests
 from flask import current_app
 
 
-# SEND EMAIL VERIFICATION LINK
-def send_verification_email(email, verification_url):
-    # GET EMAIL CONFIGURATION
+BREVO_API_URL = "https://api.brevo.com/v3/smtp/email"
+
+
+def send_email(to_email, subject, content):
+    """
+    Send a transactional email using Brevo HTTPS API.
+    """
+
+    api_key = current_app.config["BREVO_API_KEY"]
     sender_email = current_app.config["MAIL_USERNAME"]
-    sender_password = current_app.config["MAIL_PASSWORD"]
-    # CREATE EMAIL MESSAGE
-    message = EmailMessage()
-    message["Subject"] = "Verify your Campus Connect account"
-    message["From"] = sender_email
-    message["To"] = email
-    # EMAIL CONTENT
-    message.set_content(f"""
+
+    headers = {
+        "accept": "application/json",
+        "api-key": api_key,
+        "content-type": "application/json"
+    }
+
+    payload = {
+        "sender": {
+            "name": "Campus Connect",
+            "email": sender_email
+        },
+        "to": [
+            {
+                "email": to_email
+            }
+        ],
+        "subject": subject,
+        "textContent": content
+    }
+
+    try:
+        response = requests.post(
+            BREVO_API_URL,
+            headers=headers,
+            json=payload,
+            timeout=15
+        )
+
+        if response.status_code in (200, 201):
+            print("Email sent successfully.")
+            return True
+
+        print("Brevo email error:")
+        print("Status:", response.status_code)
+        print("Response:", response.text)
+
+        return False
+
+    except requests.RequestException as error:
+        print("Brevo connection error:", error)
+        return False
+
+
+# ==================================================
+# SEND EMAIL VERIFICATION LINK
+# ==================================================
+
+def send_verification_email(email, verification_url):
+
+    content = f"""
 Hello,
 
 Thank you for creating an account on Campus Connect.
@@ -30,49 +77,22 @@ If you did not create this account, you can ignore this email.
 
 Regards,
 Team Campus Connect
-""")
+"""
 
-
-    # CREATE SECURE SSL CONTEXT
-    context = ssl.create_default_context()
-    try:
-        # CONNECT TO GMAIL SMTP SERVER
-        with smtplib.SMTP_SSL(
-            "smtp.gmail.com",
-            465,
-            context=context
-        ) as server:
-            # LOGIN USING APP PASSWORD
-            server.login(
-                sender_email,
-                sender_password
-            )
-            # SEND EMAIL
-            server.send_message(message)
-
-        # EMAIL SENT SUCCESSFULLY
-        return True
-
-
-    except Exception as error:
-        # Print the actual error in the Flask terminal
-        # This helps us debug email problems.
-        print("Email sending error:", error)
-        return False
-
+    return send_email(
+        email,
+        "Verify your Campus Connect account",
+        content
+    )
 
 
 # ==================================================
 # SEND PASSWORD RESET EMAIL
 # ==================================================
+
 def send_password_reset_email(email, reset_url):
-    sender_email = current_app.config["MAIL_USERNAME"]
-    sender_password = current_app.config["MAIL_PASSWORD"]
-    message = EmailMessage()
-    message["Subject"] = "Reset your Campus Connect password"
-    message["From"] = sender_email
-    message["To"] = email
-    message.set_content(f"""
+
+    content = f"""
 Hello,
 
 We received a request to reset your Campus Connect password.
@@ -87,29 +107,10 @@ If you did not request a password reset, you can safely ignore this email.
 
 Regards,
 Team Campus Connect
-""")
+"""
 
-    context = ssl.create_default_context()
-
-    try:
-
-        with smtplib.SMTP_SSL(
-            "smtp.gmail.com",
-            465,
-            context=context
-        ) as server:
-
-            server.login(
-                sender_email,
-                sender_password
-            )
-
-            server.send_message(message)
-
-        return True
-
-    except Exception as error:
-
-        print("Password reset email error:", error)
-
-        return False
+    return send_email(
+        email,
+        "Reset your Campus Connect password",
+        content
+    )

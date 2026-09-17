@@ -7,10 +7,13 @@ from flask import (
     current_app
 )
 
-from werkzeug.utils import secure_filename
 from datetime import date, datetime, time, timedelta
 import os
 import uuid
+from urllib.parse import urlparse
+
+import cloudinary
+import cloudinary.uploader
 
 from database.queries import (
     create_update,
@@ -35,28 +38,17 @@ updates_bp = Blueprint(
 
 
 # ==================================================
-# FILE UPLOAD SETTINGS
+# CLOUDINARY IMAGE UPLOAD SETTINGS
 # ==================================================
 #
-# IMPORTANT: this must resolve to an ABSOLUTE path built from
-# current_app.static_folder (the folder Flask actually serves at
-# /static/...), not a bare relative string. A relative path here
-# gets resolved against the server process's current working
-# directory at request time, which is not guaranteed to be the
-# project root — if the app is ever launched from a different cwd
-# (an IDE run config, a task runner, a different start command),
-# uploads silently get written to a "static" folder Flask never
-# serves from. The database still stores a correct-looking path,
-# but the image 404s everywhere. get_upload_folder() avoids that
-# by always asking Flask directly where its static folder is.
+# Dynamic announcement images are stored in Cloudinary instead of
+# Flask's local static/uploads directory. This is important for
+# production because the local filesystem of a free Render service
+# is ephemeral.
+#
+# MySQL continues to store the image URL in the existing
+# `cover_image` column.
 # ==================================================
-
-def get_upload_folder():
-    return os.path.join(
-        current_app.static_folder,
-        "uploads",
-        "updates"
-    )
 
 ALLOWED_EXTENSIONS = {
     "png",
@@ -66,9 +58,110 @@ ALLOWED_EXTENSIONS = {
 }
 
 
+def configure_cloudinary():
+    """Configure Cloudinary using values loaded from Flask config."""
+
+    cloudinary.config(
+        cloud_name=current_app.config["CLOUDINARY_CLOUD_NAME"],
+        api_key=current_app.config["CLOUDINARY_API_KEY"],
+        api_secret=current_app.config["CLOUDINARY_API_SECRET"]
+    )
+
+
+def upload_to_cloudinary(file):
+    """
+    Upload an announcement image to Cloudinary.
+
+    Returns:
+        (secure_url, public_id) on success
+        (None, None) on failure
+    """
+
+    configure_cloudinary()
+
+    # Generate a unique public ID so two uploaded files can never
+    # accidentally overwrite each other. Cloudinary public IDs for
+    # images should not contain a file extension.
+    public_id = (
+        f"campus_connect/updates/{uuid.uuid4().hex}"
+    )
+
+    result = cloudinary.uploader.upload(
+        file,
+        public_id=public_id,
+        resource_type="image",
+        overwrite=False
+    )
+
+    return result.get("secure_url"), result.get("public_id")
+
+
+def delete_from_cloudinary(image_url):
+    """
+    Delete a Cloudinary image using its stored secure URL.
+
+    Older local image paths are ignored, so existing database records
+    from the old local-upload system will not cause Cloudinary errors.
+    """
+
+    if not image_url:
+        return
+
+    # Only attempt Cloudinary deletion for Cloudinary URLs.
+    if not image_url.startswith("https://res.cloudinary.com/"):
+        return
+
+    try:
+        configure_cloudinary()
+
+        parsed_url = urlparse(image_url)
+        path = parsed_url.path
+        marker = "/image/upload/"
+
+        if marker not in path:
+            return
+
+        public_id_path = path.split(marker, 1)[1]
+        public_id_parts = public_id_path.split("/")
+
+        # A version segment such as v123456789 may appear between
+        # /upload/ and the actual public ID. Remove it before calling
+        # Cloudinary destroy().
+        if (
+            public_id_parts
+            and public_id_parts[0].startswith("v")
+            and public_id_parts[0][1:].isdigit()
+        ):
+            public_id_parts = public_id_parts[1:]
+
+        public_id = "/".join(public_id_parts)
+
+        # Our uploaded images are delivered with an extension, while
+        # Cloudinary's image public ID does not include that extension.
+        public_id = os.path.splitext(public_id)[0]
+
+        if not public_id:
+            return
+
+        result = cloudinary.uploader.destroy(
+            public_id,
+            resource_type="image",
+            invalidate=True
+        )
+
+        if result.get("result") not in ("ok", "not found"):
+            print("Cloudinary image delete result:", result)
+
+    except Exception as error:
+        # Image deletion should not crash the request after the
+        # database operation has already completed.
+        print("Cloudinary image delete error:", error)
+
+
 # ==================================================
 # HELPER: CHECK FILE TYPE
 # ==================================================
+
 
 def allowed_file(filename):
 
@@ -525,8 +618,13 @@ def create_new_update():
     # ----------------------------------------------
     # COVER IMAGE
     # ----------------------------------------------
+    #
+    # Upload the image directly to Cloudinary. The database will
+    # store the returned HTTPS URL instead of a local file path.
+    # ----------------------------------------------
 
     cover_image_path = None
+    uploaded_public_id = None
 
     file = request.files.get(
         "cover_image"
@@ -546,40 +644,26 @@ def create_new_update():
                 )
             }), 400
 
+        try:
+            cover_image_path, uploaded_public_id = (
+                upload_to_cloudinary(file)
+            )
 
-        os.makedirs(
-            get_upload_folder(),
-            exist_ok=True
-        )
+            if not cover_image_path:
+                raise RuntimeError(
+                    "Cloudinary did not return an image URL."
+                )
 
+        except Exception as error:
+            print("Cloudinary upload error:", error)
 
-        original_filename = secure_filename(
-            file.filename
-        )
-
-        unique_filename = (
-            f"{uuid.uuid4().hex}_"
-            f"{original_filename}"
-        )
-
-
-        file_path = os.path.join(
-            get_upload_folder(),
-            unique_filename
-        )
-
-        file.save(
-            file_path
-        )
+            return jsonify({
+                "success": False,
+                "message": "Failed to upload image."
+            }), 500
 
 
-        cover_image_path = (
-            f"uploads/updates/"
-            f"{unique_filename}"
-        )
-
-
-    # ----------------------------------------------
+# ----------------------------------------------
     # CREATE DATABASE UPDATE
     # ----------------------------------------------
 
@@ -620,6 +704,23 @@ def create_new_update():
     # ----------------------------------------------
 
     if not update_id:
+
+        # The image has already been uploaded to Cloudinary, so clean
+        # it up if the database insert fails. This prevents orphaned
+        # images from accumulating in Cloudinary.
+        if uploaded_public_id:
+            try:
+                configure_cloudinary()
+                cloudinary.uploader.destroy(
+                    uploaded_public_id,
+                    resource_type="image",
+                    invalidate=True
+                )
+            except Exception as error:
+                print(
+                    "Cloudinary cleanup error:",
+                    error
+                )
 
         return jsonify({
             "success": False,
@@ -808,11 +909,16 @@ def edit_existing_update(update_id):
     # ----------------------------------------------
     # KEEP OLD IMAGE BY DEFAULT
     # ----------------------------------------------
+    # If the admin does not select a new image, the existing
+    # Cloudinary URL remains unchanged.
+    # ----------------------------------------------
 
     cover_image_path = (
         existing_update["cover_image"]
     )
 
+    old_cloudinary_image = cover_image_path
+    new_uploaded_public_id = None
 
     # ----------------------------------------------
     # CHECK NEW IMAGE
@@ -836,40 +942,27 @@ def edit_existing_update(update_id):
                 )
             }), 400
 
+        try:
+            (
+                cover_image_path,
+                new_uploaded_public_id
+            ) = upload_to_cloudinary(file)
 
-        os.makedirs(
-            get_upload_folder(),
-            exist_ok=True
-        )
+            if not cover_image_path:
+                raise RuntimeError(
+                    "Cloudinary did not return an image URL."
+                )
 
+        except Exception as error:
+            print("Cloudinary upload error:", error)
 
-        original_filename = secure_filename(
-            file.filename
-        )
-
-        unique_filename = (
-            f"{uuid.uuid4().hex}_"
-            f"{original_filename}"
-        )
-
-
-        file_path = os.path.join(
-            get_upload_folder(),
-            unique_filename
-        )
-
-        file.save(
-            file_path
-        )
+            return jsonify({
+                "success": False,
+                "message": "Failed to upload image."
+            }), 500
 
 
-        cover_image_path = (
-            f"uploads/updates/"
-            f"{unique_filename}"
-        )
-
-
-    # ----------------------------------------------
+# ----------------------------------------------
     # UPDATE DATABASE
     # ----------------------------------------------
 
@@ -907,6 +1000,23 @@ def edit_existing_update(update_id):
 
     if not success:
 
+        # The new image was uploaded before the database update.
+        # If the database update fails, remove the new Cloudinary
+        # asset so it does not become an orphan.
+        if new_uploaded_public_id:
+            try:
+                configure_cloudinary()
+                cloudinary.uploader.destroy(
+                    new_uploaded_public_id,
+                    resource_type="image",
+                    invalidate=True
+                )
+            except Exception as error:
+                print(
+                    "Cloudinary cleanup error:",
+                    error
+                )
+
         return jsonify({
             "success": False,
             "message": (
@@ -914,6 +1024,11 @@ def edit_existing_update(update_id):
             )
         }), 500
 
+
+    # If a new image replaced the old one, delete the old
+    # Cloudinary asset only AFTER the database update succeeds.
+    if new_uploaded_public_id and old_cloudinary_image:
+        delete_from_cloudinary(old_cloudinary_image)
 
     updated_update = get_update_by_id(
         update_id,
@@ -986,34 +1101,20 @@ def remove_update(update_id):
 
 
     # ----------------------------------------------
-    # DELETE IMAGE FILE
+    # DELETE IMAGE FROM CLOUDINARY
+    # ----------------------------------------------
+    #
+    # The database row has already been deleted above. If the stored
+    # image is a Cloudinary URL, remove the corresponding Cloudinary
+    # asset as well. Older local paths are simply ignored.
     # ----------------------------------------------
 
-    image_path = existing_update.get(
+    image_url = existing_update.get(
         "cover_image"
     )
 
-    if image_path:
-
-        full_path = os.path.join(
-            current_app.static_folder,
-            image_path
-        )
-
-        if os.path.exists(full_path):
-
-            try:
-
-                os.remove(
-                    full_path
-                )
-
-            except Exception as error:
-
-                print(
-                    "Image delete error:",
-                    error
-                )
+    if image_url:
+        delete_from_cloudinary(image_url)
 
 
     return jsonify({
