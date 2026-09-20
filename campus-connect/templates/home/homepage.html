@@ -93,9 +93,9 @@
       </div>
 
       <!-- Profile -->
-      <div class="profile" title="Profile">
+      <button class="profile" title="Profile" type="button" aria-label="Open profile">
         <img src="../static/cse-rgukt.png" alt="Profile">
-      </div>
+      </button>
     </div>
   </div>
 </header>
@@ -380,8 +380,8 @@
   <div class="dashboard-user">
     <img src="../static/cse-rgukt.png" alt="Profile">
     <div>
-      <p><strong>Basha</strong></p>
-      <p class="email">basha@rguktong.ac.in</p>
+      <p><strong>{{ session.get("username", "") }}</strong></p>
+      <p class="email">{{ session.get("email", "") }}</p>
     </div>
   </div>
 

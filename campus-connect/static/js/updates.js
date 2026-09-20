@@ -898,17 +898,6 @@
             return false;
         }
 
-        if (
-            $("#uApply")?.checked &&
-            !$("#uApplyLink")?.value.trim()
-        ) {
-            notify(
-                "Please provide the application URL."
-            );
-
-            return false;
-        }
-
         return true;
     }
 
@@ -1540,6 +1529,17 @@
         }
 
         loadUpdates();
+
+        // Academic and non-academic admin templates use the same dashboard
+        // markup as clubs. Load the shared, database-backed inbox there too.
+        if (document.getElementById("adminDataPage") &&
+            !window.__campusInboxInitialized &&
+            !document.getElementById("campusInboxScript")) {
+            const inboxScript = document.createElement("script");
+            inboxScript.id = "campusInboxScript";
+            inboxScript.src = "/static/js/club_admin_submissions.js";
+            document.head.appendChild(inboxScript);
+        }
     }
 
     document.addEventListener(

@@ -39,8 +39,8 @@
 </div>
 
 <button class="aws-admin-profile-btn" id="awsAdminProfileBtn" type="button" aria-label="Open admin profile">
-  <span class="aws-admin-avatar">A</span>
-  <span class="aws-admin-profile-name">Pixelro Admin</span>
+  <span class="aws-admin-avatar">{{ (session.get("username") or "A")[:1]|upper }}</span>
+  <span class="aws-admin-profile-name">{{ session.get("username", "") }}</span>
   <i class="fa-solid fa-chevron-down"></i>
 </button>
 </div>
@@ -108,8 +108,8 @@
 <div class="na-cat-header admin-section">
 <div class="na-cat-icon"><i class="fa-solid fa-camera"></i></div>
 <div>
-<h1>Pixelro</h1>
-<p>Fine arts &amp; design club — a creative space for sketching, painting, visual art and campus creativity.</p>
+<h1>{{ profile.get("title") or organization.get("name", "Pixelro") }}</h1>
+<p>{{ profile.get("description") or "Fine arts &amp; design club — a creative space for sketching, painting, visual art and campus creativity." }}</p>
 </div>
 <button aria-label="Edit club identity" class="admin-gear" data-edit-section="identity" type="button"><i class="fa-solid fa-gear"></i></button></div>
 <!-- Primary content: updates feed -->
@@ -189,19 +189,19 @@
 <h4>Quick Info</h4>
 <div class="na-info-row">
 <i class="fa-solid fa-user"></i>
-<div><span class="na-info-label">Convener</span>[Club Convener Name]</div>
+<div><span class="na-info-label">{{ profile.get("coordinator_label") or "Convener" }}</span>{{ profile.get("coordinator_name") or "[Club Convener Name]" }}</div>
 </div>
 <div class="na-info-row">
 <i class="fa-solid fa-phone"></i>
-<div><span class="na-info-label">Contact</span>[Contact Number]</div>
+<div><span class="na-info-label">Contact</span>{{ profile.get("contact") or "[Contact Number]" }}</div>
 </div>
 <div class="na-info-row">
 <i class="fa-solid fa-location-dot"></i>
-<div><span class="na-info-label">Location</span>[Club Room / Block]</div>
+<div><span class="na-info-label">Location</span>{{ profile.get("info_location") or profile.get("location") or "[Club Room / Block]" }}</div>
 </div>
 <div class="na-info-row">
 <i class="fa-solid fa-clock"></i>
-<div><span class="na-info-label">Meet Days</span>[e.g. Fridays, 5:00–6:30 PM]</div>
+<div><span class="na-info-label">Meet Days</span>{{ profile.get("meeting_details") or "[e.g. Fridays, 5:00–6:30 PM]" }}</div>
 </div>
 <button aria-label="Edit quick info" class="admin-gear" data-edit-section="quick-info" type="button"><i class="fa-solid fa-gear"></i></button></div>
 <div class="na-side-card">
@@ -223,19 +223,19 @@
 </div>
 <div class="aws-heads-grid">
 <article class="aws-head-card">
-<img alt="Pixelro Club Head profile placeholder" src="images/pixelro-head-1.svg"/>
-<h3>Club Head Name</h3>
-<p>President</p>
+<img alt="Pixelro Club Head profile" src="{{ leaders[0].profile_picture if leaders|length > 0 and leaders[0].profile_picture else 'images/pixelro-head-1.svg' }}"/>
+<h3>{{ leaders[0].name if leaders|length > 0 else "Club Head Name" }}</h3>
+<p>{{ leaders[0].position if leaders|length > 0 else "President" }}</p>
 <button class="admin-head-pencil" title="Edit club head" type="button"><i class="fa-solid fa-pen"></i></button></article>
 <article class="aws-head-card">
-<img alt="Pixelro Technical Lead profile placeholder" src="images/pixelro-head-2.svg"/>
-<h3>Technical Lead Name</h3>
-<p>Wise President</p>
+<img alt="Pixelro Technical Lead profile" src="{{ leaders[1].profile_picture if leaders|length > 1 and leaders[1].profile_picture else 'images/pixelro-head-2.svg' }}"/>
+<h3>{{ leaders[1].name if leaders|length > 1 else "Technical Lead Name" }}</h3>
+<p>{{ leaders[1].position if leaders|length > 1 else "Wise President" }}</p>
 <button class="admin-head-pencil" title="Edit club head" type="button"><i class="fa-solid fa-pen"></i></button></article>
 <article class="aws-head-card">
-<img alt="Pixelro Events Lead profile placeholder" src="images/pixelro-head-3.svg"/>
-<h3>Events Lead Name</h3>
-<p>Cordinator</p>
+<img alt="Pixelro Events Lead profile" src="{{ leaders[2].profile_picture if leaders|length > 2 and leaders[2].profile_picture else 'images/pixelro-head-3.svg' }}"/>
+<h3>{{ leaders[2].name if leaders|length > 2 else "Events Lead Name" }}</h3>
+<p>{{ leaders[2].position if leaders|length > 2 else "Coordinator" }}</p>
 <button class="admin-head-pencil" title="Edit club head" type="button"><i class="fa-solid fa-pen"></i></button></article>
 </div>
 <button aria-label="Manage club heads" class="admin-gear" data-edit-section="heads" type="button"><i class="fa-solid fa-gear"></i></button></section>
@@ -265,25 +265,25 @@
 <p>Have a question about an update, event or club activity? Reach out through any of the channels below.</p>
 </div>
 <div class="aws-contact-grid">
-<a class="aws-contact-item" href="mailto:pixelro@rgukt.ac.in">
+<a class="aws-contact-item" href="mailto:{{ profile.get("email") or "pixelro@rgukt.ac.in" }}">
 <span class="aws-contact-icon"><i class="fa-solid fa-envelope"></i></span>
-<span><small>Email</small><strong>pixelro@rgukt.ac.in</strong></span>
+<span><small>Email</small><strong>{{ profile.get("email") or "pixelro@rgukt.ac.in" }}</strong></span>
 </a>
-<a class="aws-contact-item" href="tel:+910000000000">
+<a class="aws-contact-item" href="tel:{{ profile.get("phone") or "+910000000000" }}">
 <span class="aws-contact-icon"><i class="fa-solid fa-phone"></i></span>
-<span><small>Phone</small><strong>+91 XXXXX XXXXX</strong></span>
+<span><small>Phone</small><strong>{{ profile.get("phone") or "+91 XXXXX XXXXX" }}</strong></span>
 </a>
 <div class="aws-contact-item">
 <span class="aws-contact-icon"><i class="fa-solid fa-location-dot"></i></span>
-<span><small>Location</small><strong>RGUKT Campus</strong></span>
+<span><small>Location</small><strong>{{ profile.get("location") or "RGUKT Campus" }}</strong></span>
 </div>
 </div>
 <div class="aws-socials">
 <span>Follow Pixelro</span>
 <div class="aws-social-links">
-<a aria-label="Instagram" href="https://www.instagram.com/pixelro_ro/"><i class="fa-brands fa-instagram"></i></a>
-<a aria-label="LinkedIn" href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-<a aria-label="YouTube" href="#"><i class="fa-brands fa-youtube"></i></a>
+<a aria-label="Instagram" href="{{ profile.get("instagram") or "#" }}"><i class="fa-brands fa-instagram"></i></a>
+<a aria-label="LinkedIn" href="{{ profile.get("linkedin") or "#" }}"><i class="fa-brands fa-linkedin-in"></i></a>
+<a aria-label="YouTube" href="{{ profile.get("youtube") or "#" }}"><i class="fa-brands fa-youtube"></i></a>
 </div>
 </div>
 </div>
@@ -435,7 +435,7 @@
     <button id="closeAdminSidebar" class="aws-icon-close" type="button"><i class="fa-solid fa-xmark"></i></button></div>
   <div class="aws-sidebar-profile">
     <div class="aws-sidebar-avatar">A</div>
-    <div><h3>Pixelro Admin</h3><p>admin.pixelro@rgukt.ac.in</p><span>Coordinator</span></div>
+    <div><h3>{{ session.get("username", "") }}</h3><p>{{ session.get("email", "") }}</p><span>{{ session.get("role", "")|capitalize }}</span></div>
   </div>
   <div class="aws-sidebar-menu">
     <button data-profile-action="profile"><i class="fa-solid fa-user-pen"></i> Change Profile</button>
@@ -444,7 +444,9 @@
   </div>
   <div class="aws-sidebar-note"><i class="fa-solid fa-shield-halved"></i>
     <span>Your changes will be connected to the Pixelro admin account when backend integration is enabled.</span></div>
-  <button class="aws-sidebar-logout" type="button"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  <form action="{{ url_for('auth.logout') }}" method="post" style="display: contents;">
+    <button class="aws-sidebar-logout" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  </form>
 </aside>
 
 <section class="admin-data-page" id="adminDataPage" aria-hidden="true">
@@ -469,23 +471,17 @@
   <button class="aws-dialog-close" data-close-dialog><i class="fa-solid fa-xmark"></i></button>
   <span class="aws-admin-eyebrow">PROFILE</span><h2>Change Profile</h2>
   <form id="adminProfileForm">
-    <label>Display Name<input value="Pixelro Admin" maxlength="60" required></label>
-    <label>Email<input type="email" value="admin.pixelro@rgukt.ac.in" required></label>
-    <label>Phone<input value="+91 98765 43210" maxlength="20"></label>
+    <label>Display Name<input value="{{ session.get('username', '') }}" maxlength="60" required></label>
+    <label>Email<input type="email" value="{{ session.get('email', '') }}" required></label>
+    <label>Phone<input value="{{ session.get('phone', '') }}" maxlength="20"></label>
     <button type="submit" class="aws-dialog-save">Save Changes</button>
   </form>
-</div>
-<div class="aws-admin-dialog" id="adminPasswordDialog">
-  <button class="aws-dialog-close" data-close-dialog><i class="fa-solid fa-xmark"></i></button>
-  <span class="aws-admin-eyebrow">SECURITY</span><h2>Change Password</h2>
-  <p>A secure password reset link will be sent to <strong>admin.pixelro@rgukt.ac.in</strong>.</p>
-  <button id="sendResetLink" class="aws-dialog-save"><i class="fa-solid fa-paper-plane"></i> Send Reset Link</button>
-  <div class="aws-reset-message" id="resetMessage"></div>
 </div>
 <div class="aws-admin-toast" id="awsAdminToast"></div>
 
 <script src="../../../static/js/pixelro_admin.js"></script>
 <script src="{{ url_for('static', filename='js/updates.js') }}"></script>
+<script src="{{ url_for('static', filename='js/club_admin_submissions.js') }}"></script>
 
 </body>
 </html>

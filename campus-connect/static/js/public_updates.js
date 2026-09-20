@@ -102,7 +102,7 @@
 
         const date = formatDateDMY(update.post_date);
         const time = formatTime12(update.post_time);
-        const image = update.cover_image ? `/static/${update.cover_image}` : "";
+        const image = imageUrl(update.cover_image);
         const applies = Number(update.enable_application) === 1 ||
             update.enable_application === true || update.enable_application === "true";
 
@@ -156,7 +156,7 @@
 
         const uploadDate = formatDateDMY(update.post_date);
         const uploadTime = formatTime12(update.post_time);
-        const image = update.cover_image ? `/static/${update.cover_image}` : "";
+        const image = imageUrl(update.cover_image);
         const applies = Number(update.enable_application) === 1 ||
             update.enable_application === true || update.enable_application === "true";
 
@@ -192,6 +192,38 @@
     function renderList(container, updates, orgName) {
         container.innerHTML = "";
         updates.forEach((update) => container.appendChild(buildListCard(update, orgName)));
+    }
+
+    function imageUrl(value) {
+        if (!value) return "";
+        return /^https?:\/\//i.test(value) ? value : `/static/${value.replace(/^\/+/, "")}`;
+    }
+
+    function openStudentForm(kind, slug) {
+        const existing = $("#sharedStudentRequest");
+        if (existing) { existing.remove(); return; }
+        const isComplaint = kind === "complaint";
+        const overlay = document.createElement("div");
+        overlay.id = "sharedStudentRequest";
+        overlay.style.cssText = "position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.58);display:grid;place-items:center;padding:20px";
+        overlay.innerHTML = `<form style="width:min(560px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;padding:24px;display:grid;gap:10px;font-family:Poppins,sans-serif"><button type="button" data-close style="justify-self:end;border:0;padding:8px;cursor:pointer">Close</button><h2 style="margin:0">${isComplaint ? "Raise a Complaint" : "Submit Application"}</h2><label>Name<input name="name" required style="display:block;width:100%;padding:9px"></label><label>Email<input name="email" type="email" required style="display:block;width:100%;padding:9px"></label><label>Roll / ID<input name="roll" required style="display:block;width:100%;padding:9px"></label><label>Branch<input name="branch" style="display:block;width:100%;padding:9px"></label><label>Year<input name="year" style="display:block;width:100%;padding:9px"></label><label>Phone<input name="phone" style="display:block;width:100%;padding:9px"></label>${isComplaint ? '<label>Subject<input name="title" required style="display:block;width:100%;padding:9px"></label><label>Complaint<textarea name="description" required rows="4" style="display:block;width:100%;padding:9px"></textarea></label>' : '<label>Why are you applying?<textarea name="reason" rows="4" style="display:block;width:100%;padding:9px"></textarea></label>'}<button style="border:0;border-radius:8px;padding:12px;background:#2563eb;color:#fff;cursor:pointer" type="submit">Submit</button><p role="status" style="margin:0"></p></form>`;
+        document.body.appendChild(overlay);
+        const form = overlay.querySelector("form");
+        overlay.querySelector("[data-close]").onclick = () => overlay.remove();
+        overlay.onclick = event => { if (event.target === overlay) overlay.remove(); };
+        form.onsubmit = async event => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            formData.set("organization_slug", slug);
+            if (isComplaint) formData.set("category", "Department request");
+            try {
+                const response = await fetch(isComplaint ? "/complaints/submit" : "/complaints/club-submissions/applications", {method:"POST", body:formData, credentials:"same-origin"});
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result.success) throw new Error(result.message || "Could not submit your request.");
+                form.querySelector("[role=status]").textContent = "Submitted successfully.";
+                form.reset();
+            } catch (error) { form.querySelector("[role=status]").textContent = error.message; }
+        };
     }
 
     // Ports the exact same "#updateModalOverlay" logic every list-style
@@ -330,6 +362,24 @@
 
             if (feedContainer) renderFeed(feedContainer, updates, orgName);
             else renderList(listContainer, updates, orgName);
+
+            // Club pages provide their own richer forms. All other category
+            // pages receive the same persisted application and complaint flow.
+            if (!$("#joinClubForm") && !$("#sharedComplaintButton")) {
+                const button = document.createElement("button");
+                button.id = "sharedComplaintButton";
+                button.type = "button";
+                button.textContent = "Raise a complaint";
+                button.style.cssText = "margin:12px 0;border:0;border-radius:7px;padding:9px 13px;background:#dc2626;color:#fff;cursor:pointer";
+                button.onclick = () => openStudentForm("complaint", slug);
+                wrapper.appendChild(button);
+                document.addEventListener("click", event => {
+                    const apply = event.target.closest("#updateModalApply.enabled");
+                    if (!apply) return;
+                    event.preventDefault(); event.stopImmediatePropagation();
+                    openStudentForm("application", slug);
+                }, true);
+            }
         } catch (error) {
             console.error(`public-updates: failed to load updates for "${slug}":`, error);
         }

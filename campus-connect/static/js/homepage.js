@@ -6,6 +6,11 @@ async function logoutUser() {
             method: "POST"
         });
 
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+
         const data = await response.json();
 
         if (data.success) {
