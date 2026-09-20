@@ -1190,6 +1190,30 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(() => t.classList.remove("show"), 2200);
   }
 
+  async function saveOrganizationProfile(data) {
+    const response = await fetch("/clubs/api/admin/profile", {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Could not save organization profile.");
+    }
+  }
+
+  async function saveOrganizationLeader(displayOrder, data) {
+    const response = await fetch(`/clubs/api/admin/leaders/${displayOrder}`, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Could not save club head.");
+    }
+  }
+
   function ask(titleText, text, okText, danger, action) {
     $("#confirmTitle").textContent = titleText;
     $("#confirmText").textContent = text;
@@ -1302,7 +1326,18 @@ document.addEventListener("DOMContentLoaded", function () {
     bindClose();
     $("#adminSave").onclick = () => {
       if (!$("#clubName").value.trim() || !$("#clubDesc").value.trim()) return toast("Club name and description are required.");
-      ask("Save club identity?", "Update the club name, description and logo?", "Yes, Save", false, () => {
+      ask("Save club identity?", "Update the club name, description and logo?", "Yes, Save", false, async () => {
+        try {
+          const image = $("#clubLogoPreview").dataset.image || "";
+          await saveOrganizationProfile({
+            title: $("#clubName").value.trim(),
+            description: $("#clubDesc").value.trim(),
+            logo: image || null
+          });
+        } catch (error) {
+          toast(error.message);
+          return;
+        }
         $(".na-cat-header h1").textContent = $("#clubName").value.trim();
         $(".na-cat-header p").textContent = $("#clubDesc").value.trim();
         const image = $("#clubLogoPreview").dataset.image;
@@ -1327,8 +1362,20 @@ document.addEventListener("DOMContentLoaded", function () {
       ${field("Meet Days / Time","qMeet","text",vals[3],{required:true})}
     </div>${actions()}`;
     bindClose();
-    $("#adminSave").onclick = () => ask("Save quick info?", "Replace the current quick information?", "Yes, Save", false, () => {
+    $("#adminSave").onclick = () => ask("Save quick info?", "Replace the current quick information?", "Yes, Save", false, async () => {
       const values = [$("#qConvener").value, $("#qPhone").value, $("#qLocation").value, $("#qMeet").value];
+      try {
+        await saveOrganizationProfile({
+          coordinator_label: "Convener",
+          coordinator_name: values[0],
+          contact: values[1],
+          location: values[2],
+          meeting_details: values[3]
+        });
+      } catch (error) {
+        toast(error.message);
+        return;
+      }
       rows.forEach((row, i) => {
         const d = row.querySelector("div");
         const label = d.querySelector("span, small");
@@ -1600,7 +1647,22 @@ document.addEventListener("DOMContentLoaded", function () {
     bindCount("hDetails");
     bindImage("headImage", d.image);
     bindClose();
-    $("#adminSave").onclick = () => ask("Save club head changes?", "Update this leadership profile?", "Yes, Save", false, () => {
+    $("#adminSave").onclick = () => ask("Save club head changes?", "Update this leadership profile?", "Yes, Save", false, async () => {
+      try {
+        await saveOrganizationLeader(
+          Array.from(document.querySelectorAll(".aws-head-card")).indexOf(card) + 1,
+          {
+            name: $("#hName").value.trim(),
+            position: $("#hDesignation").value.trim(),
+            email: $("#hEmail").value.trim(),
+            phone: $("#hPhone").value.trim(),
+            profile_picture: $("#headImagePreview").dataset.image || null
+          }
+        );
+      } catch (error) {
+        toast(error.message);
+        return;
+      }
       card.querySelector("h3").textContent = $("#hName").value.trim();
       card.querySelector("p").textContent = $("#hDesignation").value.trim();
       const img = $("#headImagePreview").dataset.image;
@@ -1653,7 +1715,20 @@ document.addEventListener("DOMContentLoaded", function () {
       ${field("YouTube URL","cYoutube","url",$("#contact .fa-youtube")?.closest("a")?.href || "",{full:true})}
     </div>${actions()}`;
     bindClose();
-    $("#adminSave").onclick = () => ask("Save contact details?", "Update the contact information and social links?", "Yes, Save", false, () => {
+    $("#adminSave").onclick = () => ask("Save contact details?", "Update the contact information and social links?", "Yes, Save", false, async () => {
+      try {
+        await saveOrganizationProfile({
+          email: $("#cEmail").value.trim(),
+          phone: $("#cPhone").value.trim(),
+          location: $("#cLocation").value.trim(),
+          instagram: $("#cInstagram").value.trim(),
+          linkedin: $("#cLinkedin").value.trim(),
+          youtube: $("#cYoutube").value.trim()
+        });
+      } catch (error) {
+        toast(error.message);
+        return;
+      }
       items[0].querySelector("strong").textContent = $("#cEmail").value.trim();
       items[1].querySelector("strong").textContent = $("#cPhone").value.trim();
       items[2].querySelector("strong").textContent = $("#cLocation").value.trim();
@@ -1715,6 +1790,38 @@ document.addEventListener("DOMContentLoaded", () => {
     ]
   };
 
+  async function loadPixelroComplaints() {
+    try {
+      const response = await fetch("/complaints/api");
+      if (!response.ok) return;
+
+      const result = await response.json();
+      if (!result.success) return;
+
+      data.complaints = (result.complaints || []).map(complaint => ({
+        referenceId: complaint.reference_id,
+        name: complaint.anonymous ? "Anonymous Student" : (complaint.name || "Student"),
+        email: complaint.anonymous ? "Not shared" : "",
+        branch: complaint.category || "General",
+        year: complaint.priority || "Medium",
+        phone: complaint.anonymous ? "Not shared" : (complaint.phone || "Not provided"),
+        subject: complaint.title,
+        category: complaint.category,
+        message: complaint.description,
+        submitted: complaint.created_at ? new Date(complaint.created_at).toLocaleString() : "Unknown",
+        status: {
+          new: "Pending",
+          "under-review": "Under Review",
+          "in-progress": "In Progress",
+          resolved: "Resolved",
+          rejected: "Rejected"
+        }[complaint.status] || complaint.status
+      }));
+    } catch (error) {
+      console.error("Could not load PixelRo complaints:", error);
+    }
+  }
+
   const meta = {
     complaints:{title:"Complaints", desc:"Review club-related complaints and requests submitted by students.", eyebrow:"COMPLAINT MANAGEMENT"},
     applications:{title:"Applications", desc:"Review event, workshop and hackathon registrations.", eyebrow:"APPLICATION MANAGEMENT"},
@@ -1753,6 +1860,7 @@ document.addEventListener("DOMContentLoaded", () => {
     detail.innerHTML = `<div class="admin-empty-detail"><i class="fa-regular fa-folder-open"></i><h3>Select a submission</h3><p>Click a card on the left to view all submitted information.</p></div>`;
     page.dataset.currentType = type;
     page.classList.add("show"); page.setAttribute("aria-hidden","false"); document.body.style.overflow="hidden";
+    if (type === "complaints") loadPixelroComplaints().then(() => renderSubmissionCards(type, "All"));
   }));
 
   function renderSubmissionCards(type, filterStatus) {
@@ -1836,11 +1944,32 @@ document.addEventListener("DOMContentLoaded", () => {
         ${entries.map(([k,v])=>`<div class="detail-field ${String(v).length>45?"full":""}"><label>${k.replace(/([A-Z])/g," $1")}</label><div>${v}</div></div>`).join("")}
       </div>`;
 
-    document.getElementById("saveSubmissionStatus").addEventListener("click", e => {
+    document.getElementById("saveSubmissionStatus").addEventListener("click", async e => {
       const btn = e.currentTarget;
       const submission = data[btn.dataset.type][Number(btn.dataset.index)];
       const oldStatus = submission.status;
       const newStatus = document.getElementById("submissionStatusSelect").value;
+
+      if (btn.dataset.type === "complaints") {
+        try {
+          const response = await fetch(
+            `/complaints/api/${encodeURIComponent(submission.referenceId)}/status`,
+            {
+              method: "PATCH",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify({status: newStatus})
+            }
+          );
+          const result = await response.json();
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || "Could not update complaint status.");
+          }
+        } catch (error) {
+          showToast(error.message);
+          return;
+        }
+      }
+
       submission.status = newStatus;
 
       document.getElementById("detailCurrentStatus").textContent = newStatus;
@@ -1849,7 +1978,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const activeFilter = list.querySelector(".admin-filter-btn.active")?.dataset.filterStatus || "All";
       renderSubmissionCards(btn.dataset.type, activeFilter);
 
-      showToast(`Status updated from ${oldStatus} to ${newStatus}. Student dashboard and notifications can use this status after backend connection.`);
+      showToast(`Status updated from ${oldStatus} to ${newStatus}.`);
     });
   });
 
@@ -1862,22 +1991,17 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("closeAdminSidebar").addEventListener("click",closeSide); backdrop.addEventListener("click",closeSide);
 
   const dialogBackdrop = document.getElementById("adminDialogBackdrop");
-  const profileDialog = document.getElementById("adminProfileDialog"), passwordDialog = document.getElementById("adminPasswordDialog");
+  const profileDialog = document.getElementById("adminProfileDialog");
   const openDialog = el=>{dialogBackdrop.classList.add("show");el.classList.add("show")};
-  const closeDialogs = ()=>{dialogBackdrop.classList.remove("show");profileDialog.classList.remove("show");passwordDialog.classList.remove("show")};
+  const closeDialogs = ()=>{dialogBackdrop.classList.remove("show");profileDialog.classList.remove("show")};
   document.querySelectorAll("[data-close-dialog]").forEach(b=>b.addEventListener("click",closeDialogs)); dialogBackdrop.addEventListener("click",closeDialogs);
 
   document.querySelectorAll("[data-profile-action]").forEach(b=>b.addEventListener("click",()=>{
     const action=b.dataset.profileAction; closeSide();
     if(action==="profile") openDialog(profileDialog);
-    else if(action==="password") openDialog(passwordDialog);
-    else showToast("Account settings will be connected to backend next.");
+    else if(action==="password") window.location.href = "/admin/profile#password";
+    else window.location.href = "/admin/profile";
   }));
   document.getElementById("adminProfileForm").addEventListener("submit",e=>{e.preventDefault();closeDialogs();showToast("Profile changes saved for preview.");});
-  document.getElementById("sendResetLink").addEventListener("click",()=>{
-    const msg=document.getElementById("resetMessage");msg.textContent="Reset link sent. Please check your email.";
-    msg.classList.add("show");
-  });
-
   function showToast(message){const t=document.getElementById("awsAdminToast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2800)}
 });

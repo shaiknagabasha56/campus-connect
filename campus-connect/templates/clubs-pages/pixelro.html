@@ -69,8 +69,8 @@
 <div class="na-cat-header">
 <div class="na-cat-icon"><i class="fa-solid fa-camera-retro"></i></div>
 <div>
-<h1>Pixelro</h1>
-<p>Photography &amp; videography club — capturing campus life, one frame at a time.</p>
+<h1>{{ profile.get("title") or organization.get("name", "Pixelro") }}</h1>
+<p>{{ profile.get("description") or "Photography &amp; videography club — capturing campus life, one frame at a time." }}</p>
 </div>
 </div>
 <!-- Primary content: updates feed -->
@@ -174,19 +174,19 @@
 <h4>Quick Info</h4>
 <div class="na-info-row">
 <i class="fa-solid fa-user"></i>
-<div><span class="na-info-label">Convener</span>[Club Convener Name]</div>
+<div><span class="na-info-label">{{ profile.get("coordinator_label") or "Convener" }}</span>{{ profile.get("coordinator_name") or "[Club Convener Name]" }}</div>
 </div>
 <div class="na-info-row">
 <i class="fa-solid fa-phone"></i>
-<div><span class="na-info-label">Contact</span>[Contact Number]</div>
+<div><span class="na-info-label">Contact</span>{{ profile.get("contact") or "[Contact Number]" }}</div>
 </div>
 <div class="na-info-row">
 <i class="fa-solid fa-location-dot"></i>
-<div><span class="na-info-label">Location</span>[Club Room / Block]</div>
+<div><span class="na-info-label">Location</span>{{ profile.get("info_location") or profile.get("location") or "[Club Room / Block]" }}</div>
 </div>
 <div class="na-info-row">
 <i class="fa-solid fa-clock"></i>
-<div><span class="na-info-label">Meet Days</span>[e.g. Fridays, 5:00–6:30 PM]</div>
+<div><span class="na-info-label">Meet Days</span>{{ profile.get("meeting_details") or "[e.g. Fridays, 5:00–6:30 PM]" }}</div>
 </div>
 </div>
 <div class="na-side-card">
@@ -208,19 +208,19 @@
 </div>
 <div class="aws-heads-grid">
 <article class="aws-head-card">
-<img alt="Pixelro Club Head profile placeholder" src="../../static/images/pixelro-head-1.svg"/>
-<h3>Club Head Name</h3>
-<p>President</p>
+<img alt="Pixelro Club Head profile" src="{{ leaders[0].profile_picture if leaders|length > 0 and leaders[0].profile_picture else '../../static/images/pixelro-head-1.svg' }}"/>
+<h3>{{ leaders[0].name if leaders|length > 0 else "Club Head Name" }}</h3>
+<p>{{ leaders[0].position if leaders|length > 0 else "President" }}</p>
 </article>
 <article class="aws-head-card">
-<img alt="Pixelro Technical Lead profile placeholder" src="../../static/images/pixelro-head-2.svg"/>
-<h3>Technical Lead Name</h3>
-<p>Wise President</p>
+<img alt="Pixelro Technical Lead profile" src="{{ leaders[1].profile_picture if leaders|length > 1 and leaders[1].profile_picture else '../../static/images/pixelro-head-2.svg' }}"/>
+<h3>{{ leaders[1].name if leaders|length > 1 else "Technical Lead Name" }}</h3>
+<p>{{ leaders[1].position if leaders|length > 1 else "Wise President" }}</p>
 </article>
 <article class="aws-head-card">
-<img alt="Pixelro Events Lead profile placeholder" src="../../static/images/pixelro-head-3.svg"/>
-<h3>Events Lead Name</h3>
-<p>Cordinator</p>
+<img alt="Pixelro Events Lead profile" src="{{ leaders[2].profile_picture if leaders|length > 2 and leaders[2].profile_picture else '../../static/images/pixelro-head-3.svg' }}"/>
+<h3>{{ leaders[2].name if leaders|length > 2 else "Events Lead Name" }}</h3>
+<p>{{ leaders[2].position if leaders|length > 2 else "Coordinator" }}</p>
 </article>
 </div>
 </section>
@@ -250,25 +250,25 @@
 <p>Have a question about an update, event or club activity? Reach out through any of the channels below.</p>
 </div>
 <div class="aws-contact-grid">
-<a class="aws-contact-item" href="mailto:pixelro@rgukt.ac.in">
+<a class="aws-contact-item" href="mailto:{{ profile.get("email") or "pixelro@rgukt.ac.in" }}">
 <span class="aws-contact-icon"><i class="fa-solid fa-envelope"></i></span>
-<span><small>Email</small><strong>pixelro@rgukt.ac.in</strong></span>
+<span><small>Email</small><strong>{{ profile.get("email") or "pixelro@rgukt.ac.in" }}</strong></span>
 </a>
-<a class="aws-contact-item" href="tel:+910000000000">
+<a class="aws-contact-item" href="tel:{{ profile.get("phone") or "+910000000000" }}">
 <span class="aws-contact-icon"><i class="fa-solid fa-phone"></i></span>
-<span><small>Phone</small><strong>+91 XXXXX XXXXX</strong></span>
+<span><small>Phone</small><strong>{{ profile.get("phone") or "+91 XXXXX XXXXX" }}</strong></span>
 </a>
 <div class="aws-contact-item">
 <span class="aws-contact-icon"><i class="fa-solid fa-location-dot"></i></span>
-<span><small>Location</small><strong>RGUKT Campus</strong></span>
+<span><small>Location</small><strong>{{ profile.get("location") or "RGUKT Campus" }}</strong></span>
 </div>
 </div>
 <div class="aws-socials">
 <span>Follow Pixelro</span>
 <div class="aws-social-links">
-<a aria-label="Instagram" href="https://www.instagram.com/__pixelro/"><i class="fa-brands fa-instagram"></i></a>
-<a aria-label="LinkedIn" href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-<a aria-label="YouTube" href="#"><i class="fa-brands fa-youtube"></i></a>
+<a aria-label="Instagram" href="{{ profile.get("instagram") or "#" }}"><i class="fa-brands fa-instagram"></i></a>
+<a aria-label="LinkedIn" href="{{ profile.get("linkedin") or "#" }}"><i class="fa-brands fa-linkedin-in"></i></a>
+<a aria-label="YouTube" href="{{ profile.get("youtube") or "#" }}"><i class="fa-brands fa-youtube"></i></a>
 </div>
 </div>
 </div>
@@ -396,5 +396,6 @@
 </footer>
 <script src="../../static/js/pixelro.js"></script>
 <script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
+<script src="{{ url_for('static', filename='js/club_public_data.js') }}"></script>
 </body>
 </html>

@@ -1,4 +1,11 @@
-from flask import Blueprint,url_for,render_template
+from flask import Blueprint, url_for, render_template, jsonify, request, session, abort
+
+from database.queries import (
+    get_organization_by_slug,
+    get_organization_profile,
+    upsert_organization_leader,
+    upsert_organization_profile
+)
 #from services.club_services import get_clubs
 
 clubs_bp=Blueprint(
@@ -41,7 +48,61 @@ def sarvasrijana_homepage():
 
 @clubs_bp.route("/pixelro")
 def pixelro_homepage():
-    return render_template("clubs-pages/pixelro.html")
+    organization = get_organization_by_slug("pixelro")
+    profile = get_organization_profile(organization["id"]) if organization else None
+    return render_template(
+        "clubs-pages/pixelro.html",
+        organization=organization,
+        profile=profile or {},
+        leaders=(profile or {}).get("leaders", [])
+    )
+
+
+@clubs_bp.route("/api/admin/profile", methods=["PUT"])
+def update_admin_organization_profile():
+    if session.get("role") != "admin":
+        abort(403)
+
+    organization_id = session.get("organization_id")
+    if not organization_id:
+        abort(403)
+
+    data = request.get_json(silent=True) or {}
+    if not upsert_organization_profile(organization_id, data):
+        return jsonify({"success": False, "message": "Could not save organization profile."}), 500
+
+    return jsonify({"success": True})
+
+
+@clubs_bp.route("/api/admin/leaders/<int:display_order>", methods=["PUT"])
+def update_admin_organization_leader(display_order):
+    if session.get("role") != "admin":
+        abort(403)
+
+    organization_id = session.get("organization_id")
+    if not organization_id:
+        abort(403)
+
+    data = request.get_json(silent=True) or {}
+    if not upsert_organization_leader(organization_id, display_order, data):
+        return jsonify({"success": False, "message": "Could not save organization leader."}), 500
+
+    return jsonify({"success": True})
+
+
+@clubs_bp.route("/api/public/<string:organization_slug>", methods=["GET"])
+def public_organization_profile(organization_slug):
+    organization = get_organization_by_slug(organization_slug)
+    if not organization:
+        return jsonify({"success": False, "message": "Organization not found."}), 404
+
+    profile = get_organization_profile(organization["id"]) or {}
+    return jsonify({
+        "success": True,
+        "organization": organization,
+        "profile": profile,
+        "leaders": profile.get("leaders", [])
+    })
 
 
 #admin routes for clubs:-
@@ -75,6 +136,13 @@ def sarvasrijana_admin():
 
 @clubs_bp.route("/pixelro/admin")
 def pixelro_admin():
-    return render_template("admin/clubs/pixelro_admin.html")
+    organization = get_organization_by_slug("pixelro")
+    profile = get_organization_profile(organization["id"]) if organization else None
+    return render_template(
+        "admin/clubs/pixelro_admin.html",
+        organization=organization,
+        profile=profile or {},
+        leaders=(profile or {}).get("leaders", [])
+    )
 
 

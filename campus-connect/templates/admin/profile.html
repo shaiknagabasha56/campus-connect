@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Profile | Campus Connect</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_profile.css') }}">
+</head>
+<body>
+  <header class="profile-topbar">
+    <a class="profile-brand" href="{{ url_for('homepage.homepage') }}">
+      <span class="profile-brand-mark"><i class="fa-solid fa-layer-group"></i></span>
+      <span>CAMPUS CONNECT</span>
+    </a>
+    <nav class="profile-nav" aria-label="Profile navigation">
+      <a href="{{ url_for('homepage.homepage') }}">Home</a>
+      <a href="{{ url_for('admin.admin_redirect') }}">Admin dashboard</a>
+      <form action="{{ url_for('auth.logout') }}" method="post">
+        <button type="submit" class="logout-button">Log out</button>
+      </form>
+    </nav>
+  </header>
+
+  <main class="profile-page">
+    <section class="profile-heading">
+      <div>
+        <span class="eyebrow">ACCOUNT SETTINGS</span>
+        <h1>Admin profile</h1>
+        <p>Manage the account used to administer your campus organization.</p>
+      </div>
+      <div class="profile-avatar" aria-hidden="true">
+        {{ profile.username[:1]|upper }}
+      </div>
+    </section>
+
+    {% if message %}
+      <div class="profile-message {{ message_type }}" role="status">{{ message }}</div>
+    {% endif %}
+
+    <div class="profile-grid">
+      <section class="profile-panel">
+        <div class="panel-heading">
+          <span class="panel-icon"><i class="fa-solid fa-id-card"></i></span>
+          <div>
+            <h2>Profile details</h2>
+            <p>Update the name and email shown for your account.</p>
+          </div>
+        </div>
+        <form action="{{ url_for('admin.update_admin_profile_details') }}" method="post" class="profile-form">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" value="{{ profile.username }}" minlength="3" maxlength="100" required>
+
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" value="{{ profile.email }}" required>
+
+          <button class="primary-button" type="submit"><i class="fa-solid fa-check"></i> Save details</button>
+        </form>
+      </section>
+
+      <section class="profile-panel" id="password">
+        <div class="panel-heading">
+          <span class="panel-icon"><i class="fa-solid fa-lock"></i></span>
+          <div>
+            <h2>Change password</h2>
+            <p>Confirm your current password before choosing a new one.</p>
+          </div>
+        </div>
+        <form action="{{ url_for('admin.update_admin_profile_password') }}" method="post" class="profile-form">
+          <label for="current-password">Current password</label>
+          <div class="password-field">
+            <input id="current-password" name="current_password" type="password" autocomplete="current-password" required>
+            <button class="password-toggle" type="button" aria-label="Show current password" aria-pressed="false" data-password-target="current-password">
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <label for="new-password">New password</label>
+          <div class="password-field">
+            <input id="new-password" name="new_password" type="password" minlength="6" autocomplete="new-password" required>
+            <button class="password-toggle" type="button" aria-label="Show new password" aria-pressed="false" data-password-target="new-password">
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <label for="confirm-password">Confirm new password</label>
+          <div class="password-field">
+            <input id="confirm-password" name="confirm_password" type="password" minlength="6" autocomplete="new-password" required>
+            <button class="password-toggle" type="button" aria-label="Show confirm new password" aria-pressed="false" data-password-target="confirm-password">
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <button class="primary-button" type="submit"><i class="fa-solid fa-key"></i> Update password</button>
+        </form>
+      </section>
+    </div>
+  </main>
+  <script>
+    document.querySelectorAll("[data-password-target]").forEach(function (toggle) {
+      toggle.addEventListener("click", function () {
+        const input = document.getElementById(toggle.dataset.passwordTarget);
+        const icon = toggle.querySelector("i");
+        const isVisible = input.type === "text";
+
+        input.type = isVisible ? "password" : "text";
+        toggle.setAttribute("aria-pressed", String(!isVisible));
+        toggle.setAttribute(
+          "aria-label",
+          (isVisible ? "Show " : "Hide ") + toggle.dataset.passwordTarget.replaceAll("-", " ")
+        );
+        icon.classList.toggle("fa-eye", isVisible);
+        icon.classList.toggle("fa-eye-slash", !isVisible);
+      });
+    });
+  </script>
+</body>
+</html>

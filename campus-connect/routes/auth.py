@@ -43,10 +43,7 @@ def login():
 def logout():
     # Remove all session data
     session.clear()
-    return jsonify({
-        "success": True,
-        "message": "Logged out successfully."
-    })
+    return redirect(url_for("auth.login"))
 
 
 #SIGNUP:
