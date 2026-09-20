@@ -112,7 +112,7 @@ closeBtn.addEventListener('click', closeDashboard);
 overlay.addEventListener('click', closeDashboard);
 
 // Handle sub-panels
-const optionButtons = document.querySelectorAll('.dash-btn[data-panel]');
+const optionButtons = document.querySelectorAll('[data-panel]');
 const subPanels = document.querySelectorAll('.sub-dashboard');
 const backButtons = document.querySelectorAll('.back-btn');
 
@@ -734,8 +734,10 @@ const themeIcon = document.getElementById('themeIcon');
 
 themeToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark-theme');
+  themeToggle.setAttribute('aria-pressed', document.body.classList.contains('dark-theme') ? 'true' : 'false');
 
-  // Switch icon
+  // Old icon swap – the panel no longer has #themeIcon, so skip when it is absent
+  if(!themeIcon) return;
   if(document.body.classList.contains('dark-theme')){
     // Sun icon for light mode
     themeIcon.innerHTML = '<path d="M8 0a.5.5 0 0 1 .5.5V2h-1V.5A.5.5 0 0 1 8 0zm4.95 1.05a.5.5 0 0 1 .7.7l-1.06 1.06-.7-.7 1.06-1.06zM16 8a.5.5 0 0 1-.5.5H14v-1h1.5A.5.5 0 0 1 16 8zm-1.05 4.95a.5.5 0 0 1-.7.7l-1.06-1.06.7-.7 1.06 1.06zM8 16a.5.5 0 0 1-.5-.5V14h1v1.5a.5.5 0 0 1-.5.5zm-4.95-1.05a.5.5 0 0 1-.7-.7l1.06-1.06.7.7-1.06 1.06zM0 8a.5.5 0 0 1 .5-.5H2v1H.5A.5.5 0 0 1 0 8zm1.05-4.95a.5.5 0 0 1 .7-.7l1.06 1.06-.7.7L1.05 3.05z"/>'; 

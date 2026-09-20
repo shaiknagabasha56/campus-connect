@@ -11,6 +11,8 @@
 
 <link rel="stylesheet" href="../../../static/css/icro_admin.css">
 <style>:root{--cat:#ef4444;--accent:#ef4444;}</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+<script src="{{ url_for('static', filename='js/mobile-nav.js') }}" defer></script>
 </head>
 <body class="na-body"><div class="admin-mode-bar">
 <span><i class="fa-solid fa-shield-halved"></i> ICRO Admin Mode</span>
@@ -438,12 +440,8 @@
     <div><h3>{{ session.get("username", "") }}</h3><p>{{ session.get("email", "") }}</p><span>{{ session.get("role", "")|capitalize }}</span></div>
   </div>
   <div class="aws-sidebar-menu">
-    <button data-profile-action="profile"><i class="fa-solid fa-user-pen"></i> Change Profile</button>
-    <button data-profile-action="password"><i class="fa-solid fa-key"></i> Change Password</button>
     <button data-profile-action="settings"><i class="fa-solid fa-gear"></i> Account Settings</button>
   </div>
-  <div class="aws-sidebar-note"><i class="fa-solid fa-shield-halved"></i>
-    <span>Your changes will be connected to the ICRO admin account when backend integration is enabled.</span></div>
   <form action="{{ url_for('auth.logout') }}" method="post" style="display: contents;">
     <button class="aws-sidebar-logout" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
   </form>
