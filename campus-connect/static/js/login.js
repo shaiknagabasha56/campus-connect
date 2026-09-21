@@ -372,18 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // Validate email format
-            if (!isValidEmail(email)) {
-
-                showMessage(
-                    signupError,
-                    "error",
-                    "Please enter a valid email address."
-                );
-
-                return;
-
-            }
+            
 
 
             // Check password
@@ -690,11 +679,7 @@ document.addEventListener("keydown", function (e) {
 // EMAIL VALIDATION FUNCTION
 // ==================================================
 
-function isValidEmail(email) {
 
-    return /^o2[1-6]\d+@rguktong\.ac\.in$/i.test(email);
-
-}
 
 
 // ==================================================
@@ -734,17 +719,7 @@ if (sendReset) {
         // CHECK EMAIL FORMAT
         // ==============================================
 
-        if (!isValidEmail(email)) {
-
-            forgotMessage.classList.add("error");
-
-            forgotMessage.innerHTML =
-                "Please enter a valid email.";
-
-            return;
-
-        }
-
+        
 
         // ==============================================
         // DISABLE BUTTON

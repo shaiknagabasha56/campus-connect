@@ -1,14 +1,11 @@
-import re
-
-from flask import Blueprint, session, redirect, abort, render_template, request, url_for
+from flask import Blueprint, session, redirect, abort, render_template, request
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from database.queries import (
     get_organization_by_id,
-    get_user_by_id,
     get_user_by_email,
-    update_user_profile_details,
-    update_user_password_by_id
+    update_user_password,
+    update_user_profile
 )
 
 
@@ -21,110 +18,6 @@ admin_bp = Blueprint(
     __name__,
     url_prefix="/admin"
 )
-
-
-def _get_authenticated_admin():
-    if session.get("role") != "admin":
-        abort(403)
-
-    user_id = session.get("user_id")
-    if not user_id:
-        abort(403)
-
-    user = get_user_by_id(user_id)
-    if not user:
-        abort(404)
-
-    return user
-
-
-def _profile_view(user, message=None, message_type=None):
-    profile = {
-        "username": user["username"],
-        "email": user["email"],
-        "role": user["role"],
-        "organization_id": user["organization_id"]
-    }
-    return render_template(
-        "admin/profile.html",
-        profile=profile,
-        message=message,
-        message_type=message_type
-    )
-
-
-@admin_bp.route("/profile", methods=["GET"])
-def admin_profile():
-    user = _get_authenticated_admin()
-    return _profile_view(user)
-
-
-@admin_bp.route("/profile/details", methods=["POST"])
-def update_admin_profile_details():
-    user = _get_authenticated_admin()
-    username = request.form.get("username", "").strip()
-    email = request.form.get("email", "").strip().lower()
-
-    if len(username) < 3 or len(username) > 100:
-        return _profile_view(
-            user,
-            "Username must be between 3 and 100 characters.",
-            "error"
-        ), 400
-
-    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
-        return _profile_view(user, "Please enter a valid email address.", "error"), 400
-
-    existing_user = get_user_by_email(email)
-    if existing_user and existing_user["id"] != user["id"]:
-        return _profile_view(user, "That email address is already in use.", "error"), 409
-
-    updated = update_user_profile_details(
-        session["user_id"],
-        username,
-        email
-    )
-    if not updated:
-        return _profile_view(user, "Could not update your profile details.", "error"), 500
-
-    session["username"] = username
-    session["email"] = email
-    user["username"] = username
-    user["email"] = email
-    return _profile_view(user, "Profile details updated successfully.", "success")
-
-
-@admin_bp.route("/profile/password", methods=["POST"])
-def update_admin_profile_password():
-    user = _get_authenticated_admin()
-    current_password = request.form.get("current_password", "")
-    new_password = request.form.get("new_password", "")
-    confirm_password = request.form.get("confirm_password", "")
-
-    if not user.get("password_hash") or not check_password_hash(
-        user["password_hash"],
-        current_password
-    ):
-        return _profile_view(user, "Current password is incorrect.", "error"), 400
-
-    if len(new_password) < 6:
-        return _profile_view(
-            user,
-            "New password must be at least 6 characters.",
-            "error"
-        ), 400
-
-    if new_password != confirm_password:
-        return _profile_view(user, "New passwords do not match.", "error"), 400
-
-    updated = update_user_password_by_id(
-        session["user_id"],
-        generate_password_hash(new_password)
-    )
-    if not updated:
-        return _profile_view(user, "Could not update your password.", "error"), 500
-
-    return redirect(url_for("admin.admin_profile"))
 
 
 # ==========================================
@@ -146,7 +39,14 @@ def admin_redirect():
     # --------------------------------------
     organization_id = session.get("organization_id")
 
+    # Some admin accounts (e.g. the Complaints Admin) are not tied
+    # to a club/cell/academic organization row at all. Send these
+    # straight to their own dedicated admin page instead of 403ing.
     if not organization_id:
+
+        if session.get("email") == "complaints-admin@gmail.com":
+            return redirect("/complaints/admin")
+
         abort(403)
 
 
@@ -200,4 +100,155 @@ def admin_redirect():
     # --------------------------------------
     return redirect(
         f"/{url_category}/{slug}/admin"
+    )
+
+
+# ==========================================
+# ADMIN PROFILE
+# ==========================================
+
+@admin_bp.route("/profile")
+def admin_profile():
+
+    if session.get("role") != "admin":
+        abort(403)
+
+    email = session.get("email")
+
+    if not email:
+        return redirect("/auth/login")
+
+    profile = get_user_by_email(email)
+
+    if not profile:
+        abort(404)
+
+    return render_template(
+        "admin/profile.html",
+        profile=profile,
+        message=None,
+        message_type=None
+    )
+
+
+# ==========================================
+# UPDATE ADMIN PROFILE DETAILS
+# ==========================================
+
+@admin_bp.route("/profile/update-details", methods=["POST"])
+def update_admin_profile_details():
+
+    if session.get("role") != "admin":
+        abort(403)
+
+    current_email = session.get("email")
+
+    if not current_email:
+        return redirect("/auth/login")
+
+    username = request.form.get("username", "").strip()
+    new_email = request.form.get("email", "").strip()
+
+    if not username or not new_email:
+        profile = get_user_by_email(current_email)
+
+        return render_template(
+            "admin/profile.html",
+            profile=profile,
+            message="Username and email are required.",
+            message_type="error"
+        )
+
+    success = update_user_profile(
+        current_email,
+        username,
+        new_email
+    )
+
+    if not success:
+        profile = get_user_by_email(current_email)
+
+        return render_template(
+            "admin/profile.html",
+            profile=profile,
+            message="Unable to update profile details.",
+            message_type="error"
+        )
+
+    # Update session email if the user changed it
+    session["email"] = new_email
+
+    profile = get_user_by_email(new_email)
+
+    return render_template(
+        "admin/profile.html",
+        profile=profile,
+        message="Profile details updated successfully.",
+        message_type="success"
+    )
+
+
+# ==========================================
+# UPDATE ADMIN PASSWORD
+# ==========================================
+
+@admin_bp.route("/profile/update-password", methods=["POST"])
+def update_admin_profile_password():
+
+    if session.get("role") != "admin":
+        abort(403)
+
+    email = session.get("email")
+
+    if not email:
+        return redirect("/auth/login")
+
+    current_password = request.form.get("current_password", "")
+    new_password = request.form.get("new_password", "")
+    confirm_password = request.form.get("confirm_password", "")
+
+    profile = get_user_by_email(email)
+
+    if not profile:
+        abort(404)
+
+    if new_password != confirm_password:
+        return render_template(
+            "admin/profile.html",
+            profile=profile,
+            message="New passwords do not match.",
+            message_type="error"
+        )
+
+    if not check_password_hash(
+        profile["password_hash"],
+        current_password
+    ):
+        return render_template(
+            "admin/profile.html",
+            profile=profile,
+            message="Current password is incorrect.",
+            message_type="error"
+        )
+
+    new_password_hash = generate_password_hash(new_password)
+
+    success = update_user_password(
+        email,
+        new_password_hash
+    )
+
+    if not success:
+        return render_template(
+            "admin/profile.html",
+            profile=profile,
+            message="Failed to update password.",
+            message_type="error"
+        )
+
+    return render_template(
+        "admin/profile.html",
+        profile=get_user_by_email(email),
+        message="Password updated successfully.",
+        message_type="success"
     )

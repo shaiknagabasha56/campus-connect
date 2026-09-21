@@ -80,7 +80,7 @@ def createApp():
 
     # LANDING PAGE
     @app.route("/")
-    def landing_page():
+    def landing_page() :
         return render_template("landing.html")
 
 

@@ -1,6 +1,15 @@
 from flask import Blueprint,render_template,redirect,url_for,request,jsonify,session
 from services.auth_services import signup_user,verify_user_email,login_user,forgot_password,reset_user_password,google_login_user
 from extensions import oauth
+from database.queries import (
+    get_user_by_email,
+    update_user_password,
+    update_user_profile
+)
+from werkzeug.security import (
+    check_password_hash,
+    generate_password_hash
+)
 
 
 
@@ -145,3 +154,107 @@ def google_callback():
     return redirect(
         url_for("homepage.homepage")
     )
+
+# ==================================================
+# UPDATE USER PROFILE
+# ==================================================
+
+@auth_bp.route("/update-profile", methods=["POST"])
+def update_user_profile_route():
+
+    # Check login
+    if "email" not in session:
+
+        return jsonify({
+            "success": False,
+            "message": "Please login first."
+        }), 401
+
+
+    # Get JSON data
+    data = request.get_json(silent=True) or {}
+
+
+    username = (
+        data.get("username") or ""
+    ).strip()
+
+    new_email = (
+        data.get("email") or ""
+    ).strip().lower()
+
+
+    # Validate
+    if not username:
+
+        return jsonify({
+            "success": False,
+            "message": "Username is required."
+        }), 400
+
+
+    if not new_email:
+
+        return jsonify({
+            "success": False,
+            "message": "Email is required."
+        }), 400
+
+
+    current_email = session["email"]
+
+
+    # Check whether another user already has this email
+    existing_user = get_user_by_email(new_email)
+
+    if (
+        existing_user
+        and existing_user.get("email") != current_email
+    ):
+
+        return jsonify({
+            "success": False,
+            "message": "This email is already in use."
+        }), 409
+
+
+    try:
+
+        updated = update_user_profile(
+            current_email,
+            username,
+            new_email
+        )
+
+
+        if not updated:
+
+            return jsonify({
+                "success": False,
+                "message": "Profile could not be updated."
+            }), 500
+
+
+        # Update Flask session
+        session["username"] = username
+
+        session["email"] = new_email
+
+
+        return jsonify({
+            "success": True,
+            "message": "Profile updated successfully."
+        }), 200
+
+
+    except Exception as error:
+
+        print(
+            "PROFILE UPDATE ERROR:",
+            error
+        )
+
+        return jsonify({
+            "success": False,
+            "message": "Failed to update profile."
+        }), 500

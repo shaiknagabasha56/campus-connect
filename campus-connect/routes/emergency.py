@@ -6,7 +6,6 @@ emergency_bp=Blueprint(
     __name__,
     url_prefix="/emergency"
 )
-
 @emergency_bp.route("/")
 def emergency_homepage():
     return render_template("emergency/emergency.html")
