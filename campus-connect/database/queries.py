@@ -29,6 +29,46 @@ def get_user_by_email(email):
         cursor.close()
         connection.close()
 
+# ==========================================
+# UPDATE USER PROFILE
+# ==========================================
+
+def update_user_profile(current_email, username, new_email):
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+        query = """
+            UPDATE users
+            SET username = %s,
+                email = %s
+            WHERE email = %s
+        """
+
+        cursor.execute(
+            query,
+            (
+                username,
+                new_email,
+                current_email
+            )
+        )
+
+        connection.commit()
+
+        return cursor.rowcount > 0
+
+    except Exception as error:
+        connection.rollback()
+        print("Update user profile error:", error)
+        return False
+
+    finally:
+        cursor.close()
+        connection.close()
+
+
 # CREATE NEW USER
 def create_user(username, phone, email, password_hash):
     connection = get_db_connection()
@@ -141,7 +181,49 @@ def get_organization_by_id(organization_id):
         cursor.close()
         connection.close()
 
+# ==================================================
+# UPDATE USER PROFILE
+# ==================================================
 
+def update_user_profile(current_email, username, new_email):
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+
+        query = """
+            UPDATE users
+            SET username = %s,
+                email = %s
+            WHERE email = %s
+        """
+
+        cursor.execute(
+            query,
+            (
+                username,
+                new_email,
+                current_email
+            )
+        )
+
+        connection.commit()
+
+        return cursor.rowcount > 0
+
+    except Exception as error:
+
+        connection.rollback()
+
+        print("Update user profile database error:", error)
+
+        return False
+
+    finally:
+
+        cursor.close()
+        connection.close()
 
 # ==================================================
 # UPDATE USER PASSWORD

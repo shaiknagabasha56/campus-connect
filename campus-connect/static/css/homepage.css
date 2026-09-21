@@ -1483,3 +1483,92 @@ html, body {
   /* --- floating chat widget --- */
   #rg-chat-panel { right: 10px; left: 10px; width: auto; max-width: none; height: min(440px, 70vh); }
 }
+
+/* Profile account/settings forms */
+.profile-settings-content {
+  overflow-y: auto;
+  padding-bottom: 10px;
+}
+
+.profile-settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.profile-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.profile-form-group input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  color: #0f172a;
+  font: 14px 'Poppins', sans-serif;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+.profile-form-group input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+.save-profile-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 14px;
+  background: #1E3A8A;
+  color: #fff;
+  font: 600 14px 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background .18s, opacity .18s;
+}
+
+.save-profile-btn:hover {
+  background: #172554;
+}
+
+.save-profile-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.profile-form-message {
+  min-height: 20px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.success-message {
+  color: #15803d;
+}
+
+.error-message {
+  color: #dc2626;
+}
+
+@media (max-width: 420px) {
+  .sub-dashboard {
+    width: min(300px, calc(100vw - 24px));
+    right: calc(-1 * min(300px, calc(100vw - 24px)) - 20px);
+  }
+
+  .sub-dashboard.active {
+    right: 0;
+  }
+}

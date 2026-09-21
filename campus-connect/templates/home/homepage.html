@@ -423,13 +423,106 @@
 <!-- ACCOUNT SUB-PANEL -->
 <div class="sub-dashboard" id="accountPanel">
   <div class="sub-header">
-    <button class="back-btn">&larr; Back</button>
+    <button class="back-btn" type="button">&larr; Back</button>
     <h3>Account &amp; Settings</h3>
   </div>
-  <div class="sub-content ">
-    <button class="dash-btn">Edit Profile</button>
-    <button class="dash-btn">Change Password</button>
-    <button class="dash-btn">Privacy Settings</button>
+  <div class="sub-content">
+    <button class="dash-btn" type="button" data-panel="editProfilePanel">
+      Edit Profile
+    </button>
+    <button class="dash-btn" type="button" data-panel="changePasswordPanel">
+      Change Password
+    </button>
+    <button class="dash-btn" type="button">Privacy Settings</button>
+  </div>
+</div>
+
+<!-- EDIT PROFILE SUB-PANEL -->
+<div class="sub-dashboard" id="editProfilePanel">
+  <div class="sub-header">
+    <button class="back-btn" type="button">&larr; Back</button>
+    <h3>Edit Profile</h3>
+  </div>
+
+  <div class="sub-content profile-settings-content">
+    <form id="editProfileForm" class="profile-settings-form">
+      <div class="profile-form-group">
+        <label for="editUsername">Username</label>
+        <input
+          type="text"
+          id="editUsername"
+          name="username"
+          value="{{ session.get('username', '') }}"
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <div class="profile-form-group">
+        <label for="editEmail">Email</label>
+        <input
+          type="email"
+          id="editEmail"
+          name="email"
+          value="{{ session.get('email', '') }}"
+          autocomplete="email"
+          required
+        >
+      </div>
+
+      <button type="submit" class="save-profile-btn">Save Changes</button>
+      <p id="profileMessage" class="profile-form-message" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD SUB-PANEL -->
+<div class="sub-dashboard" id="changePasswordPanel">
+  <div class="sub-header">
+    <button class="back-btn" type="button">&larr; Back</button>
+    <h3>Change Password</h3>
+  </div>
+
+  <div class="sub-content profile-settings-content">
+    <form id="changePasswordForm" class="profile-settings-form">
+      <div class="profile-form-group">
+        <label for="currentPassword">Current Password</label>
+        <input
+          type="password"
+          id="currentPassword"
+          name="current_password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <div class="profile-form-group">
+        <label for="newPassword">New Password</label>
+        <input
+          type="password"
+          id="newPassword"
+          name="new_password"
+          autocomplete="new-password"
+          minlength="6"
+          required
+        >
+      </div>
+
+      <div class="profile-form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirm_password"
+          autocomplete="new-password"
+          minlength="6"
+          required
+        >
+      </div>
+
+      <button type="submit" class="save-profile-btn">Change Password</button>
+      <p id="passwordMessage" class="profile-form-message" aria-live="polite"></p>
+    </form>
   </div>
 </div>
 
