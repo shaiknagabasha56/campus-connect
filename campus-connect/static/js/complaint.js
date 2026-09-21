@@ -14,7 +14,18 @@ const list = document.getElementById("complaints-list");
 const backdrop = document.getElementById("preview-backdrop");
 
 function prettyStatus(status){
-  return status === "under-review" ? "Under Review" : status.split("-").map(x=>x[0].toUpperCase()+x.slice(1)).join(" ");
+  const labels = {
+    pending: "Pending",
+    accessed: "Accessed",
+    solved: "Solved",
+    rejected: "Rejected",
+    // legacy values kept for any old rows in the database
+    new: "Pending",
+    "under-review": "Accessed",
+    "in-progress": "Accessed",
+    resolved: "Solved"
+  };
+  return labels[status] || (status || "").split("-").map(x=>x[0].toUpperCase()+x.slice(1)).join(" ");
 }
 
 function renderComplaints() {

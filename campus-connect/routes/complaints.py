@@ -1,244 +1,323 @@
-from datetime import datetime
-from uuid import uuid4
+import json
+import uuid
 
-from flask import Blueprint, render_template, jsonify, request, session
+import cloudinary
+import cloudinary.uploader
+
+from flask import (
+    Blueprint,
+    render_template,
+    jsonify,
+    request,
+    session,
+    current_app
+)
 
 from database.queries import (
     create_complaint,
-    create_club_application,
-    create_club_member,
-    get_club_submissions,
     get_all_complaints,
-    update_complaint_status,
-    update_club_submission_status,
-    get_organization_by_slug
+    get_complaint_by_reference,
+    update_complaint_status
 )
 
-complaints_bp=Blueprint(
+# ==================================================
+# COMPLAINTS BLUEPRINT
+# ==================================================
+
+complaints_bp = Blueprint(
     "complaints",
     __name__,
     url_prefix="/complaints"
 )
 
+
+# ==================================================
+# ALLOWED COMPLAINT STATUSES
+# ==================================================
+#
+# pending   - just submitted, not yet looked at
+# accessed  - an admin has opened / is reviewing it
+# solved    - the issue has been resolved
+# rejected  - the admin declined the complaint
+# ==================================================
+
+ALLOWED_STATUSES = {
+    "pending",
+    "accessed",
+    "solved",
+    "rejected"
+}
+
+
+# ==================================================
+# CLOUDINARY HELPERS (ATTACHMENTS)
+# ==================================================
+
+def configure_cloudinary():
+    cloudinary.config(
+        cloud_name=current_app.config["CLOUDINARY_CLOUD_NAME"],
+        api_key=current_app.config["CLOUDINARY_API_KEY"],
+        api_secret=current_app.config["CLOUDINARY_API_SECRET"]
+    )
+
+
+def upload_attachment(file):
+    """Upload a single complaint attachment to Cloudinary.
+
+    Returns a dict describing the file, or None on failure.
+    """
+
+    configure_cloudinary()
+
+    public_id = f"campus_connect/complaints/{uuid.uuid4().hex}"
+
+    result = cloudinary.uploader.upload(
+        file,
+        public_id=public_id,
+        resource_type="auto",
+        overwrite=False
+    )
+
+    url = result.get("secure_url")
+
+    if not url:
+        return None
+
+    return {
+        "name": file.filename,
+        "url": url,
+        "type": file.mimetype or ""
+    }
+
+
+# ==================================================
+# HELPER: SERIALIZE A COMPLAINT ROW
+# ==================================================
+
+def serialize_complaint(complaint):
+    if not complaint:
+        return complaint
+
+    serialized = dict(complaint)
+
+    # Attachments are stored as a JSON string in the database
+    raw_attachments = serialized.get("attachments")
+
+    try:
+        serialized["attachments"] = (
+            json.loads(raw_attachments) if raw_attachments else []
+        )
+    except (TypeError, ValueError):
+        serialized["attachments"] = []
+
+    if serialized.get("created_at"):
+        serialized["created_at"] = serialized["created_at"].strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+    return serialized
+
+
+# ==================================================
+# COMPLAINTS HOMEPAGE (STUDENT VIEW)
+# ==================================================
+
 @complaints_bp.route("/")
 def complaints_homepage():
     return render_template("complaints/complaint.html")
-    
+
+
+# ==================================================
+# COMPLAINTS ADMIN PAGE
+# ==================================================
+
 @complaints_bp.route("/admin")
 def complaints_admin():
     return render_template("admin/complaint/complaint_admin.html")
 
 
-def _serialize_complaint(complaint):
-    result = dict(complaint)
-    created_at = result.get("created_at")
-    if isinstance(created_at, datetime):
-        result["created_at"] = created_at.isoformat()
-    result["attachments"] = []
-    return result
-
+# ==================================================
+# GET ALL COMPLAINTS
+# GET /complaints/api
+# ==================================================
 
 @complaints_bp.route("/api", methods=["GET"])
-def complaints_api():
-    if session.get("role") != "admin":
-        return jsonify({"success": False, "message": "Admin access required."}), 403
-    organization_id = session.get("organization_id") if session.get("role") == "admin" else None
+def list_complaints():
+    complaints = get_all_complaints()
+
     return jsonify({
         "success": True,
         "complaints": [
-            _serialize_complaint(complaint)
-            for complaint in get_all_complaints(organization_id)
+            serialize_complaint(complaint) for complaint in complaints
         ]
     })
 
 
+# ==================================================
+# SUBMIT A NEW COMPLAINT
+# POST /complaints/submit
+# ==================================================
+
 @complaints_bp.route("/submit", methods=["POST"])
 def submit_complaint():
-    anonymous = request.form.get("anonymous", "false").lower() == "true"
-    # Club forms use ``subject`` and ``complaint`` while the shared
-    # complaint page uses ``title`` and ``description``.  Accept both so
-    # every entry point reaches the same persisted admin inbox.
-    title = request.form.get("title", request.form.get("subject", "")).strip()
-    category = request.form.get("category", "Club activity").strip()
-    priority = request.form.get("priority", "Medium").strip().lower()
-    description = request.form.get("description", request.form.get("complaint", "")).strip()
+    title = request.form.get("title", "").strip()
+    category = request.form.get("category", "").strip()
+    priority = request.form.get("priority", "Medium").strip() or "Medium"
+    description = request.form.get("description", "").strip()
 
-    if not title or not category or not description:
+    anonymous = request.form.get("anonymous", "false").lower() == "true"
+
+    name = request.form.get("name", "").strip()
+    roll = request.form.get("roll", "").strip()
+    phone = request.form.get("phone", "").strip()
+
+    # ----------------------------------------------
+    # REQUIRED FIELD VALIDATION
+    # ----------------------------------------------
+
+    if not title:
         return jsonify({
             "success": False,
-            "message": "Title, category, and description are required."
+            "message": "Complaint title is required."
         }), 400
 
-    organization_id = None
-    organization_slug = request.form.get("organization_slug", "").strip().lower()
-    if organization_slug:
-        organization = get_organization_by_slug(organization_slug)
-        organization_id = organization["id"] if organization else None
+    if not category:
+        return jsonify({
+            "success": False,
+            "message": "Please select a category."
+        }), 400
 
-    reference_id = f"CMP-{uuid4().hex[:8].upper()}"
-    created = create_complaint(
-        organization_id=organization_id,
+    if not description:
+        return jsonify({
+            "success": False,
+            "message": "Please describe the complaint."
+        }), 400
+
+    if not anonymous and not name:
+        return jsonify({
+            "success": False,
+            "message": "Please enter your full name."
+        }), 400
+
+    # ----------------------------------------------
+    # UPLOAD ATTACHMENTS (OPTIONAL, MULTIPLE)
+    # ----------------------------------------------
+
+    uploaded_attachments = []
+
+    files = request.files.getlist("attachments")
+
+    for file in files:
+
+        if not file or not file.filename:
+            continue
+
+        try:
+            attachment = upload_attachment(file)
+
+            if attachment:
+                uploaded_attachments.append(attachment)
+
+        except Exception as error:
+            print("Cloudinary attachment upload error:", error)
+
+            return jsonify({
+                "success": False,
+                "message": "Failed to upload one of the attachments."
+            }), 500
+
+    # ----------------------------------------------
+    # GENERATE UNIQUE REFERENCE ID
+    # ----------------------------------------------
+
+    reference_id = f"CMP-{uuid.uuid4().hex[:8].upper()}"
+
+    # ----------------------------------------------
+    # SAVE TO DATABASE
+    # ----------------------------------------------
+
+    complaint_id = create_complaint(
         reference_id=reference_id,
         title=title,
         category=category,
         priority=priority,
-        status="new",
         description=description,
         anonymous=anonymous,
-        name=None if anonymous else request.form.get("name", "").strip(),
-        roll=None if anonymous else request.form.get("roll", request.form.get("id_no", "")).strip(),
-        phone=None if anonymous else request.form.get("phone", "").strip()
+        name=None if anonymous else (name or None),
+        roll=None if anonymous else (roll or None),
+        phone=None if anonymous else (phone or None),
+        attachments=(
+            json.dumps(uploaded_attachments)
+            if uploaded_attachments else None
+        )
     )
 
-    if not created:
+    if not complaint_id:
         return jsonify({
             "success": False,
-            "message": "Could not submit complaint."
+            "message": "Could not submit complaint. Please try again."
         }), 500
 
     return jsonify({
         "success": True,
+        "message": "Complaint submitted successfully.",
         "reference_id": reference_id
     }), 201
 
 
-def _admin_organization_id():
-    if session.get("role") != "admin" or not session.get("organization_id"):
-        return None
-    return session["organization_id"]
+# ==================================================
+# UPDATE COMPLAINT STATUS (ADMIN ONLY)
+# POST /complaints/api/<reference_id>/status
+# ==================================================
 
+@complaints_bp.route(
+    "/api/<reference_id>/status",
+    methods=["POST"]
+)
+def set_complaint_status(reference_id):
 
-def _serialize_submissions(rows):
-    serialized = []
-    for row in rows:
-        item = dict(row)
-        if isinstance(item.get("created_at"), datetime):
-            item["created_at"] = item["created_at"].isoformat()
-        if isinstance(item.get("updated_at"), datetime):
-            item["updated_at"] = item["updated_at"].isoformat()
-        serialized.append(item)
-    return serialized
+    # ----------------------------------------------
+    # ONLY ADMINS CAN CHANGE A COMPLAINT'S STATUS
+    # ----------------------------------------------
 
-
-@complaints_bp.route("/club-submissions/<string:submission_type>", methods=["GET"])
-def club_submissions(submission_type):
-    organization_id = _admin_organization_id()
-    if not organization_id:
-        return jsonify({"success": False, "message": "Admin access required."}), 403
-
-    table = {
-        "applications": "club_applications",
-        "members": "club_members"
-    }.get(submission_type)
-    if not table:
-        return jsonify({"success": False, "message": "Invalid submission type."}), 400
-
-    return jsonify({
-        "success": True,
-        "submissions": _serialize_submissions(
-            get_club_submissions(table, organization_id)
-        )
-    })
-
-
-@complaints_bp.route("/club-submissions/<string:submission_type>/<int:submission_id>/status", methods=["PATCH"])
-def update_club_submission_status_route(submission_type, submission_id):
-    organization_id = _admin_organization_id()
-    if not organization_id:
-        return jsonify({"success": False, "message": "Admin access required."}), 403
-
-    table = {
-        "applications": "club_applications",
-        "members": "club_members"
-    }.get(submission_type)
-    if not table:
-        return jsonify({"success": False, "message": "Invalid submission type."}), 400
-
-    status = str((request.get_json(silent=True) or {}).get("status", "")).strip().lower()
-    allowed_statuses = {
-        "applications": {"pending", "accepted", "rejected"},
-        "members": {"pending", "accepted", "rejected"}
-    }
-    if status not in allowed_statuses[submission_type]:
-        return jsonify({"success": False, "message": "Invalid submission status."}), 400
-
-    if not update_club_submission_status(table, submission_id, organization_id, status):
-        return jsonify({"success": False, "message": "Submission not found."}), 404
-
-    return jsonify({"success": True, "status": status})
-
-
-@complaints_bp.route("/club-submissions/<string:submission_type>", methods=["POST"])
-def create_club_submission(submission_type):
-    organization_slug = request.form.get("organization_slug", "").strip().lower()
-    organization = get_organization_by_slug(organization_slug)
-    if not organization:
-        return jsonify({"success": False, "message": "Organization not found."}), 404
-
-    data = {
-        "name": request.form.get("name", "").strip(),
-        "email": request.form.get("email", "").strip().lower(),
-        "roll": request.form.get("roll", request.form.get("id_no", "")).strip(),
-        "branch": request.form.get("branch", "").strip(),
-        "year": request.form.get("year", "").strip(),
-        "semester": request.form.get("semester", request.form.get("current_sem", "")).strip(),
-        "phone": request.form.get("phone", "").strip(),
-        "reason": request.form.get("reason", "").strip()
-    }
-    if not data["name"] or not data["email"]:
-        return jsonify({"success": False, "message": "Name and email are required."}), 400
-
-    if submission_type == "members":
-        submission_id = create_club_member(organization["id"], data)
-    elif submission_type == "applications":
-        submission_id = create_club_application(organization["id"], data)
-    else:
-        return jsonify({"success": False, "message": "Invalid submission type."}), 400
-
-    if not submission_id:
-        return jsonify({"success": False, "message": "Could not save submission."}), 500
-    return jsonify({"success": True, "submission_id": submission_id}), 201
-
-
-@complaints_bp.route("/api/<string:reference_id>/status", methods=["PATCH", "POST"])
-def update_complaint_status_route(reference_id):
     if session.get("role") != "admin":
         return jsonify({
             "success": False,
-            "message": "Admin access required."
+            "message": "You are not authorized to do this."
         }), 403
 
     data = request.get_json(silent=True) or {}
-    requested_status = str(data.get("status", "")).strip().lower()
-    status_aliases = {
-        "pending": "new",
-        "new": "new",
-        "under review": "under-review",
-        "under-review": "under-review",
-        "in progress": "in-progress",
-        "in-progress": "in-progress",
-        "resolved": "resolved",
-        "rejected": "rejected"
-    }
-    status = status_aliases.get(requested_status)
-    if not status:
+    status = str(data.get("status", "")).strip().lower()
+
+    if status not in ALLOWED_STATUSES:
         return jsonify({
             "success": False,
-            "message": "Invalid complaint status."
+            "message": (
+                "Status must be one of: "
+                + ", ".join(sorted(ALLOWED_STATUSES))
+            )
         }), 400
 
-    # A club admin may only alter complaints assigned to that club.  A
-    # platform admin (without an organization) can still manage all rows.
-    organization_id = session.get("organization_id")
-    updated = update_complaint_status(reference_id, status, organization_id)
+    complaint = get_complaint_by_reference(reference_id)
+
+    if not complaint:
+        return jsonify({
+            "success": False,
+            "message": "Complaint not found."
+        }), 404
+
+    updated = update_complaint_status(reference_id, status)
+
     if not updated:
         return jsonify({
             "success": False,
-            "message": "Complaint not found or status was not updated."
-        }), 404
+            "message": "Could not update complaint status."
+        }), 500
+
+    complaint = get_complaint_by_reference(reference_id)
 
     return jsonify({
         "success": True,
-        "reference_id": reference_id,
-        "status": status
+        "message": "Complaint status updated.",
+        "complaint": serialize_complaint(complaint)
     })
