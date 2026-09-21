@@ -91,7 +91,7 @@
 
                 <strong>
                     Admin
-                </strong >
+                </strong>
 
                 <span>
                     Administrator
@@ -580,68 +580,63 @@
 
                             <div class="action-buttons">
 
+                            {% if emergency.status == 'pending' %}
 
-                                {% if emergency.status == 'pending' %}
+                              <!-- APPROVE -->
 
+                              <form
+                                 method="POST"
+                                 action="{{ url_for('emergency.approve_emergency_route', emergency_id=emergency.id) }}"
+                                 style="display:inline;">
 
-                                    <!-- APPROVE -->
+                                 <button
+                                     type="submit"
+                                     class="approve"
+                                     title="Approve">
 
-                                    <form
-                                        method="POST"
-                                        action="{{ url_for('emergency.approve_emergency_route', emergency_id=emergency.id) }}"
-                                        style="display:inline;">
-
-                                        <button
-                                            type="submit"
-                                            class="approve"
-                                            title="Approve">
-
-                                            <i class="fa-solid fa-check"></i>
-
-                                        </button>
-
-                                    </form>
-
-
-
-                                    <!-- REJECT -->
-
-                                    <form
-                                        method="POST"
-                                        action="{{ url_for('emergency.reject_emergency_route', emergency_id=emergency.id) }}"
-                                        style="display:inline;">
-
-                                        <button
-                                            type="submit"
-                                            class="reject"
-                                            title="Reject">
-
-                                            <i class="fa-solid fa-xmark"></i>
-
-                                        </button>
-
-                                    </form>
-
-
-                                {% endif %}
-
-
-
-                                <!-- VIEW -->
-
-                                <button
-                                    type="button"
-                                    class="view"
-                                    title="View"
-                                    onclick="viewEmergency(
-                                        '{{ emergency.title|e }}',
-                                        '{{ emergency.message|e }}'
-                                    )">
-
-                                    <i class="fa-solid fa-eye"></i>
+                                    <i class="fa-solid fa-check"></i>
 
                                 </button>
 
+                                </form>
+
+                             {% endif %}
+
+
+                            <!-- VIEW -->
+
+                                <button
+                                     type="button"
+                                    class="view"
+                                    title="View"
+                                    onclick="viewEmergency(
+                                            '{{ emergency.title|e }}',
+                                            '{{ emergency.message|e }}'
+                                        )">
+
+                                     <i class="fa-solid fa-eye"></i>
+
+                                </button>
+
+
+                            <!-- DELETE -->
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('emergency.delete_emergency_route', emergency_id=emergency.id) }}"
+                                    style="display:inline;"
+                                    onsubmit="return confirm('Are you sure you want to delete this emergency?');">
+
+                                    <button
+                                        type="submit"
+                                        class="delete-button"
+                                        title="Delete">
+
+                                        <i class="fa-regular fa-trash-can"></i>
+
+                                    </button>
+
+                                </form>
 
                             </div>
 

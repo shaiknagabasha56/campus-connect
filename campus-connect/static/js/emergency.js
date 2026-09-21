@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /* ============================================================
    Emergency ticker — news-style right-to-left scroll
-   ============================================================ */
+   ============================================================ 
 (function(){
   const headlines = [
     "Fire drill scheduled tomorrow at 10:00 AM — all hostellers must evacuate within 5 minutes",
@@ -171,12 +171,14 @@ document.addEventListener('DOMContentLoaded', function () {
         (text) =>
           `<span class="emergency-ticker-item"><i class="fa-solid fa-circle-exclamation" style="margin-right:8px;color:#dc2626;"></i>${text}<span class="emergency-ticker-sep">•</span></span>`
       )
-      .join(" ");
+      .join("");
   }
 
   // Render twice back-to-back so the CSS animation (0% -> -50%) loops seamlessly.
   content.innerHTML = renderItems(headlines) + renderItems(headlines);
 })();
+
+*/
 
 /* ============================================================
    Active Emergencies card — severity filter (All / Critical /

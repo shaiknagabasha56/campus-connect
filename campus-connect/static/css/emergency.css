@@ -72,7 +72,7 @@ body.na-body{
   font-size:14.5px;
   padding:7px 12px;
   border-radius:8px;
-  transition: background .18s, color .18s;
+  transition:background .18s, color .18s;
 }
 .na-nav a:hover{ background:rgba(255,255,255,0.08); color:#fff; }
 .na-nav a.active{ background:var(--cat, var(--accent)); color:#fff; }
