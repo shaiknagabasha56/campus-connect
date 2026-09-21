@@ -9,6 +9,8 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 <link href="../../static/css/sarvasrijana.css" rel="stylesheet"/>
 <style>:root{ --cat: #F97316; }</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+<script src="{{ url_for('static', filename='js/mobile-nav.js') }}" defer></script>
 </head>
 <body class="na-body">
 <header class="na-topbar na-topbar-simple">
@@ -386,5 +388,6 @@
 </footer>
 <script src="../../static/js/sarvasrijana.js"></script>
 <script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
+<script src="{{ url_for('static', filename='js/club_public_data.js') }}"></script>
 </body>
 </html>

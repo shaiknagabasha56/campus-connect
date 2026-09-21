@@ -1,0 +1,348 @@
+.
+├── campus-connect
+│   ├── app.py
+│   ├── config.py
+│   ├── database
+│   │   ├── db.py
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── db.cpython-310.pyc
+│   │   │   └── __init__.cpython-310.pyc
+│   │   └── queries.py
+│   ├── extensions.py
+│   ├── __pycache__
+│   │   ├── config.cpython-310.pyc
+│   │   └── extensions.cpython-310.pyc
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── routes
+│   │   ├── academic.py
+│   │   ├── admin.py
+│   │   ├── auth.py
+│   │   ├── cells.py
+│   │   ├── clubs.py
+│   │   ├── complaints.py
+│   │   ├── emergency.py
+│   │   ├── homepage.py
+│   │   ├── __init__.py
+│   │   ├── non_academic.py
+│   │   ├── __pycache__
+│   │   │   ├── academic.cpython-310.pyc
+│   │   │   ├── admin.cpython-310.pyc
+│   │   │   ├── auth.cpython-310.pyc
+│   │   │   ├── cells.cpython-310.pyc
+│   │   │   ├── clubs.cpython-310.pyc
+│   │   │   ├── complaints.cpython-310.pyc
+│   │   │   ├── emergency.cpython-310.pyc
+│   │   │   ├── homepage.cpython-310.pyc
+│   │   │   ├── __init__.cpython-310.pyc
+│   │   │   ├── non_academic.cpython-310.pyc
+│   │   │   └── updates.cpython-310.pyc
+│   │   ├── radio.py
+│   │   └── updates.py
+│   ├── services
+│   │   ├── auth_services.py
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   │       ├── auth_services.cpython-310.pyc
+│   │       └── __init__.cpython-310.pyc
+│   ├── static
+│   │   ├── css
+│   │   │   ├── academic.css
+│   │   │   ├── ai-ml_admin.css
+│   │   │   ├── ai-ml.css
+│   │   │   ├── artix_admin.css
+│   │   │   ├── artix.css
+│   │   │   ├── aws_admin.css
+│   │   │   ├── aws.css
+│   │   │   ├── canteen_admin.css
+│   │   │   ├── canteen.css
+│   │   │   ├── cdpc_admin.css
+│   │   │   ├── cdpc.css
+│   │   │   ├── cells.css
+│   │   │   ├── chemical_admin.css
+│   │   │   ├── chemical.css
+│   │   │   ├── civil_admin.css
+│   │   │   ├── civil.css
+│   │   │   ├── clubs.css
+│   │   │   ├── complaint_admin.css
+│   │   │   ├── complaint.css
+│   │   │   ├── cse_admin.css
+│   │   │   ├── cse.css
+│   │   │   ├── ece_admin.css
+│   │   │   ├── ece.css
+│   │   │   ├── ecell_admin.css
+│   │   │   ├── ecell.css
+│   │   │   ├── eee_admin.css
+│   │   │   ├── eee.css
+│   │   │   ├── emergency_admin.css
+│   │   │   ├── emergency.css
+│   │   │   ├── financial_admin.css
+│   │   │   ├── financial.css
+│   │   │   ├── hec_admin.css
+│   │   │   ├── hec.css
+│   │   │   ├── homepage.css
+│   │   │   ├── hospital_admin.css
+│   │   │   ├── hospital.css
+│   │   │   ├── hostel_admin.css
+│   │   │   ├── hostel.css
+│   │   │   ├── icro_admin.css
+│   │   │   ├── icro.css
+│   │   │   ├── it_infra_admin.css
+│   │   │   ├── it-infra.css
+│   │   │   ├── kaladharani_admin.css
+│   │   │   ├── kaladharani.css
+│   │   │   ├── khelsaathi_admin.css
+│   │   │   ├── khelsaathi.css
+│   │   │   ├── landing.css
+│   │   │   ├── login.css
+│   │   │   ├── mechanical_admin.css
+│   │   │   ├── mech.css
+│   │   │   ├── mess_admin.css
+│   │   │   ├── mess.css
+│   │   │   ├── metallurgy_admin.css
+│   │   │   ├── metallurgy.css
+│   │   │   ├── non-academic.css
+│   │   │   ├── pixelro_admin.css
+│   │   │   ├── pixelro.css
+│   │   │   ├── reset-password.css
+│   │   │   ├── sarvasrijana_admin.css
+│   │   │   ├── sarvasrijana.css
+│   │   │   ├── scholarship_admin.css
+│   │   │   ├── scholarship.css
+│   │   │   ├── store_admin.css
+│   │   │   ├── store.css
+│   │   │   ├── techxcel_admin.css
+│   │   │   └── techxcel.css
+│   │   ├── images
+│   │   │   ├── 480661.png
+│   │   │   ├── artix-head-1.svg
+│   │   │   ├── artix-head-2.svg
+│   │   │   ├── artix-head-3.svg
+│   │   │   ├── aws-head-1.svg
+│   │   │   ├── aws-head-2.svg
+│   │   │   ├── aws-head-3.svg
+│   │   │   ├── background.jpg
+│   │   │   ├── bluecar.jpg
+│   │   │   ├── cdpc-head-1.svg
+│   │   │   ├── cdpc-head-2.svg
+│   │   │   ├── cdpc-head-3.svg
+│   │   │   ├── ecell-head-1.svg
+│   │   │   ├── ecell-head-2.svg
+│   │   │   ├── ecell-head-3.svg
+│   │   │   ├── f2car.jpeg
+│   │   │   ├── frds.jpeg
+│   │   │   ├── hec-head-1.svg
+│   │   │   ├── hec-head-2.svg
+│   │   │   ├── hec-head-3.svg
+│   │   │   ├── hod.svg
+│   │   │   ├── icro-head-1.svg
+│   │   │   ├── icro-head-2.svg
+│   │   │   ├── icro-head-3.svg
+│   │   │   ├── kaladharani-head-1.svg
+│   │   │   ├── kaladharani-head-2.svg
+│   │   │   ├── kaladharani-head-3.svg
+│   │   │   ├── kali.png
+│   │   │   ├── khelsaathi-head-1.svg
+│   │   │   ├── khelsaathi-head-2.svg
+│   │   │   ├── khelsaathi-head-3.svg
+│   │   │   ├── me2.png
+│   │   │   ├── me.png
+│   │   │   ├── pixelro-head-1.svg
+│   │   │   ├── pixelro-head-2.svg
+│   │   │   ├── pixelro-head-3.svg
+│   │   │   ├── pixels.jpg
+│   │   │   ├── ravan.jpg
+│   │   │   ├── sarvasrijana-head-1.svg
+│   │   │   ├── sarvasrijana-head-2.svg
+│   │   │   ├── sarvasrijana-head-3.svg
+│   │   │   ├── spider.jpeg
+│   │   │   ├── students.jpg
+│   │   │   ├── sunset.png
+│   │   │   ├── techxcel-head-1.svg
+│   │   │   ├── techxcel-head-2.svg
+│   │   │   ├── techxcel-head-3.svg
+│   │   │   ├── tharcar.jpeg
+│   │   │   ├── venomspidy.jpeg
+│   │   │   ├── welcome1.jpg
+│   │   │   ├── welcome2.jpg
+│   │   │   └── whitecar.jpeg
+│   │   ├── js
+│   │   │   ├── academic.js
+│   │   │   ├── ai-ml_admin.js
+│   │   │   ├── ai-ml.js
+│   │   │   ├── artix_admin.js
+│   │   │   ├── artix.js
+│   │   │   ├── aws_admin.js
+│   │   │   ├── aws.js
+│   │   │   ├── canteen_admin.js
+│   │   │   ├── canteen.js
+│   │   │   ├── cdpc_admin.js
+│   │   │   ├── cdpc.js
+│   │   │   ├── cells.js
+│   │   │   ├── chemical_admin.js
+│   │   │   ├── chemical.js
+│   │   │   ├── civil_admin.js
+│   │   │   ├── civil.js
+│   │   │   ├── clubs.js
+│   │   │   ├── complaint_admin.js
+│   │   │   ├── complaint.js
+│   │   │   ├── cse_admin.js
+│   │   │   ├── cse.js
+│   │   │   ├── ece_admin.js
+│   │   │   ├── ece.js
+│   │   │   ├── ecell_admin.js
+│   │   │   ├── ecell.js
+│   │   │   ├── eee_admin.js
+│   │   │   ├── eee.js
+│   │   │   ├── emergency_admin.js
+│   │   │   ├── emergency.js
+│   │   │   ├── financial_admin.js
+│   │   │   ├── financial.js
+│   │   │   ├── hec_admin.js
+│   │   │   ├── hec.js
+│   │   │   ├── homepage.js
+│   │   │   ├── hospital_admin.js
+│   │   │   ├── hospital.js
+│   │   │   ├── hostel_admin.js
+│   │   │   ├── hostel.js
+│   │   │   ├── icro_admin.js
+│   │   │   ├── icro.js
+│   │   │   ├── it_infra_admin.js
+│   │   │   ├── it-infra.js
+│   │   │   ├── kaladharani_admin.js
+│   │   │   ├── kaladharani.js
+│   │   │   ├── khelsaathi_admin.js
+│   │   │   ├── khelsaathi.js
+│   │   │   ├── landing.js
+│   │   │   ├── login.js
+│   │   │   ├── mechanical_admin.js
+│   │   │   ├── mech.js
+│   │   │   ├── mess_admin.js
+│   │   │   ├── mess.js
+│   │   │   ├── metallurgy_admin.js
+│   │   │   ├── metallurgy.js
+│   │   │   ├── non-academic.js
+│   │   │   ├── pixelro_admin.js
+│   │   │   ├── pixelro.js
+│   │   │   ├── public_updates.js
+│   │   │   ├── reset-password.js
+│   │   │   ├── sarvasrijana_admin.js
+│   │   │   ├── sarvasrijana.js
+│   │   │   ├── scholarship_admin.js
+│   │   │   ├── scholarship.js
+│   │   │   ├── store_admin.js
+│   │   │   ├── store.js
+│   │   │   ├── techxcel_admin.js
+│   │   │   ├── techxcel.js
+│   │   │   └── updates.js
+│   │   └── uploads
+│   │       ├── temp.txt
+│   │       └── updates
+│   │           ├── 081cbab90117446fa600dd3f5226e259_tharcar.jpeg
+│   │           ├── 105e99d90713406fa8f93c7d0eb42c9b_bluecar.jpg
+│   │           ├── 31c86722ffc642b09d22c30874216897_tharcar.jpeg
+│   │           ├── 5e2f2f4470964c87bc32341770d5abfb_spider.jpeg
+│   │           ├── 768585704ef24b81924cbaea090b0b7f_students.jpg
+│   │           ├── a6331cd665f14d9dbd1af0ee3ffb363c_tharcar.jpeg
+│   │           ├── dee8062a2b024a6ca3948472b891260e_welcome1.jpg
+│   │           └── e1e26d83f3614bcca2791eeb6a5c0d2a_bluecar.jpg
+│   ├── structure.txt
+│   ├── templates
+│   │   ├── academic
+│   │   │   └── academic.html
+│   │   ├── academic-pages
+│   │   │   ├── ai-ml.html
+│   │   │   ├── chemical.html
+│   │   │   ├── civil.html
+│   │   │   ├── cse.html
+│   │   │   ├── ece.html
+│   │   │   ├── eee.html
+│   │   │   ├── mech.html
+│   │   │   └── metallurgy.html
+│   │   ├── admin
+│   │   │   ├── academic
+│   │   │   │   ├── aiml_admin.html
+│   │   │   │   ├── chemical_admin.html
+│   │   │   │   ├── civil_admin.html
+│   │   │   │   ├── cse_admin.html
+│   │   │   │   ├── ece_admin.html
+│   │   │   │   ├── eee_admin.html
+│   │   │   │   ├── mech_admin.html
+│   │   │   │   └── metallurgy_admin.html
+│   │   │   ├── cells
+│   │   │   │   ├── cdpc_admin.html
+│   │   │   │   ├── ecell_admin.html
+│   │   │   │   └── hec_admin.html
+│   │   │   ├── clubs
+│   │   │   │   ├── artix_admin.html
+│   │   │   │   ├── aws_admin.html
+│   │   │   │   ├── icro_admin.html
+│   │   │   │   ├── kaladharani_admin.html
+│   │   │   │   ├── khelsaathi_admin.html
+│   │   │   │   ├── pixelro_admin.html
+│   │   │   │   ├── sarvasrijana_admin.html
+│   │   │   │   └── techxcel_admin.html
+│   │   │   ├── complaint
+│   │   │   │   └── complaint_admin.html
+│   │   │   ├── emergency
+│   │   │   │   └──  emergency_admin.html
+│   │   │   └── non-academic
+│   │   │       ├── canteen_admin.html
+│   │   │       ├── fo-office_admin.html
+│   │   │       ├── hospital_admin.html
+│   │   │       ├── hostel_admin.html
+│   │   │       ├── it-infra_admin.html
+│   │   │       ├── mess_admin.html
+│   │   │       ├── scholarship-office_admin.html
+│   │   │       └── store_admin.html
+│   │   ├── auth
+│   │   │   ├── email_verified.html
+│   │   │   ├── login.html
+│   │   │   └── reset-password.html
+│   │   ├── base.html
+│   │   ├── cells
+│   │   │   └── cells.html
+│   │   ├── cells-pages
+│   │   │   ├── cdpc.html
+│   │   │   ├── ecell.html
+│   │   │   └── hec.html
+│   │   ├── clubs
+│   │   │   └── clubs.html
+│   │   ├── clubs-pages
+│   │   │   ├── artix.html
+│   │   │   ├── aws.html
+│   │   │   ├── icro.html
+│   │   │   ├── kaladharani.html
+│   │   │   ├── khelsaathi.html
+│   │   │   ├── pixelro.html
+│   │   │   ├── sarvasrijana.html
+│   │   │   └── techxcel.html
+│   │   ├── complaints
+│   │   │   └── complaint.html
+│   │   ├── emergency
+│   │   │   ├── emergency_admin.html
+│   │   │   └── emergency.html
+│   │   ├── home
+│   │   │   └── homepage.html
+│   │   ├── landing.html
+│   │   ├── non-academic
+│   │   │   └── non-academic.html
+│   │   └── non-academic-pages
+│   │       ├── canteen.html
+│   │       ├── financial.html
+│   │       ├── hospital.html
+│   │       ├── hostel.html
+│   │       ├── it-infra.html
+│   │       ├── mess.html
+│   │       ├── scholarship.html
+│   │       └── store.html
+│   └── utils
+│       ├── email_utils.py
+│       ├── __pycache__
+│       │   ├── email_utils.cpython-310.pyc
+│       │   └── token_utils.cpython-310.pyc
+│       └── token_utils.py
+└── campusConnectStructure.txt
+
+36 directories, 309 files

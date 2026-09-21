@@ -6,6 +6,11 @@ async function logoutUser() {
             method: "POST"
         });
 
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+
         const data = await response.json();
 
         if (data.success) {
@@ -84,56 +89,550 @@ async function logoutUser() {
         }
       });
       
-      // PROFILE DASHBOARD TOGGLE
+  // ============================================================
+// PROFILE DASHBOARD TOGGLE
+// ============================================================
+
 const profileIcon = document.querySelector('.profile');
 const dashboard = document.getElementById('profileDashboard');
 const overlay = document.getElementById('dashboardOverlay');
 const closeBtn = document.querySelector('.close-dashboard');
 
-function openDashboard(){
-  dashboard.classList.add('active');
-  overlay.classList.add('active');
-  dashboard.setAttribute('aria-hidden', 'false');
+
+// ------------------------------------------------------------
+// OPEN PROFILE DASHBOARD
+// ------------------------------------------------------------
+
+function openDashboard() {
+
+    if (!dashboard || !overlay) return;
+
+    dashboard.classList.add('active');
+
+    overlay.classList.add('active');
+
+    dashboard.setAttribute(
+        'aria-hidden',
+        'false'
+    );
 }
 
-function closeDashboard(){
-  dashboard.classList.remove('active');
-  overlay.classList.remove('active');
-  dashboard.setAttribute('aria-hidden', 'true');
+
+// ------------------------------------------------------------
+// CLOSE PROFILE DASHBOARD
+// ------------------------------------------------------------
+
+function closeDashboard() {
+
+    if (!dashboard || !overlay) return;
+
+    // Close all sub-panels
+    subPanels.forEach(panel => {
+        panel.classList.remove('active');
+    });
+
+    dashboard.classList.remove('active');
+
+    overlay.classList.remove('active');
+
+    dashboard.setAttribute(
+        'aria-hidden',
+        'true'
+    );
 }
 
-profileIcon.addEventListener('click', openDashboard);
-closeBtn.addEventListener('click', closeDashboard);
-overlay.addEventListener('click', closeDashboard);
 
-// Handle sub-panels
-const optionButtons = document.querySelectorAll('.dash-btn[data-panel]');
-const subPanels = document.querySelectorAll('.sub-dashboard');
-const backButtons = document.querySelectorAll('.back-btn');
+// ------------------------------------------------------------
+// PROFILE ICON CLICK
+// ------------------------------------------------------------
 
-optionButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const panelId = btn.getAttribute('data-panel');
-    document.getElementById(panelId).classList.add('active');
-  });
+if (profileIcon) {
+
+    profileIcon.addEventListener(
+        'click',
+        openDashboard
+    );
+
+}
+
+
+// ------------------------------------------------------------
+// CLOSE BUTTON
+// ------------------------------------------------------------
+
+if (closeBtn) {
+
+    closeBtn.addEventListener(
+        'click',
+        closeDashboard
+    );
+
+}
+
+
+// ------------------------------------------------------------
+// OVERLAY CLICK
+// ------------------------------------------------------------
+
+if (overlay) {
+
+    overlay.addEventListener(
+        'click',
+        closeDashboard
+    );
+
+}
+
+
+// ============================================================
+// SUB PANELS
+// ============================================================
+
+const optionButtons =
+    document.querySelectorAll('[data-panel]');
+
+const subPanels =
+    document.querySelectorAll('.sub-dashboard');
+
+const backButtons =
+    document.querySelectorAll('.back-btn');
+
+
+// ------------------------------------------------------------
+// OPEN SUB PANEL
+// ------------------------------------------------------------
+
+optionButtons.forEach(button => {
+
+    button.addEventListener('click', () => {
+
+        const panelId =
+            button.getAttribute('data-panel');
+
+        if (!panelId) return;
+
+
+        const selectedPanel =
+            document.getElementById(panelId);
+
+        if (!selectedPanel) return;
+
+
+        // Close every other sub-panel
+        subPanels.forEach(panel => {
+
+            panel.classList.remove('active');
+
+        });
+
+
+        // Open selected panel
+        selectedPanel.classList.add('active');
+
+    });
+
 });
 
-backButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    btn.closest('.sub-dashboard').classList.remove('active');
-  });
+
+// ------------------------------------------------------------
+// BACK BUTTON
+// ------------------------------------------------------------
+
+backButtons.forEach(button => {
+
+    button.addEventListener('click', () => {
+
+        const currentPanel =
+            button.closest('.sub-dashboard');
+
+        if (!currentPanel) return;
+
+        currentPanel.classList.remove('active');
+
+    });
+
 });
 
-// Also close sub-panels if dashboard is closed
-closeBtn.addEventListener('click', () => {
-  subPanels.forEach(p => p.classList.remove('active'));
-  closeDashboard();
-});
-overlay.addEventListener('click', () => {
-  subPanels.forEach(p => p.classList.remove('active'));
-  closeDashboard();
-});
 
+// ============================================================
+// EDIT PROFILE
+// ============================================================
+
+const editProfileForm = document.getElementById('editProfileForm');
+
+if (editProfileForm) {
+
+    editProfileForm.addEventListener('submit', async function (event) {
+
+        event.preventDefault();
+
+        const usernameInput = document.getElementById('editUsername');
+        const emailInput = document.getElementById('editEmail');
+        const message = document.getElementById('profileMessage');
+        const saveButton = editProfileForm.querySelector('button[type="submit"]');
+
+        if (!usernameInput || !emailInput || !message) {
+            console.error('Edit profile elements are missing.');
+            return;
+        }
+
+        const username = usernameInput.value.trim();
+        const email = emailInput.value.trim().toLowerCase();
+
+        // --------------------------------------------
+        // VALIDATION
+        // --------------------------------------------
+
+        if (!username) {
+            message.textContent = 'Username is required.';
+            message.className = 'error-message';
+            return;
+        }
+
+        if (!email) {
+            message.textContent = 'Email is required.';
+            message.className = 'error-message';
+            return;
+        }
+
+        // Prevent duplicate clicks while request is running.
+        if (saveButton) {
+            saveButton.disabled = true;
+            saveButton.dataset.originalText = saveButton.textContent;
+            saveButton.textContent = 'Saving...';
+        }
+
+        message.textContent = 'Saving changes...';
+        message.className = 'success-message';
+
+        try {
+
+            const response = await fetch('/auth/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email
+                })
+            });
+
+            // Read response as text first so an HTML error page
+            // does not cause response.json() to throw.
+            const responseText = await response.text();
+
+            let result;
+
+            try {
+                result = JSON.parse(responseText);
+            } catch (jsonError) {
+                console.error(
+                    'Profile update returned non-JSON response:',
+                    responseText
+                );
+
+                throw new Error(
+                    `Server returned HTTP ${response.status}`
+                );
+            }
+
+            if (!response.ok || !result.success) {
+
+                message.textContent =
+                    result.message || 'Failed to update profile.';
+
+                message.className = 'error-message';
+
+                return;
+            }
+
+            // --------------------------------------------
+            // SUCCESS
+            // --------------------------------------------
+
+            message.textContent =
+                result.message || 'Profile updated successfully.';
+
+            message.className = 'success-message';
+
+            // Update username in sidebar immediately.
+            const profileName = document.querySelector('.pd-name');
+
+            if (profileName) {
+                profileName.textContent = username;
+            }
+
+            // Update email in sidebar immediately.
+            const profileEmail = document.querySelector('.pd-email');
+
+            if (profileEmail) {
+                profileEmail.textContent = email;
+            }
+
+            // Update dashboard avatar.
+            const newInitial =
+                username.charAt(0).toUpperCase();
+
+            const dashboardAvatar =
+                document.querySelector('.pd-avatar');
+
+            if (dashboardAvatar) {
+                dashboardAvatar.textContent = newInitial;
+            }
+
+            // Update top profile icon.
+            const profileInitial =
+                document.querySelector('.profile-initial');
+
+            if (profileInitial) {
+                profileInitial.textContent = newInitial;
+            }
+
+            // Keep the form values synchronized.
+            usernameInput.value = username;
+            emailInput.value = email;
+
+        } catch (error) {
+
+            console.error(
+                'Profile update error:',
+                error
+            );
+
+            message.textContent =
+                'Unable to update profile. Please try again.';
+
+            message.className = 'error-message';
+
+        } finally {
+
+            // Always restore the Save button.
+            if (saveButton) {
+                saveButton.disabled = false;
+                saveButton.textContent =
+                    saveButton.dataset.originalText || 'Save Changes';
+            }
+        }
+
+    });
+
+}
+
+// ============================================================
+// CHANGE PASSWORD
+// ============================================================
+
+const changePasswordForm =
+    document.getElementById(
+        'changePasswordForm'
+    );
+
+
+if (changePasswordForm) {
+
+    changePasswordForm.addEventListener(
+        'submit',
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const currentPassword =
+                document.getElementById(
+                    'currentPassword'
+                );
+
+            const newPassword =
+                document.getElementById(
+                    'newPassword'
+                );
+
+            const confirmPassword =
+                document.getElementById(
+                    'confirmPassword'
+                );
+
+            const message =
+                document.getElementById(
+                    'passwordMessage'
+                );
+
+
+            if (
+                !currentPassword ||
+                !newPassword ||
+                !confirmPassword
+            ) {
+
+                return;
+
+            }
+
+
+            const currentValue =
+                currentPassword.value;
+
+            const newValue =
+                newPassword.value;
+
+            const confirmValue =
+                confirmPassword.value;
+
+
+            // --------------------------------------------
+            // EMPTY FIELD VALIDATION
+            // --------------------------------------------
+
+            if (
+                !currentValue ||
+                !newValue ||
+                !confirmValue
+            ) {
+
+                message.textContent =
+                    'Please fill all password fields.';
+
+                message.className =
+                    'error-message';
+
+                return;
+
+            }
+
+
+            // --------------------------------------------
+            // PASSWORD MATCH
+            // --------------------------------------------
+
+            if (
+                newValue !== confirmValue
+            ) {
+
+                message.textContent =
+                    'New passwords do not match.';
+
+                message.className =
+                    'error-message';
+
+                return;
+
+            }
+
+
+            // --------------------------------------------
+            // PASSWORD LENGTH
+            // --------------------------------------------
+
+            if (newValue.length < 8) {
+
+                message.textContent =
+                    'Password must be at least 8 characters.';
+
+                message.className =
+                    'error-message';
+
+                return;
+
+            }
+
+
+            try {
+
+                // ----------------------------------------
+                // SEND TO FLASK
+                // ----------------------------------------
+
+                const response = await fetch(
+                    '/auth/update-password',
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+
+                        body: JSON.stringify({
+
+                            current_password:
+                                currentValue,
+
+                            new_password:
+                                newValue,
+
+                            confirm_password:
+                                confirmValue
+
+                        })
+                    }
+                );
+
+
+                const result =
+                    await response.json();
+
+
+                // ----------------------------------------
+                // SHOW SERVER MESSAGE
+                // ----------------------------------------
+
+                message.textContent =
+                    result.message;
+
+
+                // ----------------------------------------
+                // SUCCESS
+                // ----------------------------------------
+
+                if (result.success) {
+
+                    message.className =
+                        'success-message';
+
+
+                    // Clear password fields
+                    currentPassword.value =
+                        '';
+
+                    newPassword.value =
+                        '';
+
+                    confirmPassword.value =
+                        '';
+
+                }
+
+                else {
+
+                    message.className =
+                        'error-message';
+
+                }
+
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    'Password update error:',
+                    error
+                );
+
+
+                message.textContent =
+                    'Something went wrong. Please try again.';
+
+                message.className =
+                    'error-message';
+
+            }
+
+        }
+    );
+
+}
   function rotateAnnouncements(card, interval) {
     const announcements = card.querySelectorAll(".announcement");
     let index = 0;
@@ -729,8 +1228,10 @@ const themeIcon = document.getElementById('themeIcon');
 
 themeToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark-theme');
+  themeToggle.setAttribute('aria-pressed', document.body.classList.contains('dark-theme') ? 'true' : 'false');
 
-  // Switch icon
+  // Old icon swap – the panel no longer has #themeIcon, so skip when it is absent
+  if(!themeIcon) return;
   if(document.body.classList.contains('dark-theme')){
     // Sun icon for light mode
     themeIcon.innerHTML = '<path d="M8 0a.5.5 0 0 1 .5.5V2h-1V.5A.5.5 0 0 1 8 0zm4.95 1.05a.5.5 0 0 1 .7.7l-1.06 1.06-.7-.7 1.06-1.06zM16 8a.5.5 0 0 1-.5.5H14v-1h1.5A.5.5 0 0 1 16 8zm-1.05 4.95a.5.5 0 0 1-.7.7l-1.06-1.06.7-.7 1.06 1.06zM8 16a.5.5 0 0 1-.5-.5V14h1v1.5a.5.5 0 0 1-.5.5zm-4.95-1.05a.5.5 0 0 1-.7-.7l1.06-1.06.7.7-1.06 1.06zM0 8a.5.5 0 0 1 .5-.5H2v1H.5A.5.5 0 0 1 0 8zm1.05-4.95a.5.5 0 0 1 .7-.7l1.06 1.06-.7.7L1.05 3.05z"/>'; 

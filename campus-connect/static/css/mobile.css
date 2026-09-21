@@ -1,0 +1,156 @@
+/* =========================================================
+   Campus Connect – shared mobile layer
+   Loaded LAST on every page (after the page's own CSS) so it
+   can override desktop-only rules. Nothing here changes the
+   desktop layout: everything is inside max-width media queries,
+   except the hidden-by-default hamburger button/panel.
+   ========================================================= */
+
+/* ---------- Safety nets (all sizes) ---------- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+img, video, iframe { max-width: 100%; }
+
+/* ---------- Hamburger button + dropdown panel ---------- */
+.mobile-menu-btn {
+  display: none;                 /* shown only on small screens */
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-menu-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: #fff;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.mobile-menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.mobile-menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.mobile-menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1300;
+  background: #0b1724;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 16px 30px rgba(2,6,23,0.35);
+  padding: 8px 12px 14px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+.mobile-menu-panel.open { display: block; }
+.mobile-menu-panel a {
+  display: block !important;     /* beats the ".na-nav-simple a{display:none}" rules */
+  padding: 14px 12px;
+  color: rgba(255,255,255,0.95);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+  border-radius: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.mobile-menu-panel a:last-child { border-bottom: 0; }
+.mobile-menu-panel a:active,
+.mobile-menu-panel a:hover { background: rgba(255,255,255,0.07); }
+
+@media (max-width: 900px) {
+  .mobile-menu-btn { display: inline-flex; }
+
+  /* homepage: nav is hidden here, so keep calendar/search/profile/menu on the right */
+  .topbar .container > .brand_1 { margin-right: auto; }
+
+  /* calendar dropdown must fit inside the screen */
+  .calendar {
+    right: 12px !important;
+    left: auto;
+    width: min(300px, calc(100vw - 24px)) !important;
+  }
+
+  /* slide-in dashboards must never be wider than the screen */
+  .profile-dashboard, .sub-dashboard { width: min(300px, 88vw); }
+}
+
+/* complaint portal hides its links at 760px, so only show the menu button from there down */
+@media (min-width: 761px) {
+  .navbar .mobile-menu-btn,
+  .navbar .mobile-menu-panel { display: none !important; }
+}
+.navbar .mobile-menu-panel { top: 100%; }
+
+/* ---------- Phones ---------- */
+@media (max-width: 600px) {
+
+  /* --- top bars (homepage .topbar and inner pages .na-topbar) --- */
+  .topbar .container,
+  .na-topbar .container {
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 8px;
+  }
+  .brand_1 { font-size: 15px; gap: 8px; min-width: 0; }
+  .brand_1 > div:last-child { font-size: 15px !important; letter-spacing: 0.3px !important; }
+  .rgukt-logo { height: 36px; width: 36px; }
+  .na-brand { font-size: 17px; min-width: 0; gap: 8px; }
+  .na-brand img { height: 32px; width: 32px; }
+  .top-actions, .na-right-group { min-width: 0; gap: 8px; margin-left: auto; }
+
+  /* search collapses to an icon and expands over the bar when tapped */
+  .search-wrap,
+  .na-search-wrap {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .search-wrap input,
+  .na-search-wrap input { width: 0; min-width: 0; padding: 0; opacity: 0; }
+  .search-wrap:focus-within,
+  .na-search-wrap:focus-within {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    height: 44px;
+    padding: 0 14px;
+    justify-content: flex-start;
+    background: #1b2938;
+    z-index: 5;
+  }
+  .search-wrap:focus-within input,
+  .na-search-wrap:focus-within input { width: 100%; opacity: 1; padding: 0 0 0 8px; font-size: 16px; }
+
+  /* --- inner pages (clubs / cells / academic / non-academic) --- */
+  .na-hero, .na-breadcrumb, .na-ann-card { padding-left: 14px; padding-right: 14px; }
+  .na-hero h1 { font-size: 24px; }
+  .hod-main-info { width: 100%; min-width: 0; }
+
+  /* --- modals: use the screen width, keep content scrollable --- */
+  #update-modal .modal-card {
+    width: calc(100vw - 24px);
+    max-height: 88vh;
+    height: auto;
+    overflow-y: auto;
+  }
+
+  /* --- tables scroll sideways inside themselves, not the whole page --- */
+  table { display: block; width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}

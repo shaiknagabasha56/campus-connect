@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <link rel="stylesheet" href="../../static/css/complaint.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+<script src="{{ url_for('static', filename='js/mobile-nav.js') }}" defer></script>
 </head>
 <body>
   <nav class="navbar">
@@ -72,10 +74,10 @@
         <div><p class="eyebrow">TRACK YOUR REQUESTS</p><h2>Existing Complaints</h2><p>Click a complaint to view its complete details and current status.</p></div>
         <div class="status-filters">
           <button class="status-filter active" data-status="all">All</button>
-          <button class="status-filter" data-status="new">New</button>
-          <button class="status-filter" data-status="under-review">Under Review</button>
-          <button class="status-filter" data-status="in-progress">In Progress</button>
-          <button class="status-filter" data-status="resolved">Resolved</button>
+          <button class="status-filter" data-status="pending">Pending</button>
+          <button class="status-filter" data-status="accessed">Accessed</button>
+          <button class="status-filter" data-status="solved">Solved</button>
+          <button class="status-filter" data-status="rejected">Rejected</button>
         </div>
       </div>
 

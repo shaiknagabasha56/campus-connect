@@ -1,4 +1,4 @@
- /* =========================================================
+/* =========================================================
    CAMPUS CONNECT
    COMPLAINT ADMIN / STUDENT COMPLAINT JAVASCRIPT
    ========================================================= */
@@ -26,10 +26,26 @@ const backdrop = document.getElementById("preview-backdrop");
    3. STATUS HELPER
    ========================================================= */
 
+const COMPLAINT_STATUS_LABELS = {
+    pending: "Pending",
+    accessed: "Accessed",
+    solved: "Solved",
+    rejected: "Rejected",
+    // legacy values kept for any old rows already in the database
+    new: "Pending",
+    "under-review": "Accessed",
+    "in-progress": "Accessed",
+    resolved: "Solved"
+};
+
 function prettyStatus(status) {
 
     if (!status) {
         return "Unknown";
+    }
+
+    if (COMPLAINT_STATUS_LABELS[status]) {
+        return COMPLAINT_STATUS_LABELS[status];
     }
 
     return String(status)
@@ -1159,13 +1175,9 @@ function renderManagement() {
         currentManagementItems();
 
 
-    const statuses = [
-        "All",
-        "New",
-        "Under Review",
-        "In Progress",
-        "Resolved"
-    ];
+    const statuses = managementType === "complaints"
+        ? ["All", "Pending", "Accessed", "Solved", "Rejected"]
+        : ["All", "New", "Under Review", "In Progress", "Resolved"];
 
 
     managementFilters.innerHTML =
@@ -1475,6 +1487,34 @@ function renderManagementPreview(id) {
 
         </div>
 
+        ${
+            isComplaint
+                ? `
+                    <div class="status-action-bar">
+                        <span class="status-action-label">Mark as:</span>
+                        ${
+                            ["pending", "accessed", "solved", "rejected"].map(
+                                statusValue => `
+                                    <button
+                                        type="button"
+                                        class="status-action ${
+                                            item.status === statusValue
+                                                ? "active"
+                                                : ""
+                                        }"
+                                        data-ref="${escapeHTML(item.id)}"
+                                        data-status="${statusValue}"
+                                    >
+                                        ${prettyStatus(statusValue)}
+                                    </button>
+                                `
+                            ).join("")
+                        }
+                    </div>
+                `
+                : ""
+        }
+
 
         <div class="admin-meta-grid">
 
@@ -1606,11 +1646,77 @@ function renderAdminAttachments(files) {
 }
 
 
+/* =========================================================
+   17b. CHANGE COMPLAINT STATUS
+   ========================================================= */
+
+async function changeComplaintStatus(referenceId, status) {
+
+    try {
+
+        const response = await fetch(
+            `/complaints/api/${encodeURIComponent(referenceId)}/status`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ status })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Could not update status."
+            );
+        }
+
+        // Reflect the change locally without a full page reload
+        const item = complaints.find(
+            complaint => String(complaint.id) === String(referenceId)
+        );
+
+        if (item) {
+            item.status = data.complaint.status;
+        }
+
+        renderComplaints();
+        updateAdminCounts();
+        renderManagement();
+        renderManagementPreview(referenceId);
+
+    } catch (error) {
+
+        console.error("Error updating complaint status:", error);
+        alert(error.message || "Could not update complaint status.");
+
+    }
+
+}
+
+
 if (managementPreview) {
 
     managementPreview.addEventListener(
         "click",
         event => {
+
+            const statusButton =
+                event.target.closest(
+                    ".status-action"
+                );
+
+            if (statusButton) {
+
+                changeComplaintStatus(
+                    statusButton.dataset.ref,
+                    statusButton.dataset.status
+                );
+
+                return;
+            }
 
             const button =
                 event.target.closest(

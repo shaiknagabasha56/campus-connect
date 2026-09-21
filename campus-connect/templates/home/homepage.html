@@ -21,6 +21,8 @@
   
   
   <link rel="stylesheet" href="../../static/css/homepage.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+<script src="{{ url_for('static', filename='js/mobile-nav.js') }}" defer></script>
 </head>
 <body>
 
@@ -31,7 +33,7 @@
     <!-- Brand -->
     <div class="brand_1" aria-hidden="false">
       <div>
-        <img src="../static/rgukt.png" class="rgukt-logo"/>
+        <img src="../../static/images/"  alt="RGUKT logo" onerror="this.style.display='none'"/>
       </div>
       <div style="font-size:20px;letter-spacing:0.6px">CAMPUS CONNECT</div>
     </div>
@@ -93,9 +95,9 @@
       </div>
 
       <!-- Profile -->
-      <div class="profile" title="Profile">
-        <img src="../static/cse-rgukt.png" alt="Profile">
-      </div>
+      <button class="profile" title="Profile" type="button" aria-label="Open profile">
+        <span class="profile-initial">{{ (session.get("username", "")[:1] or "U")|upper }}</span>
+      </button>
     </div>
   </div>
 </header>
@@ -368,47 +370,159 @@
   
  <!-- PROFILE DASHBOARD PANEL -->
 <div class="profile-dashboard" id="profileDashboard" aria-hidden="true">
-<div class="dashboard-header">
-  <!-- Theme Toggle Button -->
-  <button id="themeToggle" class="theme-btn" aria-label="Toggle Dark/Light Theme">
-    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="black" class="bi bi-brightness-high-fill" viewBox="0 0 16 16">
-  <path d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/>
-</svg>
-  </button>
 
-  <!-- Profile section -->
-  <div class="dashboard-user">
-    <img src="../static/cse-rgukt.png" alt="Profile">
-    <div>
-      <p><strong>Basha</strong></p>
-      <p class="email">basha@rguktong.ac.in</p>
+  <!-- Header: title + close -->
+  <div class="pd-top">
+    <span class="pd-title">My Profile</span>
+    <button class="close-dashboard" aria-label="Close" type="button">&times;</button>
+  </div>
+
+  <!-- User card -->
+  {% set uname = session.get("username", "") %}
+  <div class="pd-user">
+    <div class="pd-avatar" aria-hidden="true">{{ (uname[:1] or "U")|upper }}</div>
+    <div class="pd-user-text">
+      <strong class="pd-name">{{ uname }}</strong>
+      <span class="pd-email">{{ session.get("email", "") }}</span>
+      {% if session.get("role") %}<span class="pd-role">{{ session.get("role")|capitalize }}</span>{% endif %}
     </div>
   </div>
 
-  <button class="close-dashboard" aria-label="Close">&times;</button>
-</div>
+  <!-- Menu -->
+  <nav class="pd-menu" aria-label="Profile menu">
+    {% if session.get("role") == "admin" %}
+    <a class="pd-item" href="{{ url_for('admin.admin_redirect') }}">
+      <i class="fa-solid fa-user-shield pd-icon"></i><span class="pd-label">Admin dashboard</span><i class="fa-solid fa-chevron-right pd-chev"></i>
+    </a>
+    {% endif %}
+    <button class="pd-item" type="button" data-panel="savedPanel">
+      <i class="fa-regular fa-bookmark pd-icon"></i><span class="pd-label">Saved announcements</span><i class="fa-solid fa-chevron-right pd-chev"></i>
+    </button>
+    <button class="pd-item" type="button" data-panel="recordingsPanel">
+      <i class="fa-solid fa-microphone pd-icon"></i><span class="pd-label">Recordings</span><i class="fa-solid fa-chevron-right pd-chev"></i>
+    </button>
+    <button class="pd-item" type="button" data-panel="accountPanel">
+      <i class="fa-solid fa-gear pd-icon"></i><span class="pd-label">Account &amp; Settings</span><i class="fa-solid fa-chevron-right pd-chev"></i>
+    </button>
+    <button class="pd-item" type="button" data-panel="helpPanel">
+      <i class="fa-regular fa-circle-question pd-icon"></i><span class="pd-label">Help &amp; Support</span><i class="fa-solid fa-chevron-right pd-chev"></i>
+    </button>
+    <button class="pd-item pd-theme" id="themeToggle" type="button" aria-label="Toggle dark theme" aria-pressed="false">
+      <i class="fa-solid fa-moon pd-icon"></i><span class="pd-label">Dark mode</span><span class="pd-switch" aria-hidden="true"></span>
+    </button>
+  </nav>
 
-
-  <div class="dashboard-options">
-    <button class="dash-btn" data-panel="accountPanel">Account</button>
-    <button class="dash-btn" data-panel="savedPanel">Saved announcements</button>
-    <button class="dash-btn" data-panel="recordingsPanel">Recordings</button>
-    <button class="dash-btn" data-panel="settingsPanel">Settings</button>
-    <button class="dash-btn" data-panel="helpPanel">Help & Support</button>
-    <button class="dash-btn logout" onclick="logoutUser()">Logout</button>
+  <!-- Logout pinned to the bottom -->
+  <div class="pd-footer">
+    <button class="pd-logout" type="button" onclick="logoutUser()">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
   </div>
 </div>
 
 <!-- ACCOUNT SUB-PANEL -->
 <div class="sub-dashboard" id="accountPanel">
   <div class="sub-header">
-    <button class="back-btn">&larr; Back</button>
-    <h3>Account Settings</h3>
+    <button class="back-btn" type="button">&larr; Back</button>
+    <h3>Account &amp; Settings</h3>
   </div>
-  <div class="sub-content ">
-    <button class="dash-btn" style="width:270px;">Edit Profile</button>
-    <button class="dash-btn" style="width:270px;">Change Password</button>
-    <button class="dash-btn" style="width:270px;">Privacy Settings</button>
+  <div class="sub-content">
+    <button class="dash-btn" type="button" data-panel="editProfilePanel">
+      Edit Profile
+    </button>
+    <button class="dash-btn" type="button" data-panel="changePasswordPanel">
+      Change Password
+    </button>
+    <button class="dash-btn" type="button">Privacy Settings</button>
+  </div>
+</div>
+
+<!-- EDIT PROFILE SUB-PANEL -->
+<div class="sub-dashboard" id="editProfilePanel">
+  <div class="sub-header">
+    <button class="back-btn" type="button">&larr; Back</button>
+    <h3>Edit Profile</h3>
+  </div>
+
+  <div class="sub-content profile-settings-content">
+    <form id="editProfileForm" class="profile-settings-form">
+      <div class="profile-form-group">
+        <label for="editUsername">Username</label>
+        <input
+          type="text"
+          id="editUsername"
+          name="username"
+          value="{{ session.get('username', '') }}"
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <div class="profile-form-group">
+        <label for="editEmail">Email</label>
+        <input
+          type="email"
+          id="editEmail"
+          name="email"
+          value="{{ session.get('email', '') }}"
+          autocomplete="email"
+          required
+        >
+      </div>
+
+      <button type="submit" class="save-profile-btn">Save Changes</button>
+      <p id="profileMessage" class="profile-form-message" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD SUB-PANEL -->
+<div class="sub-dashboard" id="changePasswordPanel">
+  <div class="sub-header">
+    <button class="back-btn" type="button">&larr; Back</button>
+    <h3>Change Password</h3>
+  </div>
+
+  <div class="sub-content profile-settings-content">
+    <form id="changePasswordForm" class="profile-settings-form">
+      <div class="profile-form-group">
+        <label for="currentPassword">Current Password</label>
+        <input
+          type="password"
+          id="currentPassword"
+          name="current_password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <div class="profile-form-group">
+        <label for="newPassword">New Password</label>
+        <input
+          type="password"
+          id="newPassword"
+          name="new_password"
+          autocomplete="new-password"
+          minlength="6"
+          required
+        >
+      </div>
+
+      <div class="profile-form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirm_password"
+          autocomplete="new-password"
+          minlength="6"
+          required
+        >
+      </div>
+
+      <button type="submit" class="save-profile-btn">Change Password</button>
+      <p id="passwordMessage" class="profile-form-message" aria-live="polite"></p>
+    </form>
   </div>
 </div>
 
@@ -431,17 +545,6 @@
   </div>
   <div class="sub-content">
     <p>Your saved recordings will appear here.</p>
-  </div>
-</div>
-
-<!-- SETTINGS PANEL -->
-<div class="sub-dashboard" id="settingsPanel">
-  <div class="sub-header">
-    <button class="back-btn">&larr; Back</button>
-    <h3>Settings</h3>
-  </div>
-  <div class="sub-content">
-    <p>General settings options here...</p>
   </div>
 </div>
 

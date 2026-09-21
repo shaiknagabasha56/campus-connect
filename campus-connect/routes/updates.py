@@ -597,25 +597,6 @@ def create_new_update():
 
 
     # ----------------------------------------------
-    # IF APPLICATION ENABLED
-    # URL IS REQUIRED
-    # ----------------------------------------------
-
-    if (
-        enable_application
-        and not application_url
-    ):
-
-        return jsonify({
-            "success": False,
-            "message": (
-                "Application URL is required "
-                "when registration is enabled."
-            )
-        }), 400
-
-
-    # ----------------------------------------------
     # COVER IMAGE
     # ----------------------------------------------
     #
@@ -887,23 +868,6 @@ def edit_existing_update(update_id):
             "on"
         ]
     )
-
-
-    # ----------------------------------------------
-    # APPLICATION VALIDATION
-    # ----------------------------------------------
-
-    if (
-        enable_application
-        and not application_url
-    ):
-
-        return jsonify({
-            "success": False,
-            "message": (
-                "Application URL is required."
-            )
-        }), 400
 
 
     # ----------------------------------------------

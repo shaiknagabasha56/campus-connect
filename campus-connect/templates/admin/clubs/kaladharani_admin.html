@@ -11,6 +11,8 @@
 
 <link rel="stylesheet" href="../../..//static/css/kaladharani_admin.css">
 <style>:root{--cat:#ec4899;--accent:#ec4899;}</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+<script src="{{ url_for('static', filename='js/mobile-nav.js') }}" defer></script>
 </head>
 <body class="na-body"><div class="admin-mode-bar">
 <span><i class="fa-solid fa-shield-halved"></i> Kaladharani Admin Mode</span>
@@ -39,8 +41,8 @@
 </div>
 
 <button class="aws-admin-profile-btn" id="awsAdminProfileBtn" type="button" aria-label="Open admin profile">
-  <span class="aws-admin-avatar">A</span>
-  <span class="aws-admin-profile-name">Kaladharani Admin</span>
+  <span class="aws-admin-avatar">{{ (session.get("username") or "A")[:1]|upper }}</span>
+  <span class="aws-admin-profile-name">{{ session.get("username", "") }}</span>
   <i class="fa-solid fa-chevron-down"></i>
 </button>
 </div>
@@ -435,16 +437,14 @@
     <button id="closeAdminSidebar" class="aws-icon-close" type="button"><i class="fa-solid fa-xmark"></i></button></div>
   <div class="aws-sidebar-profile">
     <div class="aws-sidebar-avatar">A</div>
-    <div><h3>Kaladharani Admin</h3><p>admin.kaladharani@rgukt.ac.in</p><span>Coordinator</span></div>
+    <div><h3>{{ session.get("username", "") }}</h3><p>{{ session.get("email", "") }}</p><span>{{ session.get("role", "")|capitalize }}</span></div>
   </div>
   <div class="aws-sidebar-menu">
-    <button data-profile-action="profile"><i class="fa-solid fa-user-pen"></i> Change Profile</button>
-    <button data-profile-action="password"><i class="fa-solid fa-key"></i> Change Password</button>
     <button data-profile-action="settings"><i class="fa-solid fa-gear"></i> Account Settings</button>
   </div>
-  <div class="aws-sidebar-note"><i class="fa-solid fa-shield-halved"></i>
-    <span>Your changes will be connected to the Kaladharani admin account when backend integration is enabled.</span></div>
-  <button class="aws-sidebar-logout" type="button"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  <form action="{{ url_for('auth.logout') }}" method="post" style="display: contents;">
+    <button class="aws-sidebar-logout" type="submit"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  </form>
 </aside>
 
 <section class="admin-data-page" id="adminDataPage" aria-hidden="true">
@@ -469,23 +469,18 @@
   <button class="aws-dialog-close" data-close-dialog><i class="fa-solid fa-xmark"></i></button>
   <span class="aws-admin-eyebrow">PROFILE</span><h2>Change Profile</h2>
   <form id="adminProfileForm">
-    <label>Display Name<input value="Kaladharani Admin" maxlength="60" required></label>
-    <label>Email<input type="email" value="admin.kaladharani@rgukt.ac.in" required></label>
-    <label>Phone<input value="+91 98765 43210" maxlength="20"></label>
+    <label>Display Name<input value="{{ session.get('username', '') }}" maxlength="60" required></label>
+    <label>Email<input type="email" value="{{ session.get('email', '') }}" required></label>
+    <label>Phone<input value="{{ session.get('phone', '') }}" maxlength="20"></label>
     <button type="submit" class="aws-dialog-save">Save Changes</button>
   </form>
-</div>
-<div class="aws-admin-dialog" id="adminPasswordDialog">
-  <button class="aws-dialog-close" data-close-dialog><i class="fa-solid fa-xmark"></i></button>
-  <span class="aws-admin-eyebrow">SECURITY</span><h2>Change Password</h2>
-  <p>A secure password reset link will be sent to <strong>admin.kaladharani@rgukt.ac.in</strong>.</p>
-  <button id="sendResetLink" class="aws-dialog-save"><i class="fa-solid fa-paper-plane"></i> Send Reset Link</button>
-  <div class="aws-reset-message" id="resetMessage"></div>
 </div>
 <div class="aws-admin-toast" id="awsAdminToast"></div>
 
 <script src="../../../static/js/kaladharani_admin.js"></script>
 <script src="{{ url_for('static', filename='js/updates.js') }}"></script>
+<script src="{{ url_for('static', filename='js/club_admin_persistence.js') }}"></script>
+<script src="{{ url_for('static', filename='js/club_admin_submissions.js') }}"></script>
 
 </body>
 </html>

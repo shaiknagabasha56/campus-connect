@@ -1715,6 +1715,10 @@ document.addEventListener("DOMContentLoaded", () => {
     ]
   };
 
+  async function loadClubComplaints() {
+    try { const response = await fetch("/complaints/api"); if (!response.ok) return; const result = await response.json(); if (!result.success) return; data.complaints = (result.complaints || []).map(complaint => ({referenceId:complaint.reference_id,name:complaint.anonymous?"Anonymous Student":(complaint.name||"Student"),email:complaint.anonymous?"Not shared":"",branch:complaint.category||"General",year:complaint.priority||"Medium",phone:complaint.anonymous?"Not shared":(complaint.phone||"Not provided"),subject:complaint.title,category:complaint.category,message:complaint.description,submitted:complaint.created_at?new Date(complaint.created_at).toLocaleString():"Unknown",status:{new:"Pending","under-review":"Under Review","in-progress":"In Progress",resolved:"Resolved",rejected:"Rejected"}[complaint.status]||complaint.status})); } catch (error) { console.error("Could not load club complaints:", error); }
+  }
+
   const meta = {
     complaints:{title:"Complaints", desc:"Review club-related complaints and requests submitted by students.", eyebrow:"COMPLAINT MANAGEMENT"},
     applications:{title:"Applications", desc:"Review event, workshop and hackathon registrations.", eyebrow:"APPLICATION MANAGEMENT"},
@@ -1753,6 +1757,7 @@ document.addEventListener("DOMContentLoaded", () => {
     detail.innerHTML = `<div class="admin-empty-detail"><i class="fa-regular fa-folder-open"></i><h3>Select a submission</h3><p>Click a card on the left to view all submitted information.</p></div>`;
     page.dataset.currentType = type;
     page.classList.add("show"); page.setAttribute("aria-hidden","false"); document.body.style.overflow="hidden";
+    if (type === "complaints") loadClubComplaints().then(() => renderSubmissionCards(type, "All"));
   }));
 
   function renderSubmissionCards(type, filterStatus) {
@@ -1836,11 +1841,12 @@ document.addEventListener("DOMContentLoaded", () => {
         ${entries.map(([k,v])=>`<div class="detail-field ${String(v).length>45?"full":""}"><label>${k.replace(/([A-Z])/g," $1")}</label><div>${v}</div></div>`).join("")}
       </div>`;
 
-    document.getElementById("saveSubmissionStatus").addEventListener("click", e => {
+    document.getElementById("saveSubmissionStatus").addEventListener("click", async e => {
       const btn = e.currentTarget;
       const submission = data[btn.dataset.type][Number(btn.dataset.index)];
       const oldStatus = submission.status;
       const newStatus = document.getElementById("submissionStatusSelect").value;
+      if (btn.dataset.type === "complaints") { try { const response = await fetch(`/complaints/api/${encodeURIComponent(submission.referenceId)}/status`, {method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:newStatus})}); const result = await response.json(); if (!response.ok || !result.success) throw new Error(result.message || "Could not update complaint status."); } catch (error) { showToast(error.message); return; } }
       submission.status = newStatus;
 
       document.getElementById("detailCurrentStatus").textContent = newStatus;
@@ -1849,7 +1855,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const activeFilter = list.querySelector(".admin-filter-btn.active")?.dataset.filterStatus || "All";
       renderSubmissionCards(btn.dataset.type, activeFilter);
 
-      showToast(`Status updated from ${oldStatus} to ${newStatus}. Student dashboard and notifications can use this status after backend connection.`);
+      showToast(`Status updated from ${oldStatus} to ${newStatus}.`);
     });
   });
 
@@ -1862,22 +1868,17 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("closeAdminSidebar").addEventListener("click",closeSide); backdrop.addEventListener("click",closeSide);
 
   const dialogBackdrop = document.getElementById("adminDialogBackdrop");
-  const profileDialog = document.getElementById("adminProfileDialog"), passwordDialog = document.getElementById("adminPasswordDialog");
+  const profileDialog = document.getElementById("adminProfileDialog");
   const openDialog = el=>{dialogBackdrop.classList.add("show");el.classList.add("show")};
-  const closeDialogs = ()=>{dialogBackdrop.classList.remove("show");profileDialog.classList.remove("show");passwordDialog.classList.remove("show")};
+  const closeDialogs = ()=>{dialogBackdrop.classList.remove("show");profileDialog.classList.remove("show")};
   document.querySelectorAll("[data-close-dialog]").forEach(b=>b.addEventListener("click",closeDialogs)); dialogBackdrop.addEventListener("click",closeDialogs);
 
   document.querySelectorAll("[data-profile-action]").forEach(b=>b.addEventListener("click",()=>{
     const action=b.dataset.profileAction; closeSide();
     if(action==="profile") openDialog(profileDialog);
-    else if(action==="password") openDialog(passwordDialog);
-    else showToast("Account settings will be connected to backend next.");
+    else if(action==="password") window.location.href = "/admin/profile#password";
+    else window.location.href = "/admin/profile";
   }));
   document.getElementById("adminProfileForm").addEventListener("submit",e=>{e.preventDefault();closeDialogs();showToast("Profile changes saved for preview.");});
-  document.getElementById("sendResetLink").addEventListener("click",()=>{
-    const msg=document.getElementById("resetMessage");msg.textContent="Reset link sent. Please check your email.";
-    msg.classList.add("show");
-  });
-
   function showToast(message){const t=document.getElementById("awsAdminToast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2800)}
 });
