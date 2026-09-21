@@ -15,13 +15,13 @@
 <body class="na-body">
 <header class="na-topbar na-topbar-simple">
 <div class="container">
-<a class="na-brand" href="../index.html">
+<a class="na-brand" href="{{ url_for('homepage.homepage') }}">
 <img onerror="this.style.display='none'" src="../rgukt.png"/>
         RGUKT
       </a>
 <div class="na-right-group">
 <nav class="na-nav-simple">
-<a href="{{ url_for('clubs.clubs_homepage') }}">Home</a>
+<a href="{{ url_for('homepage.homepage') }}">Home</a>
 <a href="#contact">Contact</a>
 </nav>
 <!-- Calendar -->
@@ -61,9 +61,9 @@
 </div>
 </header>
 <div class="na-breadcrumb">
-<a href="../index.html">Home</a>
+<a href="{{ url_for('homepage.homepage') }}">Home</a>
 <span class="sep">›</span>
-<a href="clubs-and-cells.html">Clubs &amp; Cells</a>
+<a href="{{ url_for('clubs.clubs_homepage') }}">Clubs &amp; Cells</a>
 <span class="sep">›</span>
 <span class="current">ICRO</span>
 </div>

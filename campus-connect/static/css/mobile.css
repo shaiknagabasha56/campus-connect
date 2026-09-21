@@ -96,6 +96,7 @@ img, video, iframe { max-width: 100%; }
 @media (max-width: 600px) {
 
   /* --- top bars (homepage .topbar and inner pages .na-topbar) --- */
+  .admin-panel-btn { display: none !important; }   /* moved into the hamburger menu (see mobile-nav.js) */
   .topbar .container,
   .na-topbar .container {
     padding-left: 12px;

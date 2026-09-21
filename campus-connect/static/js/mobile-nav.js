@@ -63,6 +63,15 @@
       panel.appendChild(copy);
     });
 
+    // Admins: the homepage "Admin" pill is hidden on phones (no room), so offer it in the menu instead
+    var adminLink = host.querySelector('a.admin-panel-btn');
+    if (adminLink) {
+      var adminCopy = document.createElement('a');
+      adminCopy.href = adminLink.getAttribute('href');
+      adminCopy.textContent = 'Admin dashboard';
+      panel.appendChild(adminCopy);
+    }
+
     btnParent.appendChild(btn);
     host.appendChild(panel);
 

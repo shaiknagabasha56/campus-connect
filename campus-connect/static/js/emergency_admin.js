@@ -254,11 +254,16 @@ document.addEventListener("DOMContentLoaded", function () {
             if (confirmed) {
 
                 /*
-                 * Change this URL if your Flask
-                 * logout route has a different name.
+                 * The Flask logout route is POST-only (/auth/logout),
+                 * so a plain redirect to it gives a 404.
                  */
 
-                window.location.href = "/logout";
+                fetch("/auth/logout", {
+                    method: "POST",
+                    credentials: "same-origin"
+                }).finally(function () {
+                    window.location.href = "/auth/login";
+                });
 
             }
 

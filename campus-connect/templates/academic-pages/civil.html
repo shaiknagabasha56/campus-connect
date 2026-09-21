@@ -13,10 +13,10 @@
 <body>
 <header class="na-topbar">
  <div class="container">
-  <a href="{{ url_for('academic.academic_homepage') }}" class="na-brand"><span class="na-brand-mark">R</span>RGUKT</a>
+  <a href="{{ url_for('homepage.homepage') }}" class="na-brand"><span class="na-brand-mark">R</span>RGUKT</a>
   <div class="na-right-group">
    <nav class="na-nav-simple">
-    <a href="{{ url_for('academic.academic_homepage') }}">Home</a>
+    <a href="{{ url_for('homepage.homepage') }}">Home</a>
     <a href="#contact">Contact</a>
    </nav>
    <button id="calendar-toggle" class="icon-btn" aria-label="Toggle calendar"><i class="fa-regular fa-calendar"></i></button>
@@ -30,7 +30,7 @@
  </div>
 </header>
 
-<div class="na-breadcrumb"><a href="{{ url_for('academic.academic_homepage') }}">Home</a><span class="sep">›</span><a href="../academic.html">Academic</a><span class="sep">›</span><span class="current">CIVIL</span></div>
+<div class="na-breadcrumb"><a href="{{ url_for('homepage.homepage') }}">Home</a><span class="sep">›</span><a href="{{ url_for('academic.academic_homepage') }}">Academic</a><span class="sep">›</span><span class="current">CIVIL</span></div>
 
 <main class="na-catwrap">
  <div class="na-cat-header">
@@ -99,9 +99,9 @@
     <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">RGUKT Official Website ↗</a>
     <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">Admissions ↗</a>
     <a href="https://rgukt.ac.in/" target="_blank" rel="noopener">Academics ↗</a>
-    <a href="../clubs-and-cells.html">Clubs &amp; Cells</a>
+    <a href="{{ url_for('clubs.clubs_homepage') }}">Clubs &amp; Cells</a>
   </div></div>
-  <div class="footer-col"><h4>Quick Navigation</h4><div class="footer-links"><a href="../index.html">Home</a><a href="../academic.html">Academic</a><a href="../contact.html">Contact</a><a href="#top">Back to top ↑</a></div></div>
+  <div class="footer-col"><h4>Quick Navigation</h4><div class="footer-links"><a href="{{ url_for('homepage.homepage') }}">Home</a><a href="{{ url_for('academic.academic_homepage') }}">Academic</a><a href="#contact">Contact</a><a href="#top">Back to top ↑</a></div></div>
  </div>
  <div class="footer-bottom"><span>© 2026 RGUKT — Academic Department</span><span>CIVIL</span></div>
 </footer>

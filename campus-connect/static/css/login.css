@@ -11,6 +11,9 @@ RESET
 html{
     font-size:16px;
 }
+body{
+    font-family:'Poppins',sans-serif;
+}
 
 body{
 
@@ -1417,4 +1420,176 @@ input:focus-visible{
 
 .form-message.info{
     color:#1976d2;
+}
+
+
+/*==================================================
+  PHONE + TABLET LAYOUT  (<= 992px)
+  The old layout kept a fixed 900x500 card, so on a phone the form was
+  clipped and the decorative circles covered the "WELCOME" text.
+  Here the banner sits on top, the card grows with its content, and
+  Login <-> Sign up swaps without the 3D flip (which needs a fixed height).
+==================================================*/
+@media (max-width:992px){
+
+    .page{
+        padding:16px 14px;
+        min-height:100vh;
+        min-height:100dvh;
+    }
+
+    .scene{
+        width:100%;
+        max-width:460px;
+        height:auto;
+        perspective:none;
+    }
+
+    /* swap faces instead of flipping them */
+    .flip-card{
+        height:auto;
+        transform:none !important;
+        transition:none;
+        will-change:auto;
+        transform-style:flat;
+    }
+    .card-face{
+        position:relative;
+        inset:auto;
+        height:auto;
+        transform:none !important;
+        transform-style:flat;
+        backface-visibility:visible;
+        -webkit-backface-visibility:visible;
+    }
+    .card-back{ display:none; }
+    .flip-card.flip .card-front{ display:none; }
+    .flip-card.flip .card-back{ display:block; }
+
+    .card-face .login-card{
+        position:relative;
+        inset:auto;
+        width:100%;
+        max-width:none;
+        height:auto;
+        flex-direction:column;
+        border-radius:22px;
+        box-shadow:0 18px 40px rgba(0,0,0,.18);
+    }
+    .login-card:hover{ box-shadow:0 18px 40px rgba(0,0,0,.18); }
+
+    /* blue banner */
+    .left-panel{
+        width:100%;
+        height:auto;
+        padding:26px 20px 42px;
+        background:linear-gradient(135deg,#2195f7 0%,#00509d 100%);
+        border-radius:0 0 44px 44px;
+    }
+    .left-shape{ display:none; }
+    .circle-left,
+    .circle-center{
+        background:rgba(255,255,255,.14);
+        box-shadow:none;
+        transform:none;
+        z-index:1;
+    }
+    .circle-left{
+        width:150px;
+        height:150px;
+        left:-45px;
+        top:-55px;
+        bottom:auto;
+    }
+    .circle-center{
+        width:120px;
+        height:120px;
+        left:auto;
+        right:-34px;
+        bottom:-40px;
+    }
+    .welcome-content{
+        position:relative;
+        top:auto;
+        left:auto;
+        transform:none;
+        width:auto;
+        text-align:center;
+        z-index:10;
+    }
+    .welcome-content h1{
+        font-size:32px;
+        letter-spacing:1.5px;
+        margin-bottom:4px;
+    }
+    .welcome-content h3{
+        font-size:15px;
+        font-weight:600;
+        margin:0;
+    }
+    .welcome-content p{ display:none; }
+
+    /* form */
+    .right-panel{
+        display:block;
+        width:100%;
+        height:auto;
+        padding:24px 20px 28px;
+        overflow:visible;
+    }
+    .circle-right{ display:none; }
+    .form-container{
+        width:100%;
+        max-width:none;
+        height:auto;
+    }
+    .form-container h2{
+        font-size:28px;
+        margin-bottom:6px;
+    }
+    .subtitle{
+        font-size:13px;
+        margin-bottom:20px;
+    }
+    .form-message{ min-height:20px; font-size:13px; }
+    .input-box{ margin-bottom:14px; }
+    .input-box input{
+        height:50px;
+        font-size:16px;              /* 16px stops iOS zooming into the field */
+        padding-left:46px;
+    }
+    .options{
+        flex-direction:row;
+        flex-wrap:wrap;
+        justify-content:space-between;
+        align-items:center;
+        gap:8px 12px;
+        margin:2px 0 18px;
+    }
+    .options label,
+    .options a{ font-size:13px; }
+    .login-btn,
+    .google-btn{
+        height:50px;
+        font-size:16px;
+    }
+    .divider{ margin:16px 0; }
+    .signup{
+        margin-top:18px;
+        font-size:13px;
+    }
+}
+
+@media (max-width:380px){
+    .page{ padding:10px; }
+    .right-panel{ padding:22px 16px 24px; }
+    .welcome-content h1{ font-size:28px; }
+    .form-container h2{ font-size:25px; }
+}
+
+.forgot-card{ max-width:420px; }
+@media (max-width:500px){
+    .forgot-card{ width:92%; }
+    .forgot-card h2{ font-size:26px; }
+    .forgot-card .input-box input{ font-size:16px; }
 }

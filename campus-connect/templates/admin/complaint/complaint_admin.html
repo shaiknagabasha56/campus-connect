@@ -12,7 +12,7 @@
 </head>
 <body>
   <nav class="navbar">
-    <a class="brand" href="#"><span class="brand-mark">R</span><span>RGUKT</span></a>
+    <a class="brand" href="{{ url_for('homepage.homepage') }}"><span class="brand-mark">R</span><span>RGUKT</span></a>
     <div class="nav-right">
       <a href="{{url_for('homepage.homepage')}}">Home</a><a href="#">Contact</a>
       <button class="calendar-btn" aria-label="Calendar"><i class="fa-regular fa-calendar"></i></button>
@@ -102,8 +102,8 @@
 
   <footer>
     <div><h3>RGUKT Campus Connect</h3><p>One central place for students to discover campus updates, opportunities and announcements.</p></div>
-    <div><h4>University Links</h4><a href="#">RGUKT Official Website</a><a href="#">Admissions</a><a href="#">Academic Programmes</a></div>
-    <div><h4>Quick Navigation</h4><a href="#">Home</a><a href="#">Contact</a><a href="#top">Back to top ↑</a></div>
+    <div><h4>University Links</h4><a href="https://www.rgukt.ac.in/" target="_blank" rel="noopener">RGUKT Official Website</a><a href="https://www.rgukt.ac.in/admissions.html" target="_blank" rel="noopener">Admissions</a><a href="https://www.rgukt.ac.in/academicprogrammes.html" target="_blank" rel="noopener">Academic Programmes</a></div>
+    <div><h4>Quick Navigation</h4><a href="{{ url_for('homepage.homepage') }}">Home</a><a href="#">Contact</a><a href="#top">Back to top ↑</a></div>
   </footer>
 
   <div id="management-backdrop" class="management-backdrop hidden">

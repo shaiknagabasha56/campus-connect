@@ -20,7 +20,7 @@
 </div>
 <header class="na-topbar na-topbar-simple">
 <div class="container">
-<a class="na-brand" href="../index.html">
+<a class="na-brand" href="{{ url_for('homepage.homepage') }}">
 <img onerror="this.style.display='none'" src="images/rgukt.png"/>
         RGUKT
       </a>
@@ -72,9 +72,9 @@
 </div>
 </header>
 <div class="na-breadcrumb">
-<a href="../index.html">Home</a>
+<a href="{{ url_for('homepage.homepage') }}">Home</a>
 <span class="sep">›</span>
-<a href="clubs-and-cells.html">Clubs &amp; Cells</a>
+<a href="{{ url_for('clubs.clubs_homepage') }}">Clubs &amp; Cells</a>
 <span class="sep">›</span>
 <span class="current">AWS Cloud Club</span>
 </div>

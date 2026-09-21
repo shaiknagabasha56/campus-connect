@@ -15,7 +15,7 @@
   <!-- NAVBAR: Logo + RGUKT (left)  |  Home About Contact Search (right) -->
   <header class="na-topbar na-topbar-simple">
     <div class="container">
-      <a href="../index.html" class="na-brand">
+      <a href="{{ url_for('homepage.homepage') }}" class="na-brand">
         <img src="../rgukt.png" onerror="this.style.display='none'"/>
         RGUKT
       </a>
@@ -68,7 +68,7 @@
 
   <!-- BREADCRUMB -->
   <div class="na-breadcrumb">
-    <a href="../index.html">Home</a>
+    <a href="{{ url_for('homepage.homepage') }}">Home</a>
     <span class="sep">›</span>
     <span class="current">Cells</span>
   </div>

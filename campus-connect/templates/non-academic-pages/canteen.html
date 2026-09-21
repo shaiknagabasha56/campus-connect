@@ -40,7 +40,7 @@
             <div class="na-right-group">
 
                 <nav class="na-nav-simple">
-                    <a href="{{ url_for('non_academic.non_academic_homepage') }}">Home</a>
+                    <a href="{{ url_for('homepage.homepage') }}">Home</a>
                     <a href="#contact">Contact</a>
                 </nav>
 
@@ -604,7 +604,7 @@
                         Academics ↗
                     </a>
 
-                    <a href="../clubs-and-cells.html">
+                    <a href="{{ url_for('clubs.clubs_homepage') }}">
                         Clubs &amp; Cells
                     </a>
 
@@ -619,9 +619,9 @@
 
                 <div class="footer-links">
 
-                    <a href="../index.html">Home</a>
-                    <a href="../non-academic.html">Non-Academic</a>
-                    <a href="../contact.html">Contact</a>
+                    <a href="{{ url_for('homepage.homepage') }}">Home</a>
+                    <a href="{{ url_for('non_academic.non_academic_homepage') }}">Non-Academic</a>
+                    <a href="#contact">Contact</a>
                     <a href="#top">Back to top ↑</a>
 
                 </div>
