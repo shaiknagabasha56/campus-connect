@@ -6,10 +6,7 @@ from database.queries import get_user_by_email, create_user,mark_user_as_verifie
 from utils.token_utils import generate_verification_token,verify_verification_token,generate_password_reset_token,verify_password_reset_token
 from utils.email_utils import send_verification_email,send_password_reset_email
 
-# EMAIL VALIDATION FUNCTION
-def is_valid_email(email):
-    email_pattern = r"^o2[1-6]\d+@rguktong\.ac\.in$"
-    return re.match(email_pattern, email) is not None
+
 
 # PHONE VALIDATION FUNCTION
 def is_valid_phone(phone):
@@ -84,11 +81,6 @@ def validate_signup_data(data):
         return {
             "success": False,
             "message": "Please enter your email address."
-        }
-    if not is_valid_email(email):
-        return {
-            "success": False,
-            "message": "Please enter a valid email address."
         }
 
     # VALIDATE PASSWORD
