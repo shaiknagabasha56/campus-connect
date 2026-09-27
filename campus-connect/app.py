@@ -13,6 +13,7 @@ from routes.complaints import complaints_bp
 from routes.emergency import emergency_bp
 from routes.admin import admin_bp
 from routes.updates import updates_bp
+from routes.radio import radio_bp
 
 
 def createApp():
@@ -39,6 +40,7 @@ def createApp():
     app.register_blueprint(emergency_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(updates_bp)
+    app.register_blueprint(radio_bp)
 
     @app.before_request
     def require_login():
