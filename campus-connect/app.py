@@ -78,6 +78,7 @@ def createApp():
                     abort(403)
 
 
+
     # LANDING PAGE
     @app.route("/")
     def landing_page() :
