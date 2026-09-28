@@ -202,6 +202,31 @@ def update_user_password(email, password_hash):
         connection.close()
 
 
+# UPDATE THE AUTHENTICATED USER'S USERNAME + EMAIL, LOOKED UP BY THEIR CURRENT EMAIL
+# (used by routes/admin.py, where only the current session email is known)
+def update_user_profile(current_email, username, new_email):
+    connection = get_db_connection()
+    if not connection:
+        return False
+    cursor = connection.cursor()
+    try:
+        query = """
+            UPDATE users
+            SET username = %s, email = %s
+            WHERE email = %s
+        """
+        cursor.execute(query, (username, new_email, current_email))
+        connection.commit()
+        return cursor.rowcount > 0
+    except Exception as error:
+        connection.rollback()
+        print("Admin profile update database error:", error)
+        return False
+    finally:
+        cursor.close()
+        connection.close()
+
+
 # UPDATE THE AUTHENTICATED USER'S DETAILS
 def update_user_profile_details(user_id, username, email):
     connection = get_db_connection()
@@ -1130,7 +1155,69 @@ def update_update(
         cursor.close()
         connection.close()
 
+# ==================================================
+# GET PUBLISHED UPDATES FOR HOMEPAGE
+# ==================================================
 
+def get_homepage_announcements():
+
+    connection = get_db_connection()
+
+    if not connection:
+        return []
+
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        query = """
+            SELECT
+                u.id,
+                u.organization_id,
+                u.category_tag,
+                u.title,
+                u.description,
+                u.post_date,
+                u.post_time,
+                u.event_date,
+                u.deadline,
+                u.contact_email,
+                u.enable_application,
+                u.application_url,
+                u.status,
+                u.created_at,
+
+                o.name AS organization_name,
+                o.slug AS organization_slug,
+                o.category AS organization_category
+
+            FROM updates u
+
+            INNER JOIN organizations o
+                ON u.organization_id = o.id
+
+            WHERE u.status = 'published'
+
+            ORDER BY u.created_at DESC
+        """
+
+        cursor.execute(query)
+
+        return cursor.fetchall()
+
+    except Exception as error:
+
+        print(
+            "Homepage announcements database error:",
+            error
+        )
+
+        return []
+
+    finally:
+
+        cursor.close()
+        connection.close()
 # --------------------------------------------------
 # DELETE UPDATE
 # Only deletes if it belongs to the organization.
@@ -1221,6 +1308,209 @@ def get_published_updates_by_organization(
         )
 
         return cursor.fetchall()
+
+    finally:
+
+        cursor.close()
+        connection.close()
+
+# --------------------------------------------------
+# GET COMPLAINT BY REFERENCE ID
+# --------------------------------------------------
+def get_complaint_by_reference(reference_id):
+    connection = get_db_connection()
+
+    if not connection:
+        return None
+
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        query = """
+            SELECT
+                id,
+                reference_id,
+                title,
+                category,
+                priority,
+                status,
+                description,
+                anonymous,
+                name,
+                roll,
+                phone,
+                attachments,
+                created_at
+            FROM complaints
+            WHERE reference_id = %s
+        """
+
+        cursor.execute(query, (reference_id,))
+        return cursor.fetchone()
+
+    finally:
+        cursor.close()
+        connection.close()
+
+
+# ==================================================
+# GET ALL COLLEGE UPDATES FOR HOMEPAGE FEED
+# ==================================================
+
+def get_all_college_updates():
+
+    connection = get_db_connection()
+
+    if not connection:
+        return []
+
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+
+        query = """
+            SELECT
+                u.id,
+                u.organization_id,
+                u.title,
+                u.description,
+                u.post_date,
+                u.post_time,
+                u.created_at,
+
+                o.name AS organization_name,
+                o.slug AS organization_slug,
+                o.category AS organization_category
+
+            FROM updates u
+
+            INNER JOIN organizations o
+                ON u.organization_id = o.id
+
+            WHERE u.status = 'published'
+
+            ORDER BY u.created_at DESC
+        """
+
+        cursor.execute(query)
+
+        updates = cursor.fetchall()
+
+        # --------------------------------------------------
+        # GET COMPLAINTS
+        # --------------------------------------------------
+
+        complaint_query = """
+            SELECT
+                id,
+                reference_id,
+                title,
+                description,
+                status,
+                created_at
+            FROM complaints
+            ORDER BY created_at DESC
+        """
+
+        cursor.execute(complaint_query)
+
+        complaints = cursor.fetchall()
+
+        # --------------------------------------------------
+        # CONVERT EVERYTHING INTO COMMON FORMAT
+        # --------------------------------------------------
+
+        college_updates = []
+
+        for update in updates:
+
+            college_updates.append({
+                "type": update.get("organization_category"),
+                "title": update.get("title"),
+                "description": update.get("description"),
+                "created_at": update.get("created_at"),
+                "organization_name": update.get("organization_name")
+            })
+
+
+        for complaint in complaints:
+
+            college_updates.append({
+                "type": "complaint",
+                "title": complaint.get("title"),
+                "description": complaint.get("description"),
+                "created_at": complaint.get("created_at"),
+                "organization_name": "Complaints"
+            })
+
+
+        # --------------------------------------------------
+        # SPLIT INTO CATEGORIES
+        # --------------------------------------------------
+
+        categories = {
+            "club": [],
+            "cell": [],
+            "academic": [],
+            "non_academic": [],
+            "complaint": []
+        }
+
+        for item in college_updates:
+
+            category = item.get("type")
+
+            if category in categories:
+
+                categories[category].append(item)
+
+
+        # --------------------------------------------------
+        # ROUND ROBIN ORDER
+        #
+        # CLUB
+        # CELL
+        # ACADEMIC
+        # NON-ACADEMIC
+        # COMPLAINT
+        # --------------------------------------------------
+
+        result = []
+
+        max_length = max(
+            [len(items) for items in categories.values()],
+            default=0
+        )
+
+        for i in range(max_length):
+
+            for category in [
+                "club",
+                "cell",
+                "academic",
+                "non_academic",
+                "complaint"
+            ]:
+
+                items = categories[category]
+
+                if i < len(items):
+
+                    result.append(
+                        items[i]
+                    )
+
+
+        return result
+
+    except Exception as error:
+
+        print(
+            "All college updates database error:",
+            error
+        )
+
+        return []
 
     finally:
 

@@ -828,324 +828,968 @@ if (changePasswordForm) {
   })();
   
   //radio_script
-  document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener("DOMContentLoaded", () => {
+  // ============================================================
+  // CAMPUS RADIO
+  // Uses the existing homepage Radio markup and the Flask Radio API.
+  // The backend is the authoritative source for all audio.
+  // ============================================================
 
-  // Elements
-  const menuItems = document.querySelectorAll('.menu-item');
-  const needle = document.getElementById('needle');
-  const dial = document.getElementById('dial');
-  const ticksContainer = document.getElementById('ticks');
-  const freqNum = document.getElementById('freqNum');
-  const freqLabel = document.getElementById('freqLabel');
-  const metaName = document.getElementById('metaName');
-  const metaState = document.getElementById('metaState');
-  const playPauseBtn = document.getElementById('playPauseBtn');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const audio = document.getElementById('player');
+  const menuItems = Array.from(document.querySelectorAll(".menu-item"));
+  const needle = document.getElementById("needle");
+  const dial = document.getElementById("dial");
+  const ticksContainer = document.getElementById("ticks");
+  const freqNum = document.getElementById("freqNum");
+  const freqLabel = document.getElementById("freqLabel");
+  const metaName = document.getElementById("metaName");
+  const metaState = document.getElementById("metaState");
+  const playPauseBtn = document.getElementById("playPauseBtn");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const audio = document.getElementById("player");
 
-  // Config
-  const ANGLE_MIN = -110;   // left-most needle angle (deg)
-  const ANGLE_MAX =  110;   // right-most needle angle (deg)
+  if (
+    !menuItems.length ||
+    !needle ||
+    !dial ||
+    !ticksContainer ||
+    !freqNum ||
+    !freqLabel ||
+    !metaName ||
+    !metaState ||
+    !playPauseBtn ||
+    !prevBtn ||
+    !nextBtn ||
+    !audio
+  ) {
+    console.warn("Campus Radio: required HTML elements were not found.");
+    return;
+  }
+
+  const ANGLE_MIN = -110;
+  const ANGLE_MAX = 110;
   const FREQ_MIN = 88.0;
   const FREQ_MAX = 108.0;
 
-  // Category definitions and streams (replace placeholder streams with yours)
-  const categories = [
-    { id:'college',  name:'College Radio',    draggable:true,
-      // College has multiple stations at specific frequencies
-      stations:[
-        { freq: 88.3, title:'Campus Jazz 88.3', stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
-        { freq: 90.1, title:'Campus News 90.1', stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
-        { freq: 93.1, title:'KBS 1 FM (Sim) 93.1', stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
-        { freq: 96.5, title:'Campus Rock 96.5', stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
-        { freq:100.3, title:'Student Talks 100.3', stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3' },
-        { freq:104.5, title:'Classical 104.5', stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3' },
-        { freq:107.9, title:'Late Night 107.9', stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' }
+  const STATE_URL = "/radio/api/state";
+
+  const USE_TEMPORARY_DEMO_FALLBACK = false;
+
+  const fallbackCategories = [
+    {
+      id: "college",
+      name: "College Radio",
+      draggable: true,
+      stations: [
+        {
+          freq: 88.3,
+          title: "Campus Jazz 88.3",
+          stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+        },
+        {
+          freq: 90.1,
+          title: "Campus News 90.1",
+          stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+        },
+        {
+          freq: 93.1,
+          title: "Campus Radio 93.1",
+          stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+        },
+        {
+          freq: 96.5,
+          title: "Campus Rock 96.5",
+          stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+        },
+        {
+          freq: 100.3,
+          title: "Student Talks 100.3",
+          stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
+        },
+        {
+          freq: 104.5,
+          title: "Classical 104.5",
+          stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"
+        },
+        {
+          freq: 107.9,
+          title: "Late Night 107.9",
+          stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
+        }
       ]
     },
-    { id:'commentary', name:'Live Commentary', draggable:false,
-      stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
-      title:'Live Commentary'
+    {
+      id: "commentary",
+      name: "Live Commentary",
+      draggable: false,
+      stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
+      title: "Live Commentary"
     },
-    { id:'meetings',   name:'Meetings', draggable:false,
-      stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
-      title:'Seminar Meetings'
+    {
+      id: "meetings",
+      name: "Meetings",
+      draggable: false,
+      stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
+      title: "Seminar Meetings"
     },
-    { id:'songs',      name:'Special Songs', draggable:false,
-      stream:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-      title:'Special Songs'
+    {
+      id: "songs",
+      name: "Special Songs",
+      draggable: false,
+      stream: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      title: "Special Songs"
     }
   ];
 
-  // state
+  let categories = fallbackCategories;
   let activeCategoryIndex = 0;
   let currentFreq = 93.1;
-  let isPlaying = true;
+  let needleAngle = 0;
   let dragging = false;
-  let lastAutoStationIndex = -1;
-  let needleAngle = freqToAngle(currentFreq);
-
-  // Utility: linear map
-  function map(value, inMin, inMax, outMin, outMax){
-    return outMin + (outMax - outMin) * ((value - inMin) / (inMax - inMin));
-  }
-
-  // Angle <-> Frequency mapping (linearly)
-  function freqToAngle(freq){
-    return map(freq, FREQ_MIN, FREQ_MAX, ANGLE_MIN, ANGLE_MAX);
-  }
-  function angleToFreq(angle){
-    return parseFloat(map(angle, ANGLE_MIN, ANGLE_MAX, FREQ_MIN, FREQ_MAX).toFixed(1));
-  }
-
-  // Initialize the ticks (like mm/cm scale) around dial
-  function buildTicks(){
-    ticksContainer.innerHTML = '';
-    const dialRect = dial.getBoundingClientRect();
-    const radius = dialRect.width/2 - 18;
-    const centerX = dialRect.width/2;
-    const centerY = dialRect.height/2;
-
-    // major ticks every 2 MHz
-    for (let f = FREQ_MIN; f <= FREQ_MAX + 0.001; f += 2.0){
-      const angle = freqToAngle(f);
-      const rad = (angle) * Math.PI/180;
-      // compute position slightly outside the inner circle
-      const r = radius - 8;
-      // convert (0 deg at up): math uses angle 0 at up positive clockwise -> use same rad
-      // we computed angle to rotate needle similarly, so place positions accordingly
-      const x = centerX + r * Math.sin(rad); // sin because 0 at up
-      const y = centerY - r * Math.cos(rad);
-      const el = document.createElement('div');
-      el.style.position = 'absolute';
-      el.style.left = `${x}px`;
-      el.style.top = `${y}px`;
-      el.style.transform = 'translate(-50%,-50%)';
-      el.style.fontSize = '12px';
-      el.style.color = 'rgba(255,255,255,0.75)';
-      el.style.fontWeight = '600';
-      el.innerText = `${f.toFixed(0)}`;
-      el.title = `${f.toFixed(1)} MHz`;
-      ticksContainer.appendChild(el);
-
-      // minor tick (small dot) closer to edge
-      const d = document.createElement('div');
-      const r2 = radius - 24;
-      const x2 = centerX + r2 * Math.sin(rad);
-      const y2 = centerY - r2 * Math.cos(rad);
-      d.style.position = 'absolute';
-      d.style.left = `${x2}px`;
-      d.style.top = `${y2}px`;
-      d.style.transform = 'translate(-50%,-50%)';
-      d.style.width = '6px';
-      d.style.height = '6px';
-      d.style.borderRadius = '50%';
-      d.style.background = 'rgba(255,255,255,0.06)';
-      ticksContainer.appendChild(d);
-    }
-
-    // Add small markers for each 1 MHz between
-    for (let f = FREQ_MIN+1; f < FREQ_MAX; f += 2){
-      const angle = freqToAngle(f);
-      const rad = angle * Math.PI/180;
-      const r2 = radius - 20;
-      const x2 = centerX + r2 * Math.sin(rad);
-      const y2 = centerY - r2 * Math.cos(rad);
-      const d = document.createElement('div');
-      d.style.position = 'absolute';
-      d.style.left = `${x2}px`;
-      d.style.top = `${y2}px`;
-      d.style.transform = 'translate(-50%,-50%)';
-      d.style.width = '4px';
-      d.style.height = '4px';
-      d.style.borderRadius = '50%';
-      d.style.background = 'rgba(255,255,255,0.04)';
-      ticksContainer.appendChild(d);
-    }
-  }
-
-  // Update needle rotation & displayed frequency
-  function updateNeedle(angle){
-    needleAngle = Math.max(ANGLE_MIN, Math.min(ANGLE_MAX, angle));
-    needle.style.transform = `rotate(${needleAngle}deg)`;
-    if (isCollegeMode()) {
-      currentFreq = angleToFreq(needleAngle);
-      freqNum.textContent = currentFreq.toFixed(1);
-      freqLabel.textContent = `FM • ${currentFreq.toFixed(1)} MHz`;
-      needle.setAttribute('aria-valuenow', currentFreq.toFixed(1));
-      // auto-switch to nearest college station when close
-      tryAutoSwitchStation(currentFreq);
-    }
-  }
-
-  // Detect nearest station and auto-switch (for College Radio)
-  function tryAutoSwitchStation(freq){
-    const cat = categories[activeCategoryIndex];
-    if (!cat || !cat.stations) return;
-    let nearest = -1, mind = Infinity;
-    cat.stations.forEach((s,i)=>{
-      const d = Math.abs(s.freq - freq);
-      if (d < mind){ mind = d; nearest = i; }
-    });
-    // threshold (MHz) to auto switch
-    const THRESH = 0.45;
-    if (nearest !== -1 && mind <= THRESH && nearest !== lastAutoStationIndex){
-      // switch
-      const st = cat.stations[nearest];
-      audio.src = st.stream;
-      audio.play().catch(()=>{});
-      lastAutoStationIndex = nearest;
-      metaName.textContent = `${st.title} • ${st.freq.toFixed(1)} MHz`;
-      metaState.textContent = 'Playing';
-      isPlaying = true;
-      playPauseBtn.textContent = '⏸ Pause';
-    } else if (mind > THRESH){
-      // not near any specific station -> don't auto-change or clear meta
-      // keep lastAutoStationIndex as-is
-      metaName.textContent = `Tuning • ${freq.toFixed(1)} MHz`;
-    }
-  }
-
-  // Helper: check if active category is college
-  function isCollegeMode(){ return categories[activeCategoryIndex].id === 'college' }
-
-  // Load category (when clicking sidebar or next/prev)
-  function loadCategory(index){
-    activeCategoryIndex = (index + categories.length) % categories.length;
-    // update sidebar active class
-    menuItems.forEach(it => it.classList.remove('active'));
-    const activeMenu = document.querySelector(`.menu-item[data-id="${categories[activeCategoryIndex].id}"]`);
-    if (activeMenu) activeMenu.classList.add('active');
-
-    // behavior
-    const cat = categories[activeCategoryIndex];
-    metaName.textContent = cat.name;
-    lastAutoStationIndex = -1;
-
-    if (cat.draggable){
-      // College: enable needle dragging and set some frequency / center text
-      needle.classList.remove('disabled');
-      // keep currentFreq; ensure needle matches it
-      updateNeedle(freqToAngle(currentFreq));
-      // show label
-      freqLabel.textContent = `FM • ${currentFreq.toFixed(1)} MHz`;
-      // set audio to nearest station now
-      tryAutoSwitchStation(currentFreq);
-    } else {
-  needle.classList.add('disabled');       // keep needle disabled
-  audio.src = cat.stream;                 // set audio stream
-  audio.play().catch(()=>{});             // play audio
-  metaState.textContent = 'Playing';      // show playing state
-  isPlaying = true;                        // update playing flag
-  playPauseBtn.textContent = '⏸ Pause';   // update button text
-
-  // Removed lines:
-  // metaName.textContent = (cat.title || cat.name);
-  // freqNum.textContent = cat.name;
-  // freqLabel.textContent = cat.title || cat.name;
-}
-  }
-
-  // Play/pause toggle
-  playPauseBtn.addEventListener('click', ()=>{
-    if (!audio.src) return;
-    if (audio.paused){
-      audio.play().catch(()=>{});
-      isPlaying = true; metaState.textContent = 'Playing'; playPauseBtn.textContent = '⏸ Pause';
-    } else{
-      audio.pause();
-      isPlaying = false; metaState.textContent = 'Paused'; playPauseBtn.textContent = '▶ Play';
-    }
-  });
-
-  // Prev/Next buttons cycle categories
-  prevBtn.addEventListener('click', ()=>{
-    loadCategory(activeCategoryIndex - 1);
-  });
-  nextBtn.addEventListener('click', ()=>{
-    loadCategory(activeCategoryIndex + 1);
-  });
-
-  // Sidebar clicks
-  menuItems.forEach((el, idx)=>{
-    el.addEventListener('click', ()=>{
-      // find index of clicked id
-      const id = el.getAttribute('data-id');
-      const catIndex = categories.findIndex(c=>c.id===id);
-      if (catIndex>=0) loadCategory(catIndex);
-    });
-  });
-
-  // Needle dragging (pointer events)
-  function getCenter(el){
-    const r = el.getBoundingClientRect();
-    return { x: r.left + r.width/2, y: r.top + r.height/2 };
-  }
-
   let pointerId = null;
-  needle.addEventListener('pointerdown', (ev)=>{
-    // only allow in college mode
-    if (!isCollegeMode()) return;
-    ev.preventDefault();
-    dragging = true;
-    pointerId = ev.pointerId;
-    needle.setPointerCapture(pointerId);
-    needle.style.transition = 'none';
-  });
+  let lastStationIndex = -1;
+  let backendConnected = false;
+  let liveRoom = null;
+  let liveChannelId = null;
+  let liveAttachedTrack = null;
+  const LIVE_CHANNELS = new Set(["college", "commentary"]);
 
-  window.addEventListener('pointermove', (ev)=>{
-    if (!dragging || ev.pointerId !== pointerId) return;
-    const c = getCenter(dial);
-    const dx = ev.clientX - c.x;
-    const dy = ev.clientY - c.y;
-    // compute angle where 0 = top, positive = clockwise to right
-    let deg = Math.atan2(dy, dx) * 180/Math.PI; // 0 at right
-    deg = deg + 90; // shift so 0 is top
-    if (deg > 180) deg -= 360; // normalize -180..180
-    // clamp
-    if (deg < ANGLE_MIN) deg = ANGLE_MIN;
-    if (deg > ANGLE_MAX) deg = ANGLE_MAX;
-    updateNeedle(deg);
-  });
+  function map(value, inMin, inMax, outMin, outMax) {
+    return outMin + (outMax - outMin) * (
+      (value - inMin) / (inMax - inMin)
+    );
+  }
 
-  window.addEventListener('pointerup', (ev)=>{
-    if (!dragging || ev.pointerId !== pointerId) return;
-    dragging = false;
-    if (pointerId) {
-      try { needle.releasePointerCapture(pointerId); } catch(e){}
-      pointerId = null;
+  function freqToAngle(freq) {
+    return map(
+      freq,
+      FREQ_MIN,
+      FREQ_MAX,
+      ANGLE_MIN,
+      ANGLE_MAX
+    );
+  }
+
+  function angleToFreq(angle) {
+    return parseFloat(
+      map(
+        angle,
+        ANGLE_MIN,
+        ANGLE_MAX,
+        FREQ_MIN,
+        FREQ_MAX
+      ).toFixed(1)
+    );
+  }
+
+  function currentCategory() {
+    return categories[activeCategoryIndex] || categories[0];
+  }
+
+  function isCollegeMode() {
+    return currentCategory()?.id === "college";
+  }
+
+  function setMeta(name, state) {
+    metaName.textContent = name;
+    metaState.textContent = state;
+  }
+
+  function updatePlayButton() {
+    const hasAudioSource = Boolean(audio.currentSrc || audio.src || liveRoom);
+
+    // The button must be clickable whenever a real audio URL is loaded.
+    playPauseBtn.disabled = !hasAudioSource;
+
+    if (audio.paused) {
+      playPauseBtn.textContent = "▶ Play";
+      playPauseBtn.setAttribute("aria-label", "Play radio");
+    } else {
+      playPauseBtn.textContent = "⏸ Pause";
+      playPauseBtn.setAttribute("aria-label", "Pause radio");
     }
-    needle.style.transition = 'transform 0.35s cubic-bezier(.2,.9,.3,1)';
-  });
+  }
 
-  // When window resizes, rebuild ticks (positions depend on size)
-  window.addEventListener('resize', ()=>{ buildTicks(); });
+  function buildTicks() {
+    ticksContainer.innerHTML = "";
 
-  // initial setup
-  buildTicks();
-  // set default frequency & needle
-  currentFreq = 93.1;
-  updateNeedle(freqToAngle(currentFreq));
+    const rect = dial.getBoundingClientRect();
+    const size = Math.min(rect.width, rect.height);
 
-  // load default category (College)
-  loadCategory(0);
+    if (!size) return;
 
-  // Make sure meta state toggles when audio plays/pauses naturally
-  audio.addEventListener('play', ()=>{ metaState.textContent = 'Playing'; playPauseBtn.textContent = '⏸ Pause'; isPlaying = true; });
-  audio.addEventListener('pause', ()=>{ metaState.textContent = 'Paused'; playPauseBtn.textContent = '▶ Play'; isPlaying = false; });
+    const radius = size / 2 - 18;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-  // Accessibility: keyboard left/right to rotate needle when college mode active
-  window.addEventListener('keydown', (e)=>{
+    // Frequency labels: 88, 90, 92 ... 108
+    for (let f = FREQ_MIN; f <= FREQ_MAX + 0.001; f += 2) {
+      const angle = freqToAngle(f);
+      const rad = angle * Math.PI / 180;
+      const r = radius - 8;
+
+      const label = document.createElement("div");
+      label.className = "radio-tick-label";
+      label.style.position = "absolute";
+      label.style.left = `${centerX + r * Math.sin(rad)}px`;
+      label.style.top = `${centerY - r * Math.cos(rad)}px`;
+      label.style.transform = "translate(-50%, -50%)";
+      label.style.fontSize = "12px";
+      label.style.color = "rgba(255,255,255,0.82)";
+      label.style.fontWeight = "700";
+      label.style.pointerEvents = "none";
+      label.textContent = f.toFixed(0);
+
+      ticksContainer.appendChild(label);
+    }
+
+    // Small dots between the numbered marks.
+    for (let f = FREQ_MIN + 1; f < FREQ_MAX; f += 2) {
+      const angle = freqToAngle(f);
+      const rad = angle * Math.PI / 180;
+      const r = radius - 24;
+
+      const dot = document.createElement("div");
+      dot.className = "radio-tick-dot";
+      dot.style.position = "absolute";
+      dot.style.left = `${centerX + r * Math.sin(rad)}px`;
+      dot.style.top = `${centerY - r * Math.cos(rad)}px`;
+      dot.style.transform = "translate(-50%, -50%)";
+      dot.style.width = "5px";
+      dot.style.height = "5px";
+      dot.style.borderRadius = "50%";
+      dot.style.background = "rgba(255,255,255,0.35)";
+      dot.style.pointerEvents = "none";
+
+      ticksContainer.appendChild(dot);
+    }
+  }
+
+  function updateNeedle(angle, switchStation = true) {
+    needleAngle = Math.max(
+      ANGLE_MIN,
+      Math.min(ANGLE_MAX, angle)
+    );
+
+    needle.style.transform = `rotate(${needleAngle}deg)`;
+
     if (!isCollegeMode()) return;
-    if (e.key === 'ArrowRight'){ updateNeedle(needleAngle + 2); }
-    if (e.key === 'ArrowLeft'){ updateNeedle(needleAngle - 2); }
+
+    currentFreq = angleToFreq(needleAngle);
+    freqNum.textContent = currentFreq.toFixed(1);
+    freqLabel.textContent = `FM • ${currentFreq.toFixed(1)} MHz`;
+    needle.setAttribute("aria-valuenow", currentFreq.toFixed(1));
+
+    if (switchStation) {
+      tryAutoSwitchStation();
+    }
+  }
+
+  function nearestStationIndex(freq) {
+    const stations = currentCategory()?.stations || [];
+
+    if (!stations.length) return -1;
+
+    let nearest = 0;
+    let distance = Infinity;
+
+    stations.forEach((station, index) => {
+      const stationFreq = Number(
+        station.freq ??
+        station.frequency ??
+        0
+      );
+
+      const d = Math.abs(stationFreq - freq);
+
+      if (d < distance) {
+        distance = d;
+        nearest = index;
+      }
+    });
+
+    return nearest;
+  }
+
+
+  function getLiveKitClient() { return window.LivekitClient || window.LiveKitClient || null; }
+
+  async function disconnectLiveRoom() {
+    if (liveAttachedTrack) { try { liveAttachedTrack.detach(audio); } catch (_) {} liveAttachedTrack = null; }
+    audio.pause(); audio.removeAttribute("src"); audio.srcObject = null; audio.load();
+    if (liveRoom) { try { liveRoom.disconnect(); } catch (_) {} }
+    liveRoom = null; liveChannelId = null;
+    syncPlayButton();
+  }
+
+  async function joinLiveRoom(channelId, title) {
+    const LiveKit = getLiveKitClient();
+    if (!LiveKit) throw new Error("LiveKit client library is not loaded.");
+    await disconnectLiveRoom();
+    const response = await fetch("/radio/api/live/token", {
+      method:"GET"
+    });
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (_) {
+      throw new Error(`Live token endpoint returned HTTP ${response.status}, not JSON.`);
+    }
+
+    if (!response.ok || data.success === false || !data.token || !data.livekit_url) {
+      throw new Error(
+        data?.message ||
+        `Live connection failed (${response.status})`
+      );
+    }
+
+    const room = new LiveKit.Room({ adaptiveStream: true, dynacast: true });
+    room.on(LiveKit.RoomEvent.TrackSubscribed, (track) => {
+      if (!track || track.kind !== LiveKit.Track.Kind.Audio) return;
+      if (liveAttachedTrack) { try { liveAttachedTrack.detach(audio); } catch (_) {} }
+      liveAttachedTrack = track;
+      track.attach(audio);
+      audio.autoplay = true;
+      setMeta(title, "LIVE • Connected");
+      syncPlayButton();
+      audio.play().catch(() => { setMeta(title, "LIVE • Click Play to listen"); syncPlayButton(); });
+    });
+    room.on(LiveKit.RoomEvent.TrackUnsubscribed, (track) => {
+      if (track === liveAttachedTrack) { try { track.detach(audio); } catch (_) {} liveAttachedTrack = null; audio.pause(); audio.srcObject = null; setMeta(title, "LIVE • Waiting for audio"); syncPlayButton(); }
+    });
+    room.on(LiveKit.RoomEvent.Disconnected, () => {
+      if (liveRoom !== room) return;
+      liveRoom = null; liveChannelId = null; liveAttachedTrack = null; audio.pause(); audio.srcObject = null; setMeta(title, "Live stream disconnected"); syncPlayButton();
+    });
+    await room.connect(data.livekit_url, data.token);
+    liveRoom = room; liveChannelId = channelId;
+    room.remoteParticipants.forEach(p => p.trackPublications.forEach(pub => { if (pub.kind === LiveKit.Track.Kind.Audio) pub.setSubscribed(true).catch(() => {}); }));
+    setMeta(title, "LIVE • Connected");
+    playPauseBtn.disabled = false;
+    playPauseBtn.textContent = "▶ Listen Live";
+    playPauseBtn.setAttribute("aria-label", "Listen to live radio");
+  }
+
+  function playStream(url, title, stateText = "Ready", autoPlay = false) {
+    if (typeof url !== "string" || !url.trim()) {
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+
+      playPauseBtn.disabled = true;
+      playPauseBtn.textContent = "▶ Play";
+      playPauseBtn.setAttribute("aria-label", "Play radio");
+
+      setMeta(title, stateText);
+      return false;
+    }
+
+    audio.pause();
+    audio.src = url;
+    audio.load();
+
+    // A valid source has been assigned. Enable Play immediately.
+    // Playback itself is still controlled by the user unless autoPlay is true.
+    playPauseBtn.disabled = false;
+    playPauseBtn.textContent = "▶ Play";
+    playPauseBtn.setAttribute("aria-label", "Play radio");
+
+    setMeta(title, stateText);
+
+    if (autoPlay) {
+      audio.play().catch(() => {
+        setMeta(title, "Click Play to listen");
+        updatePlayButton();
+      });
+    }
+
+    return true;
+  }
+
+  function tryAutoSwitchStation() {
+    if (!isCollegeMode()) return;
+
+    const stations = currentCategory()?.stations || [];
+    if (!stations.length) return;
+
+    const index = nearestStationIndex(currentFreq);
+    if (index < 0) return;
+
+    const station = stations[index];
+    const stationFreq = Number(
+      station.freq ??
+      station.frequency ??
+      currentFreq
+    );
+
+    // Only lock onto a station when the tuner is reasonably close.
+    const distance = Math.abs(stationFreq - currentFreq);
+
+    if (distance > 0.45) {
+      lastStationIndex = -1;
+      setMeta(
+        "Tuning",
+        `${currentFreq.toFixed(1)} MHz`
+      );
+      return;
+    }
+
+    if (index === lastStationIndex) {
+      return;
+    }
+
+    lastStationIndex = index;
+    currentFreq = stationFreq;
+
+    updateNeedle(
+      freqToAngle(currentFreq),
+      false
+    );
+
+    const title =
+      station.title ||
+      station.name ||
+      `College Radio • ${currentFreq.toFixed(1)} MHz`;
+
+    if (currentCategory()?.live && LIVE_CHANNELS.has("college")) {
+      joinLiveRoom("college", String(title || "College Radio")).catch(error => {
+        console.error("Live College Radio connection error:", error);
+        setMeta(title, error.message || "Live stream unavailable");
+        playPauseBtn.disabled = true;
+      });
+      return;
+    }
+
+    const stream =
+      station.stream ||
+      station.stream_url ||
+      station.audio_url ||
+      station.url;
+
+    playStream(
+      stream,
+      `${title} • ${currentFreq.toFixed(1)} MHz`,
+      backendConnected ? "Ready" : "Demo",
+      false
+    );
+  }
+
+  function updateActiveMenu() {
+    const id = currentCategory()?.id;
+
+    menuItems.forEach(item => {
+      const active = item.getAttribute("data-id") === id;
+      item.classList.toggle("active", active);
+      item.setAttribute(
+        "aria-current",
+        active ? "true" : "false"
+      );
+    });
+  }
+
+  function loadCategory(index, autoPlay = false) {
+    activeCategoryIndex =
+      (index + categories.length) % categories.length;
+
+    const cat = currentCategory();
+
+    updateActiveMenu();
+    lastStationIndex = -1;
+
+    if (!cat) return;
+
+    if (cat.draggable) {
+      needle.classList.remove("disabled");
+
+      if (!Number.isFinite(currentFreq)) {
+        currentFreq = 93.1;
+      }
+
+      updateNeedle(
+        freqToAngle(currentFreq),
+        true
+      );
+
+      freqNum.textContent = currentFreq.toFixed(1);
+      freqLabel.textContent =
+        `FM • ${currentFreq.toFixed(1)} MHz`;
+
+      if (cat.live && LIVE_CHANNELS.has(cat.id)) {
+        joinLiveRoom(cat.id, String(cat.title || cat.name || cat.id)).catch(error => {
+          console.error("Live College Radio connection error:", error);
+          setMeta(cat.title || cat.name, error.message || "Live stream unavailable");
+          playPauseBtn.disabled = true;
+        });
+      } else if (liveRoom) {
+        disconnectLiveRoom();
+      }
+
+      return;
+    }
+
+    needle.classList.add("disabled");
+
+    const stream =
+      cat.stream ||
+      cat.stream_url ||
+      cat.audio_url ||
+      cat.url;
+
+    const title =
+      cat.title ||
+      cat.name;
+
+    freqLabel.textContent =
+      `FM • ${cat.name || "Campus Radio"}`;
+
+    if (cat.live && LIVE_CHANNELS.has(cat.id)) {
+      joinLiveRoom(cat.id, String(title || cat.name || cat.id)).catch(error => {
+        console.error("Live Radio connection error:", error);
+        setMeta(title, error.message || "Live stream unavailable");
+        playPauseBtn.disabled = true;
+      });
+      return;
+    }
+
+    if (liveRoom) disconnectLiveRoom();
+
+    setMeta(
+      title,
+      stream ? "Ready" : "Offline"
+    );
+
+    playStream(
+      stream,
+      title,
+      stream
+        ? (backendConnected ? "Ready" : "Demo")
+        : "Offline",
+      autoPlay
+    );
+  }
+
+  function applyBackendState(data) {
+    if (!data || typeof data !== "object") {
+      throw new Error("Invalid Radio API response");
+    }
+
+    const source = data.channels || data;
+
+    const result = [];
+
+    const ids = [
+      "college",
+      "commentary",
+      "meetings",
+      "songs"
+    ];
+
+    ids.forEach(id => {
+      const channel = source[id];
+
+      if (!channel) return;
+
+      const item = {
+        id,
+        name:
+          channel.name ||
+          channel.title ||
+          fallbackCategories.find(c => c.id === id)?.name ||
+          id,
+        title:
+          channel.title ||
+          channel.name ||
+          id,
+        draggable: id === "college",
+        stream:
+          channel.stream_url ||
+          channel.audio_url ||
+          channel.url ||
+          null,
+        live: Boolean(channel.live) || Boolean(channel.is_live),
+        stations: Array.isArray(channel.stations)
+          ? channel.stations.map(station => ({
+              ...station,
+              freq: Number(
+                station.freq ??
+                station.frequency ??
+                88
+              ),
+              stream:
+                station.stream ||
+                station.stream_url ||
+                station.audio_url ||
+                station.url ||
+                null,
+              title:
+                station.title ||
+                station.name ||
+                "College Radio"
+            }))
+          : []
+      };
+
+      result.push(item);
+    });
+
+    // Also support APIs that return a top-level stations array.
+    if (
+      result.some(c => c.id === "college") &&
+      Array.isArray(data.stations)
+    ) {
+      const college = result.find(c => c.id === "college");
+
+      if (!college.stations.length) {
+        college.stations = data.stations.map(station => ({
+          ...station,
+          freq: Number(
+            station.freq ??
+            station.frequency ??
+            88
+          ),
+          stream:
+            station.stream ||
+            station.stream_url ||
+            station.audio_url ||
+            station.url ||
+            null,
+          title:
+            station.title ||
+            station.name ||
+            "College Radio"
+        }));
+      }
+    }
+
+    if (result.length) {
+      categories = result;
+      backendConnected = true;
+    }
+  }
+
+  async function refreshRadioState() {
+    try {
+      const response = await fetch(STATE_URL, {
+        method: "GET",
+        headers: {
+          Accept: "application/json"
+        },
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Radio API returned HTTP ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+
+      applyBackendState(data);
+
+      loadCategory(
+        Math.min(
+          activeCategoryIndex,
+          categories.length - 1
+        ),
+        false
+      );
+    } catch (error) {
+      console.warn(
+        "Radio API unavailable. Using temporary Radio fallback.",
+        error
+      );
+
+      if (!USE_TEMPORARY_DEMO_FALLBACK) {
+        categories = [
+          {
+            id: "college",
+            name: "College Radio",
+            draggable: true,
+            stations: []
+          },
+          {
+            id: "commentary",
+            name: "Live Commentary",
+            draggable: false,
+            stream: null,
+            title: "Live Commentary"
+          },
+          {
+            id: "meetings",
+            name: "Meetings",
+            draggable: false,
+            stream: null,
+            title: "Meetings"
+          },
+          {
+            id: "songs",
+            name: "Special Songs",
+            draggable: false,
+            stream: null,
+            title: "Special Songs"
+          }
+        ];
+
+        backendConnected = false;
+        loadCategory(activeCategoryIndex, false);
+      }
+    }
+  }
+
+  // ------------------------------------------------------------
+  // PLAY / PAUSE
+  // ------------------------------------------------------------
+
+  // Keep the button state synchronized with the actual audio element.
+  function syncPlayButton() {
+    const hasSource = Boolean(audio.currentSrc || audio.src || liveRoom);
+    playPauseBtn.disabled = !hasSource;
+
+    if (audio.paused) {
+      playPauseBtn.textContent = liveRoom ? "▶ Listen Live" : "▶ Play";
+      playPauseBtn.setAttribute(
+        "aria-label",
+        liveRoom ? "Listen to live radio" : "Play radio"
+      );
+    } else {
+      playPauseBtn.textContent = "⏸ Pause";
+      playPauseBtn.setAttribute("aria-label", "Pause radio");
+    }
+  }
+
+  playPauseBtn.addEventListener("click", () => {
+    if (liveRoom) {
+      if (audio.paused) audio.play().catch(() => setMeta(metaName.textContent, "Click Play to listen live"));
+      else audio.pause();
+      return;
+    }
+
+    if (!audio.src) {
+      setMeta(
+        metaName.textContent,
+        backendConnected
+          ? "No audio available"
+          : "Demo stream unavailable"
+      );
+      return;
+    }
+
+    if (audio.paused) {
+      audio.play().catch(() => {
+        setMeta(
+          metaName.textContent,
+          "Unable to play"
+        );
+      });
+    } else {
+      audio.pause();
+    }
   });
 
-  // Good to know: many browsers block autoplay; audio.play() may require user gesture.
-  // When testing, click a menu item or Play button once to allow audio.
-});
+  // ------------------------------------------------------------
+  // PREVIOUS / NEXT
+  // ------------------------------------------------------------
 
+  prevBtn.addEventListener("click", () => {
+    loadCategory(
+      activeCategoryIndex - 1,
+      true
+    );
+  });
+
+  nextBtn.addEventListener("click", () => {
+    loadCategory(
+      activeCategoryIndex + 1,
+      true
+    );
+  });
+
+  // ------------------------------------------------------------
+  // SIDEBAR / RADIO CATEGORIES
+  // ------------------------------------------------------------
+
+  menuItems.forEach(item => {
+    item.addEventListener("click", () => {
+      const id = item.getAttribute("data-id");
+
+      const index = categories.findIndex(
+        category => category.id === id
+      );
+
+      if (index >= 0) {
+        loadCategory(index, false);
+      }
+    });
+  });
+
+  // ------------------------------------------------------------
+  // NEEDLE DRAGGING
+  // ------------------------------------------------------------
+
+  function getCenter(element) {
+    const rect = element.getBoundingClientRect();
+
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    };
+  }
+
+  needle.addEventListener("pointerdown", event => {
+    if (!isCollegeMode()) return;
+
+    event.preventDefault();
+
+    dragging = true;
+    pointerId = event.pointerId;
+
+    try {
+      needle.setPointerCapture(pointerId);
+    } catch (_) {}
+
+    needle.style.transition = "none";
+  });
+
+  window.addEventListener("pointermove", event => {
+    if (!dragging || event.pointerId !== pointerId) {
+      return;
+    }
+
+    const center = getCenter(dial);
+
+    const dx = event.clientX - center.x;
+    const dy = event.clientY - center.y;
+
+    let angle =
+      Math.atan2(dy, dx) * 180 / Math.PI;
+
+    angle += 90;
+
+    if (angle > 180) {
+      angle -= 360;
+    }
+
+    angle = Math.max(
+      ANGLE_MIN,
+      Math.min(ANGLE_MAX, angle)
+    );
+
+    updateNeedle(angle, true);
+  });
+
+  window.addEventListener("pointerup", event => {
+    if (!dragging || event.pointerId !== pointerId) {
+      return;
+    }
+
+    dragging = false;
+
+    try {
+      needle.releasePointerCapture(pointerId);
+    } catch (_) {}
+
+    pointerId = null;
+    needle.style.transition =
+      "transform 0.35s cubic-bezier(.2,.9,.3,1)";
+  });
+
+  // ------------------------------------------------------------
+  // KEYBOARD TUNING
+  // ------------------------------------------------------------
+
+  window.addEventListener("keydown", event => {
+    if (!isCollegeMode()) return;
+
+    if (
+      event.target &&
+      (
+        event.target.tagName === "INPUT" ||
+        event.target.tagName === "TEXTAREA" ||
+        event.target.tagName === "SELECT"
+      )
+    ) {
+      return;
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      updateNeedle(
+        needleAngle + 2,
+        true
+      );
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      updateNeedle(
+        needleAngle - 2,
+        true
+      );
+    }
+
+    if (event.key === " ") {
+      event.preventDefault();
+      playPauseBtn.click();
+    }
+  });
+
+  // ------------------------------------------------------------
+  // AUDIO EVENTS
+  // ------------------------------------------------------------
+
+  audio.addEventListener("play", () => {
+    metaState.textContent = "Playing";
+    syncPlayButton();
+  });
+
+  audio.addEventListener("pause", () => {
+    metaState.textContent = "Paused";
+    syncPlayButton();
+  });
+
+  audio.addEventListener("ended", () => {
+    metaState.textContent = "Ended";
+    syncPlayButton();
+  });
+
+  audio.addEventListener("error", () => {
+    metaState.textContent = "Stream unavailable";
+    // Keep Play available so the user can retry the loaded source.
+    playPauseBtn.disabled = !Boolean(audio.currentSrc || audio.src);
+    playPauseBtn.textContent = "▶ Play";
+    playPauseBtn.setAttribute("aria-label", "Play radio");
+  });
+
+  // ------------------------------------------------------------
+  // RESIZE
+  // ------------------------------------------------------------
+
+  window.addEventListener("resize", buildTicks);
+
+  // ------------------------------------------------------------
+  // INITIALIZE
+  // ------------------------------------------------------------
+
+  currentFreq = 93.1;
+
+  buildTicks();
+
+  updateNeedle(
+    freqToAngle(currentFreq),
+    false
+  );
+
+  freqNum.textContent = currentFreq.toFixed(1);
+  freqLabel.textContent = "FM • 93.1 MHz";
+
+  loadCategory(0, false);
+
+  // Try the real Flask API. If it does not exist yet,
+  // the temporary fallback keeps the Radio controls usable.
+  refreshRadioState();
+});
 
 const calendarToggle = document.getElementById("calendar-toggle");
 const calendarPanel = document.getElementById("calendar-panel");

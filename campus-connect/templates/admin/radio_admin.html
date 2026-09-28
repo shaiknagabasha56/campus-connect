@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Campus Radio Admin</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/radio_admin.css') }}"
+  >
+</head>
+
+<body class="radio-admin-body">
+
+<header class="radio-admin-topbar">
+  <div class="radio-admin-brand">
+    <div class="radio-admin-logo">
+      <i class="fa-solid fa-radio"></i>
+    </div>
+    <div>
+      <strong>Campus Connect</strong>
+      <span>College-wide Radio</span>
+    </div>
+  </div>
+
+  <div class="radio-admin-top-actions">
+    <a href="{{ url_for('homepage.homepage') }}" class="top-link">
+      <i class="fa-solid fa-house"></i>
+      Homepage
+    </a>
+
+    <button
+      type="button"
+      class="top-link danger-link"
+      id="radioLogoutButton"
+    >
+      <i class="fa-solid fa-right-from-bracket"></i>
+      Back
+    </button>
+  </div>
+</header>
+
+<main class="radio-admin-page">
+
+  <section class="radio-admin-heading">
+    <div>
+      <span class="eyebrow">ADMINISTRATION</span>
+      <h1>Radio Control Center</h1>
+      <p>
+        Manage the college-wide Radio channels, stations, recordings and songs.
+      </p>
+    </div>
+
+    <div class="connection-badge" id="connectionBadge">
+      <span></span>
+      Connecting...
+    </div>
+  </section>
+
+  <section class="radio-channel-grid" id="channelGrid">
+
+    <button class="radio-channel-card active" data-channel="college">
+      <span class="channel-icon"><i class="fa-solid fa-tower-broadcast"></i></span>
+      <span class="channel-copy">
+        <strong>College Radio</strong>
+        <small>FM stations & campus shows</small>
+      </span>
+      <span class="channel-status" data-status-for="college">Offline</span>
+    </button>
+
+    <button class="radio-channel-card" data-channel="commentary">
+      <span class="channel-icon"><i class="fa-solid fa-microphone-lines"></i></span>
+      <span class="channel-copy">
+        <strong>Live Commentary</strong>
+        <small>Sports & event coverage</small>
+      </span>
+      <span class="channel-status" data-status-for="commentary">Offline</span>
+    </button>
+
+    <button class="radio-channel-card" data-channel="meetings">
+      <span class="channel-icon"><i class="fa-solid fa-users"></i></span>
+      <span class="channel-copy">
+        <strong>Meetings</strong>
+        <small>Seminars & meeting recordings</small>
+      </span>
+      <span class="channel-status" data-status-for="meetings">Offline</span>
+    </button>
+
+    <button class="radio-channel-card" data-channel="songs">
+      <span class="channel-icon"><i class="fa-solid fa-music"></i></span>
+      <span class="channel-copy">
+        <strong>Special Songs</strong>
+        <small>Curated campus tracks</small>
+      </span>
+      <span class="channel-status" data-status-for="songs">Offline</span>
+    </button>
+
+  </section>
+
+  <section class="radio-panel">
+
+    <div class="panel-header">
+      <div>
+        <span class="eyebrow">CHANNEL CONTROL</span>
+        <h2 id="panelTitle">College Radio</h2>
+        <p id="panelDescription">Live campus news & shows</p>
+      </div>
+
+      <div class="live-control">
+        <span id="liveLabel">OFFLINE</span>
+        <button
+          type="button"
+          class="live-toggle"
+          id="liveToggle"
+          aria-pressed="false"
+        >
+          <span></span>
+          Start Live
+        </button>
+      </div>
+    </div>
+
+    <div class="channel-settings">
+
+      <div class="field">
+        <label for="channelName">Channel name</label>
+        <input id="channelName" type="text" maxlength="100">
+      </div>
+
+      <div class="field">
+        <label for="channelDescription">Description</label>
+        <input id="channelDescription" type="text" maxlength="255">
+      </div>
+
+      <div class="field field-wide">
+        <label for="channelStreamUrl">
+          Main stream URL
+          <span>optional</span>
+        </label>
+        <input
+          id="channelStreamUrl"
+          type="url"
+          placeholder="https://example.com/live.mp3"
+        >
+      </div>
+
+      <label class="checkbox-field">
+        <input id="channelEnabled" type="checkbox">
+        <span>
+          <strong>Channel enabled</strong>
+          <small>Make this channel available on the student Radio.</small>
+        </span>
+      </label>
+
+    </div>
+
+    <div class="panel-actions">
+      <button type="button" class="secondary-btn" id="reloadButton">
+        <i class="fa-solid fa-rotate"></i>
+        Reload
+      </button>
+
+      <button type="button" class="primary-btn" id="saveChannelButton">
+        <i class="fa-solid fa-floppy-disk"></i>
+        Save Channel
+      </button>
+    </div>
+
+  </section>
+
+  <section class="radio-items-panel">
+
+    <div class="panel-header">
+      <div>
+        <span class="eyebrow">CONTENT</span>
+        <h2 id="itemsTitle">College Radio Stations</h2>
+        <p id="itemsDescription">
+          Manage the frequencies shown on the homepage tuner.
+        </p>
+      </div>
+
+      <button type="button" class="primary-btn" id="addItemButton">
+        <i class="fa-solid fa-plus"></i>
+        Add
+      </button>
+    </div>
+
+    <div id="itemsList" class="items-list"></div>
+
+  </section>
+
+</main>
+
+<div class="radio-modal hidden" id="itemModal">
+  <div class="modal-backdrop" data-close-modal></div>
+
+  <section class="radio-modal-card" role="dialog" aria-modal="true">
+
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">RADIO CONTENT</span>
+        <h2 id="itemModalTitle">Add Radio Item</h2>
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        data-close-modal
+        aria-label="Close"
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="item-form">
+
+      <div class="field">
+        <label for="itemTitle">Title *</label>
+        <input id="itemTitle" type="text" maxlength="255">
+      </div>
+
+      <div class="field" id="frequencyField">
+        <label for="itemFrequency">Frequency (MHz)</label>
+        <input
+          id="itemFrequency"
+          type="number"
+          min="88"
+          max="108"
+          step="0.1"
+          placeholder="93.1"
+        >
+      </div>
+
+      <div class="field">
+        <label for="itemArtist">Artist / Speaker</label>
+        <input id="itemArtist" type="text" maxlength="255">
+      </div>
+
+      <div class="field">
+        <label for="itemOrder">Display order</label>
+        <input id="itemOrder" type="number" min="0" step="1" value="0">
+      </div>
+
+      <div class="field field-wide">
+        <label for="itemAudioFile">
+          Upload audio
+          <span>MP3, WAV, M4A, AAC, OGG or WEBM</span>
+        </label>
+        <input
+          id="itemAudioFile"
+          type="file"
+          accept=".mp3,.wav,.m4a,.aac,.ogg,.oga,.webm,audio/*"
+        >
+        <small class="upload-note" id="audioUploadStatus">
+          Choose a file, then save the Radio item.
+        </small>
+      </div>
+
+      <div class="field field-wide">
+        <label for="itemMediaUrl">
+          Audio / stream URL
+          <span>optional alternative to upload</span>
+        </label>
+        <input
+          id="itemMediaUrl"
+          type="url"
+          placeholder="https://example.com/audio.mp3"
+        >
+      </div>
+
+      <div class="field field-wide">
+        <label for="itemDescription">Description</label>
+        <textarea id="itemDescription" rows="4" maxlength="1000"></textarea>
+      </div>
+
+      <label class="checkbox-field field-wide">
+        <input id="itemActive" type="checkbox" checked>
+        <span>
+          <strong>Active</strong>
+          <small>Inactive items will not appear on the student Radio.</small>
+        </span>
+      </label>
+
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary-btn" data-close-modal>
+        Cancel
+      </button>
+
+      <button type="button" class="primary-btn" id="saveItemButton">
+        Save
+      </button>
+    </div>
+
+  </section>
+</div>
+
+<div class="radio-toast" id="radioToast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/livekit-client@2.22.3/dist/livekit-client.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/radio_admin.js') }}"></script>
+</body>
+</html>

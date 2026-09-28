@@ -221,11 +221,11 @@ def update_user_profile_route():
 
     try:
 
-    updated = update_user_profile_details(
-        session["user_id"],
-        username,
-        new_email
-)
+        updated = update_user_profile_details(
+            session["user_id"],
+            username,
+            new_email
+        )
 
 
         if not updated:
