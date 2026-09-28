@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!response.ok || !result.success) throw new Error(result.message || "Could not submit application.");
         overlay.querySelector("#clubApplicationMessage").textContent = "Application submitted successfully.";
         event.currentTarget.reset();
+        setTimeout(() => overlay.remove(), 1500);
       } catch (error) {
         overlay.querySelector("#clubApplicationMessage").textContent = error.message;
       }
@@ -81,6 +82,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       const message = form.querySelector(".form-success") || document.getElementById("complaintFormSuccess");
       if (message) message.textContent = "Submitted successfully.";
       form.reset();
+      // close the popup by itself (the old page script that used to do this is bypassed by this handler)
+      setTimeout(() => {
+        const overlay = form.closest(".action-form-overlay");
+        if (overlay) {
+          overlay.classList.remove("show");
+          overlay.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+        }
+        if (message) message.textContent = "";
+      }, 1500);
     } catch (error) {
       console.error(error);
       const message = form.querySelector(".form-success") || document.getElementById("complaintFormSuccess");

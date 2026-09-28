@@ -4,12 +4,13 @@ from extensions import oauth
 from database.queries import (
     get_user_by_email,
     update_user_password,
-    update_user_profile
+    update_user_profile_details
 )
 from werkzeug.security import (
     check_password_hash,
     generate_password_hash
 )
+
 
 
 
@@ -220,11 +221,11 @@ def update_user_profile_route():
 
     try:
 
-        updated = update_user_profile(
-            current_email,
-            username,
-            new_email
-        )
+    updated = update_user_profile_details(
+        session["user_id"],
+        username,
+        new_email
+)
 
 
         if not updated:
