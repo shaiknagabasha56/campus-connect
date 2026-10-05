@@ -169,19 +169,41 @@
       <a href="{{ url_for('emergency.emergency_homepage') }}">
         Emergency
       </a>
+
     </nav>
 
 
-    <!-- Right Side Actions -->
+    <!-- ===================================================== -->
+    <!-- ADMIN BUTTON -->
+    <!-- Main Admin      -> /admin -->
+    <!-- Radio Admin     -> /radio/admin -->
+    <!-- Emergency Admin -> /emergency/admin -->
+    <!-- ===================================================== -->
 
-    {% if session.get("role") == "admin" %}
+    {% if session.get("role") in ["admin", "radio_admin", "emergency_admin"] %}
 
-    <a href="{{ url_for('admin.admin_redirect') }}"
-       class="admin-panel-btn">
+        {% if session.get("role") == "radio_admin" %}
 
-      Admin
+            <a href="{{ url_for('radio.radio_admin') }}"
+               class="admin-panel-btn">
+                Admin
+            </a>
 
-    </a>
+        {% elif session.get("role") == "emergency_admin" %}
+
+            <a href="{{ url_for('emergency.emergency_admin') }}"
+               class="admin-panel-btn">
+                Admin
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('admin.admin_redirect') }}"
+               class="admin-panel-btn">
+                Admin
+            </a>
+
+        {% endif %}
 
     {% endif %}
 
@@ -237,41 +259,38 @@
 <!-- EMERGENCY BAR -->
 <!-- ========================================================= -->
 
-
-  <div class="updates-container" class="updates-label">
+<div class="updates-container">
 
     <div class="updates-label"
-      title="View Emergency Events">
-      Emergency
+         title="View Emergency Events">
+        Emergency
     </div>
 
     <div class="updates-marquee">
 
-      <div class="marquee-content">
+        <div class="marquee-content">
 
-        <span>
-          <b>🩸 Need A+ blood for heart surgery |</b>
-        </span>
+            <span>
+                <b>🩸 Need A+ blood for heart surgery |</b>
+            </span>
 
-        <span>
-          <b>⚡ Power shortage in college for two days |</b>
-        </span>
+            <span>
+                <b>⚡ Power shortage in college for two days |</b>
+            </span>
 
-        <span>
-          <b>💦 Water shortage for this day |</b>
-        </span>
+            <span>
+                <b>💦 Water shortage for this day |</b>
+            </span>
 
-        <span>
-          <b>Director interactive session with students at 4:00 PM |</b>
-        </span>
+            <span>
+                <b>Director interactive session with students at 4:00 PM |</b>
+            </span>
 
-      </div>
+        </div>
 
     </div>
 
-  </div>
-
-</a>
+</div>
 
 
 
@@ -671,101 +690,98 @@
       <div class="news-scroll">
 
 
-  <ul class="news-list">
+        <ul class="news-list">
 
-    {% for update in college_updates %}
+          {% for update in college_updates %}
 
-    <li>
+          <li>
 
-      {% if update.type == "club" %}
-
-        <span class="marker purple"></span>
-
-      {% elif update.type == "cell" %}
-
-        <span class="marker green"></span>
-
-      {% elif update.type == "academic" %}
-
-        <span class="marker yellow"></span>
-
-      {% elif update.type == "non_academic" %}
-
-        <span class="marker red"></span>
-
-      {% elif update.type == "complaint" %}
-
-        <span class="marker red"></span>
-
-      {% endif %}
-
-
-      <div class="news-content">
-
-        <div class="news-date">
-
-          {% if update.created_at %}
-
-            {{ update.created_at.strftime('%d-%m-%Y') }}
-
-            <span>
-              {{ update.created_at.strftime('%I:%M %p') }}
-            </span>
-
-          {% endif %}
-
-        </div>
-
-
-        <p>
-
-          <strong>
             {% if update.type == "club" %}
-              Club
+
+              <span class="marker purple"></span>
+
             {% elif update.type == "cell" %}
-              Cell
+
+              <span class="marker green"></span>
+
             {% elif update.type == "academic" %}
-              Academic
+
+              <span class="marker yellow"></span>
+
             {% elif update.type == "non_academic" %}
-              Non-academic
+
+              <span class="marker red"></span>
+
             {% elif update.type == "complaint" %}
-              Complaint
+
+              <span class="marker red"></span>
+
             {% endif %}
-          </strong>
 
-          —
 
-          {{ update.title }}
+            <div class="news-content">
 
-        </p>
+              <div class="news-date">
 
-      </div>
+                {% if update.created_at %}
 
-    </li>
+                  {{ update.created_at.strftime('%d-%m-%Y') }}
 
-    {% else %}
+                  <span>
+                    {{ update.created_at.strftime('%I:%M %p') }}
+                  </span>
 
-    <li>
+                {% endif %}
 
-      <span class="marker green"></span>
+              </div>
 
-      <div class="news-content">
 
-        <p>
-          No college updates available.
-        </p>
+              <p>
 
-      </div>
+                <strong>
+                  {% if update.type == "club" %}
+                    Club
+                  {% elif update.type == "cell" %}
+                    Cell
+                  {% elif update.type == "academic" %}
+                    Academic
+                  {% elif update.type == "non_academic" %}
+                    Non-academic
+                  {% elif update.type == "complaint" %}
+                    Complaint
+                  {% endif %}
+                </strong>
 
-    </li>
+                —
 
-    {% endfor %}
+                {{ update.title }}
 
-  </ul>
+              </p>
 
-</div>
+            </div>
 
-          
+          </li>
+
+          {% else %}
+
+          <li>
+
+            <span class="marker green"></span>
+
+            <div class="news-content">
+
+              <p>
+                No college updates available.
+              </p>
+
+            </div>
+
+          </li>
+
+          {% endfor %}
+
+        </ul>
+
       </div>
 
     </section>
@@ -801,59 +817,97 @@
         class="menu-item active"
         data-id="college"
         id="m-college">
+
         <div class="emoji">🎙</div>
+
         <div>
-          <div style="font-weight:700">College Radio</div>
+
+          <div style="font-weight:700">
+            College Radio
+          </div>
+
           <div style="font-size:12px;color:var(--muted)">
             Live campus news &amp; shows
           </div>
+
         </div>
+
       </button>
+
 
       <button
         type="button"
         class="menu-item"
         data-id="commentary"
         id="m-commentary">
+
         <div class="emoji">🎧</div>
+
         <div>
-          <div style="font-weight:700">Live Commentary</div>
+
+          <div style="font-weight:700">
+            Live Commentary
+          </div>
+
           <div style="font-size:12px;color:var(--muted)">
             Event coverage
           </div>
+
         </div>
+
       </button>
+
 
       <button
         type="button"
         class="menu-item"
         data-id="meetings"
         id="m-meetings">
+
         <div class="emoji">🏫</div>
+
         <div>
-          <div style="font-weight:700">Meetings</div>
+
+          <div style="font-weight:700">
+            Meetings
+          </div>
+
           <div style="font-size:12px;color:var(--muted)">
             Seminar recordings
           </div>
+
         </div>
+
       </button>
+
 
       <button
         type="button"
         class="menu-item"
         data-id="songs"
         id="m-songs">
+
         <div class="emoji">🎶</div>
+
         <div>
-          <div style="font-weight:700">Special Songs</div>
+
+          <div style="font-weight:700">
+            Special Songs
+          </div>
+
           <div style="font-size:12px;color:var(--muted)">
             Curated tracks
           </div>
+
         </div>
+
       </button>
 
+
       <div style="flex:1"></div>
+
     </aside>
+
 
     <!-- RADIO MAIN -->
     <section class="main" aria-label="Radio player">
@@ -864,6 +918,7 @@
         aria-label="Campus radio player">
 
         <div class="dial-wrap">
+
           <div class="dial" id="dial">
 
             <div class="ticks" id="ticks"></div>
@@ -879,23 +934,33 @@
               tabindex="0">
             </div>
 
+
             <div class="freq">
-              <div class="num" id="freqNum">93.1</div>
+
+              <div class="num" id="freqNum">
+                93.1
+              </div>
+
               <div class="label" id="freqLabel">
                 FM • College Radio
               </div>
+
             </div>
 
           </div>
+
         </div>
 
+
         <div class="controls">
+
           <button
             type="button"
             class="btn secondary"
             id="prevBtn">
             ⏮ Prev
           </button>
+
 
           <button
             type="button"
@@ -905,15 +970,19 @@
             ▶ Play
           </button>
 
+
           <button
             type="button"
             class="btn secondary"
             id="nextBtn">
             ⏭ Next
           </button>
+
         </div>
 
+
         <div class="meta" id="metaRow">
+
           <div
             id="metaName"
             style="font-weight:700">
@@ -925,7 +994,9 @@
             class="radio-status offline">
             Radio offline
           </div>
+
         </div>
+
 
         <audio
           id="player"
@@ -934,7 +1005,9 @@
         </audio>
 
       </div>
+
     </section>
+
   </div>
 
 
@@ -997,7 +1070,6 @@
         {{ session.get("email", "") }}
       </span>
 
-
       {% if session.get("role") %}
 
       <span class="pd-role">
@@ -1011,13 +1083,16 @@
   </div>
 
 
-  <!-- Profile Menu -->
+  <!-- ===================================================== -->
+  <!-- PROFILE MENU -->
+  <!-- ===================================================== -->
 
   <nav
     class="pd-menu"
     aria-label="Profile menu">
 
 
+    <!-- Main Admin -->
     {% if session.get("role") == "admin" %}
 
     <a
@@ -1036,6 +1111,48 @@
 
     {% endif %}
 
+
+    <!-- Radio Admin -->
+    {% if session.get("role") == "radio_admin" %}
+
+    <a
+      class="pd-item"
+      href="{{ url_for('radio.radio_admin') }}">
+
+      <i class="fa-solid fa-radio pd-icon"></i>
+
+      <span class="pd-label">
+        Radio Admin
+      </span>
+
+      <i class="fa-solid fa-chevron-right pd-chev"></i>
+
+    </a>
+
+    {% endif %}
+
+
+    <!-- Emergency Admin -->
+    {% if session.get("role") == "emergency_admin" %}
+
+    <a
+      class="pd-item"
+      href="{{ url_for('emergency.emergency_admin') }}">
+
+      <i class="fa-solid fa-triangle-exclamation pd-icon"></i>
+
+      <span class="pd-label">
+        Emergency Admin
+      </span>
+
+      <i class="fa-solid fa-chevron-right pd-chev"></i>
+
+    </a>
+
+    {% endif %}
+
+
+    <!-- Account Settings -->
 
     <button
       class="pd-item"
@@ -1718,6 +1835,7 @@
 <!-- ========================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.22.3/dist/livekit-client.umd.min.js"></script>
+
 <script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
 
 </body>

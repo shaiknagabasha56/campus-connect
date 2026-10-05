@@ -15,9 +15,7 @@ from flask import Blueprint, jsonify, request, session, abort, render_template, 
 import cloudinary
 import cloudinary.uploader
 import uuid
-import os
-from livekit import api as livekit_api
-from datetime import timedelta
+
 from database.db import get_db_connection
 
 
@@ -36,11 +34,11 @@ CHANNEL_ORDER = [
 
 
 def require_admin():
-    """Require a logged-in admin for Radio management endpoints."""
+    """Require a Radio Admin or Main Admin for Radio management endpoints."""
     if not session.get("user_id"):
         abort(401)
 
-    if session.get("role") != "admin":
+    if session.get("role") not in {"admin", "radio_admin"}:
         abort(403)
 
     return session.get("user_id")
@@ -510,101 +508,6 @@ def admin_upload_audio():
         return jsonify({
             "success": False,
             "message": "Audio upload failed. Check Cloudinary configuration."
-        }), 500
-
-
-
-
-# ============================================================
-# LIVEKIT LIVE RADIO
-# ============================================================
-
-LIVE_ROOM_NAME = "campus-connect-live-commentary"
-
-
-def create_livekit_token(identity, can_publish=False, can_subscribe=True):
-    """Create a short-lived LiveKit access token."""
-    api_key = os.getenv("LIVEKIT_API_KEY")
-    api_secret = os.getenv("LIVEKIT_API_SECRET")
-
-    if not api_key or not api_secret:
-        raise RuntimeError("LIVEKIT_API_KEY / LIVEKIT_API_SECRET are not configured.")
-
-    token = (
-        livekit_api.AccessToken(api_key, api_secret)
-        .with_identity(str(identity))
-        .with_name(str(identity))
-        .with_ttl(timedelta(hours=1))
-        .with_grants(
-            livekit_api.VideoGrants(
-                room_join=True,
-                room=LIVE_ROOM_NAME,
-                can_publish=can_publish,
-                can_subscribe=can_subscribe,
-            )
-        )
-    )
-
-    return token.to_jwt()
-
-
-@radio_bp.route("/admin/api/live/token", methods=["GET"])
-def admin_live_token():
-    """Issue a publisher token to the logged-in Radio admin."""
-    admin_id = require_admin()
-
-    try:
-        token = create_livekit_token(
-            identity=f"admin-{admin_id}",
-            can_publish=True,
-            can_subscribe=True,
-        )
-
-        return jsonify({
-            "success": True,
-            "token": token,
-            "room": LIVE_ROOM_NAME,
-            "livekit_url": os.getenv("LIVEKIT_URL"),
-        })
-
-    except Exception as error:
-        print("LiveKit admin token error:", error)
-        return jsonify({
-            "success": False,
-            "message": "Could not create the live broadcast token.",
-        }), 500
-
-
-@radio_bp.route("/api/live/token", methods=["GET"])
-def student_live_token():
-    """Issue a listener-only token to a logged-in student."""
-    user_id = session.get("user_id")
-
-    if not user_id:
-        return jsonify({
-            "success": False,
-            "message": "Login required.",
-        }), 401
-
-    try:
-        token = create_livekit_token(
-            identity=f"listener-{user_id}",
-            can_publish=False,
-            can_subscribe=True,
-        )
-
-        return jsonify({
-            "success": True,
-            "token": token,
-            "room": LIVE_ROOM_NAME,
-            "livekit_url": os.getenv("LIVEKIT_URL"),
-        })
-
-    except Exception as error:
-        print("LiveKit student token error:", error)
-        return jsonify({
-            "success": False,
-            "message": "Could not create the live listener token.",
         }), 500
 
 
