@@ -270,22 +270,6 @@
 
         <div class="marquee-content">
 
-            <span>
-                <b>🩸 Need A+ blood for heart surgery |</b>
-            </span>
-
-            <span>
-                <b>⚡ Power shortage in college for two days |</b>
-            </span>
-
-            <span>
-                <b>💦 Water shortage for this day |</b>
-            </span>
-
-            <span>
-                <b>Director interactive session with students at 4:00 PM |</b>
-            </span>
-
             {% for emergency in active_emergencies %}
             <span class="emergency-dynamic-item">
                 <b>🚨 {{ emergency.title }}: {{ emergency.message }} |</b>
