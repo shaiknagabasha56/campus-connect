@@ -12,6 +12,8 @@ class Config:
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+    # Allow multipart update attachments up to 100 MB plus request overhead.
+    MAX_CONTENT_LENGTH = 110 * 1024 * 1024
 
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_PORT = int(os.getenv("DB_PORT", 3306))

@@ -569,16 +569,20 @@ if (changePasswordForm) {
                 );
 
 
-                const result =
-                    await response.json();
-
+                const responseText = await response.text();
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    throw new Error(`Server returned HTTP ${response.status}`);
+                }
 
                 // ----------------------------------------
                 // SHOW SERVER MESSAGE
                 // ----------------------------------------
 
                 message.textContent =
-                    result.message;
+                    result.message || (response.ok ? 'Request completed.' : 'Password update failed.');
 
 
                 // ----------------------------------------
@@ -674,158 +678,7 @@ if (changePasswordForm) {
 
     })();
     
-      (function(){
-    const toggleBtn = document.getElementById('rg-chat-toggle');
-    const panel = document.getElementById('rg-chat-panel');
-    const closeBtn = document.getElementById('rg-chat-close');
-    const messagesWrap = document.getElementById('rg-chat-messages');
-    const input = document.getElementById('rg-chat-input');
-    const sendBtn = document.getElementById('rg-send-btn');
-    const emojiBtn = document.getElementById('rg-emoji-btn');
-    const emojiPicker = document.getElementById('rg-emoji-picker');
-    const suggestions = document.getElementById('rg-chat-suggestions');
-
-    let emojiOpen = false;
-
-    function openPanel(){
-      panel.classList.add('rg-open');
-      panel.setAttribute('aria-hidden','false');
-      toggleBtn.style.display = 'none';
-      input.focus();
-    }
-    function closePanel(){
-      panel.classList.remove('rg-open');
-      panel.setAttribute('aria-hidden','true');
-      toggleBtn.style.display = 'flex';
-      hideEmojiPicker();
-    }
-
-    toggleBtn.addEventListener('click', (e) => { openPanel(); });
-    closeBtn.addEventListener('click', (e) => { closePanel(); });
-
-    // append message helpers
-    function appendUser(text){
-      const el = document.createElement('div');
-      el.className = 'rg-msg rg-user';
-      el.textContent = text;
-      messagesWrap.appendChild(el);
-      scrollBottom();
-    }
-    function appendBot(text){
-      const el = document.createElement('div');
-      el.className = 'rg-msg rg-bot';
-      el.textContent = text;
-      messagesWrap.appendChild(el);
-      scrollBottom();
-    }
-    function scrollBottom(){
-      // small timeout to allow DOM to render then scroll
-      setTimeout(()=> messagesWrap.scrollTop = messagesWrap.scrollHeight, 40);
-    }
-
-    // central send function (used for button, Enter, and suggested buttons)
-    function sendMessage(textFromSuggestion){
-      const text = (typeof textFromSuggestion === 'string' ? textFromSuggestion : input.value).trim();
-      if(!text) return;
-
-      // if it came from input, clear it
-      if(typeof textFromSuggestion !== 'string') input.value = '';
-
-      // hide emoji picker (so it doesn't block)
-      hideEmojiPicker();
-
-      appendUser(text);
-
-      // placeholder bot reply (simulate)
-      setTimeout(()=>{
-        appendBot("You said: " + text);
-      }, 700);
-    }
-
-    // send on click
-    sendBtn.addEventListener('click', ()=> sendMessage());
-
-    // send on Enter key
-    input.addEventListener('keydown', function(e){
-      if(e.key === "Enter"){
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-
-    // SUGGESTED BUTTONS: send immediately when clicked
-    suggestions.addEventListener('click', function(e){
-      const btn = e.target.closest('.rg-suggest');
-      if(!btn) return;
-      sendMessage(btn.textContent.trim());
-    });
-
-    // EMOJI PICKER: toggle, click to insert and auto-close
-    function showEmojiPicker(){
-      emojiPicker.classList.add('rg-show');
-      emojiPicker.setAttribute('aria-hidden','false');
-      emojiOpen = true;
-      emojiBtn.setAttribute('aria-expanded','true');
-    }
-    function hideEmojiPicker(){
-      emojiPicker.classList.remove('rg-show');
-      emojiPicker.setAttribute('aria-hidden','true');
-      emojiOpen = false;
-      emojiBtn.setAttribute('aria-expanded','false');
-    }
-
-    emojiBtn.addEventListener('click', function(e){
-      e.stopPropagation(); // avoid document click closing it
-      if(emojiOpen) hideEmojiPicker();
-      else showEmojiPicker();
-    });
-
-    // click an emoji to insert and close picker (and focus input)
-    emojiPicker.addEventListener('click', function(e){
-      const el = e.target.closest('.rg-emoji');
-      if(!el) return;
-      const emoji = el.dataset.emoji;
-      if(emoji){
-        input.value = input.value + emoji;
-        hideEmojiPicker();
-        input.focus();
-      }
-    });
-
-    // close emoji picker on outside click or Esc
-    document.addEventListener('click', function(e){
-      // if click is outside picker and outside emojiBtn -> hide picker
-      if(emojiOpen){
-        if(!emojiPicker.contains(e.target) && e.target !== emojiBtn){
-          hideEmojiPicker();
-        }
-      }
-    });
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape' && emojiOpen) hideEmojiPicker();
-      if(e.key === 'Escape' && panel.classList.contains('rg-open')) {
-        // optional: pressing Esc closes panel (uncomment if desired)
-        // closePanel();
-      }
-    });
-
-    // accessibility: prevent click on messages area from closing things accidentally
-    messagesWrap.addEventListener('click', (e)=> e.stopPropagation());
-
-    // initial demo bot message already present; scroll to bottom
-    scrollBottom();
-
-    // If you want to close the whole panel when clicking outside, uncomment below:
-    /*
-    document.addEventListener('click', function(e){
-      if(panel.classList.contains('rg-open')){
-        if(!panel.contains(e.target) && e.target !== toggleBtn){
-          closePanel();
-        }
-      }
-    });
-    */
-  })();
+      // Community chat behavior is implemented in static/js/community_chat.js.
   
   //radio_script
 document.addEventListener("DOMContentLoaded", () => {
@@ -1884,3 +1737,30 @@ themeToggle.addEventListener('click', () => {
     themeIcon.innerHTML = '<path d="M6 0a6 6 0 1 0 6 6A6 6 0 0 0 6 0zm0 11a5 5 0 1 1 5-5 5 5 0 0 1-5 5z"/>';
   }
 });
+
+// Keep the homepage emergency marquee current for users who already have
+// the homepage open. Hardcoded baseline items remain untouched.
+(function () {
+  const marquee = document.querySelector('.updates-marquee .marquee-content');
+  if (!marquee) return;
+  async function refreshEmergencyMarquee() {
+    try {
+      const response = await fetch('/emergency/api/active', { headers: { Accept: 'application/json' } });
+      const result = await response.json();
+      if (!response.ok || !result.success) return;
+      marquee.querySelectorAll('.emergency-dynamic-item').forEach((node) => node.remove());
+      (result.emergencies || []).slice().reverse().forEach((emergency) => {
+        const span = document.createElement('span');
+        span.className = 'emergency-dynamic-item';
+        const bold = document.createElement('b');
+        bold.textContent = `🚨 ${emergency.title}: ${emergency.message} |`;
+        span.appendChild(bold);
+        marquee.appendChild(span);
+      });
+    } catch (error) {
+      console.error('Could not refresh homepage emergency marquee:', error);
+    }
+  }
+  refreshEmergencyMarquee();
+  window.setInterval(refreshEmergencyMarquee, 10000);
+})();

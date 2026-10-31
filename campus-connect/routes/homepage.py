@@ -4,6 +4,7 @@ from database.queries import (
     get_homepage_announcements,
     get_all_college_updates
 )
+from routes.emergency import _fetch_active_emergencies
 
 
 homepage_bp = Blueprint(
@@ -51,6 +52,7 @@ def homepage():
     # --------------------------------------------------
 
     college_updates = get_all_college_updates()
+    active_emergencies = _fetch_active_emergencies()
 
 
     return render_template(
@@ -61,5 +63,6 @@ def homepage():
         clubs=clubs,
         cells=cells,
 
-        college_updates=college_updates
+        college_updates=college_updates,
+        active_emergencies=active_emergencies
     )

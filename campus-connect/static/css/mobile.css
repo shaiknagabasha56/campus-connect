@@ -155,3 +155,15 @@ img, video, iframe { max-width: 100%; }
   /* --- tables scroll sideways inside themselves, not the whole page --- */
   table { display: block; width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
+
+
+/* ---------- Navbar declutter (requested) ---------- */
+/* Keep existing DOM nodes for compatibility with page scripts; remove only the visible navbar controls. */
+header.topbar .search-wrap,
+header.na-topbar .na-search-wrap,
+header.topbar .calendar-toggle,
+header.na-topbar .calendar-toggle,
+header.topbar #calendar-toggle,
+header.na-topbar #calendar-toggle,
+header.topbar #calendar-panel,
+header.na-topbar #calendar-panel { display: none !important; }

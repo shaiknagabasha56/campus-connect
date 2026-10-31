@@ -45,31 +45,17 @@
    </div>
   </div>
   <div class="na-updates-feed">
-        <article class="na-update-item" role="button" tabindex="0" data-status="new" data-title="Lab schedule updated" data-date="12-07-2026" data-time="10:00 AM" data-uploaded-by="CSE Department" data-deadline="" data-category="Academic Update" data-category-color="#4f46e5" data-email="cse@rgukt.ac.in" data-image="" data-apply="false"  data-body="Revised programming lab schedule for the current semester has been posted." data-full="Lab schedules for the current semester have been revised and posted for students. Please check the department notice board for the updated timings and room allocations.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">12-07-2026<span class="na-time">10:00 AM</span></div>
-            <p class="na-update-title">Lab schedule updated</p>
-            <p class="na-update-body">Revised programming lab schedule for the current semester has been posted.</p>
-          </div>
-        </article>
-        <article class="na-update-item" role="button" tabindex="0" data-status="old" data-title="Guest lecture on AI" data-date="01-07-2026" data-time="11:00 AM" data-uploaded-by="CSE Department" data-deadline="" data-category="Guest Lecture" data-category-color="#4f46e5" data-email="cse@rgukt.ac.in" data-image="" data-apply="true" data-apply-link="https://example.com/apply" data-body="A guest lecture on emerging trends in AI is being organized for CSE students." data-full="A guest lecture on emerging trends in artificial intelligence is being organized for CSE students. Further venue and participation details will be shared by the department.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">01-07-2026<span class="na-time">11:00 AM</span></div>
-            <p class="na-update-title">Guest lecture on AI</p>
-            <p class="na-update-body">A guest lecture on emerging trends in AI is being organized for CSE students.</p>
-          </div>
-        </article></div>
+  </div>
  </section>
 
  <aside>
   <div class="na-side-card">
    <h4>Contact &amp; Info</h4>
-   <div class="na-info-row"><i class="fa-solid fa-user"></i><div><span class="na-info-label">HOD</span>[HOD Name]</div></div>
-   <div class="na-info-row"><i class="fa-solid fa-phone"></i><div><span class="na-info-label">Contact</span>[Contact Number]</div></div>
-   <div class="na-info-row"><i class="fa-solid fa-location-dot"></i><div><span class="na-info-label">Location</span>[CSE Block, Floor]</div></div>
-   <div class="na-info-row"><i class="fa-solid fa-clock"></i><div><span class="na-info-label">Office Hours</span>[e.g. Mon–Sat, 9:30 AM–4:30 PM]</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-user"></i><div><span class="na-info-label">HOD</span>Mrs.P. Sindhu
+</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-phone"></i><div><span class="na-info-label">Contact</span>9000800098</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-location-dot"></i><div><span class="na-info-label">Location</span>CSE Block, 1st Floor</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-clock"></i><div><span class="na-info-label">Office Hours</span>Mon–Sat, 9:30 AM–4:30 PM</div></div>
   </div>
   <div class="na-side-card complaint-card"><h4>Need Something Resolved?</h4><button id="complaint-btn" class="primary-btn"><i class="fa-solid fa-circle-exclamation"></i>&nbsp; Raise a Complaint</button></div>
   
@@ -78,16 +64,16 @@
 </main>
 
 <section class="hod-section" id="contact">
-  <div class="hod-photo hod-section-photo"><img src="../../static/images/hod.svg" alt="HOD profile placeholder"></div>
+  <div class="hod-photo hod-section-photo"><img src="https://res.cloudinary.com/iapagzu6/image/upload/v1793467606/92ac64d2-a955-4331-b41a-40edeec66aaf.png" alt="HOD profile placeholder"></div>
   <div class="hod-main-info">
     <h2>HOD</h2>
-    <h3>[HOD Name]</h3>
+    <h3>Mrs.P. Sindhu</h3>
     <p class="designation">Head of Department (HOD)</p>
   </div>
   <div class="hod-contact-info" >
-    <div><span>Contact</span><strong>[Contact Number]</strong></div>
-    <div><span>Email</span><strong>cse@rgukt.ac.in</strong></div>
-    <div><span>Cabin No.</span><strong>[Cabin Number]</strong></div>
+    <div><span>Contact</span><strong>9000800098</strong></div>
+    <div><span>Email</span><strong>cse-hod@rgukt.ac.in</strong></div>
+    <div><span>Cabin No.</span><strong>2nd floor 206 beside</strong></div>
   </div>
   <button id="hod-profile-btn" class="secondary-btn hod-view-btn">View Profile</button>
 </section>
@@ -112,6 +98,7 @@
   <div class="modal-head update-modal-head"><div></div><button class="close-btn modal-close" aria-label="Close">×</button></div>
   <div id="modal-update-detail-content" class="modal-body">
    <img id="modal-update-image" class="update-image" alt="Update image">
+   <div id="modal-update-attachment" style="display:none"></div>
    <div class="update-category" id="modal-update-category">Update</div>
    <h3 class="update-detail-title" id="modal-update-title-secondary">Update</h3>
    <div class="update-meta-list">
@@ -154,11 +141,10 @@
 <div id="hod-modal" class="modal-backdrop hidden">
  <div class="modal-card profile-modal">
   <div class="modal-head"><div><h2>HOD Profile</h2><p>CSE Department</p></div><button class="close-btn modal-close">×</button></div>
-  <div class="modal-body"><div class="profile-preview"><div class="hod-photo"><img src="hod-placeholder.svg" alt="HOD profile placeholder"></div><div><h3 style="margin:0 0 4px">[HOD Name]</h3><p style="margin:0;color:var(--cat);font-size:12px;font-weight:700">Head of Department (HOD)</p></div></div><p style="font-size:13px;color:#64748b;line-height:1.7;margin:0">HOD profile details can be connected to the department database later. Replace the placeholder name and profile image with the actual department information.</p></div>
+  <div class="modal-body"><div class="profile-preview"><div class="hod-photo"><img src="https://res.cloudinary.com/iapagzu6/image/upload/v1793467606/92ac64d2-a955-4331-b41a-40edeec66aaf.png" alt="HOD profile placeholder"></div><div><h3 style="margin:0 0 4px">Mrs.P. Sindhu</h3><p style="margin:0;color:var(--cat);font-size:12px;font-weight:700">Head of Department (HOD)</p></div></div><p style="font-size:13px;color:#64748b;line-height:1.7;margin:0"></p></div>
  </div>
 </div>
 <script src="../../static/js/cse.js"></script>
-<script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
-<script src="{{ url_for('static', filename='js/section_public_forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_updates.js', v='20261031-category-inbox-2') }}"></script>
 </body>
 </html>

@@ -116,6 +116,9 @@
         article.dataset.categoryColor = "";
         article.dataset.email = update.contact_email || "";
         article.dataset.image = image;
+        article.dataset.attachmentUrl = update.attachment_url || "";
+        article.dataset.attachmentName = update.attachment_name || "";
+        article.dataset.attachmentMime = update.attachment_mime || "";
         article.dataset.apply = applies ? "true" : "false";
         if (applies && update.application_url) article.dataset.applyLink = update.application_url;
         article.dataset.body = truncate(update.description, 150);
@@ -163,6 +166,9 @@
         button.dataset.status = computeStatus(update.post_date);
         button.dataset.title = update.title || "";
         button.dataset.image = image;
+        button.dataset.attachmentUrl = update.attachment_url || "";
+        button.dataset.attachmentName = update.attachment_name || "";
+        button.dataset.attachmentMime = update.attachment_mime || "";
         button.dataset.uploadDate = uploadDate;
         button.dataset.uploadTime = uploadTime;
         button.dataset.uploadedBy = orgName || "";
@@ -199,6 +205,82 @@
         return /^https?:\/\//i.test(value) ? value : `/static/${value.replace(/^\/+/, "")}`;
     }
 
+    function bindExistingComplaintForms(slug) {
+        const postComplaint = async (form, buildPayload, successNode) => {
+            form.addEventListener("submit", async event => {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                if (!form.checkValidity()) { form.reportValidity(); return; }
+                const payload = buildPayload();
+                payload.set("organization_slug", slug);
+                try {
+                    const response = await fetch("/category-complaints/submit", {
+                        method: "POST", body: payload, credentials: "same-origin"
+                    });
+                    const result = await response.json().catch(() => ({}));
+                    if (!response.ok || !result.success) throw new Error(result.message || "Could not submit complaint.");
+                    if (successNode) successNode.textContent = `Complaint submitted successfully. Reference: ${result.reference_id}`;
+                    form.reset();
+                } catch (error) {
+                    if (successNode) successNode.textContent = error.message;
+                    else alert(error.message);
+                }
+            }, true);
+        };
+
+        // Club and cell complaint forms already have named fields.
+        const actionForm = $("#complaintForm");
+        if (actionForm && !actionForm.dataset.backendBound) {
+            actionForm.dataset.backendBound = "true";
+            const success = $("#complaintFormSuccess");
+            postComplaint(actionForm, () => {
+                const source = new FormData(actionForm);
+                const data = new FormData();
+                data.set("title", source.get("subject") || source.get("title") || "Student complaint");
+                data.set("description", source.get("complaint") || source.get("description") || "");
+                data.set("category", source.get("category") || "General");
+                data.set("name", source.get("name") || "");
+                data.set("roll", source.get("id_no") || source.get("roll") || "");
+                data.set("phone", source.get("phone") || "");
+                data.set("email", source.get("email") || "");
+                data.set("branch", source.get("branch") || "");
+                data.set("year", source.get("year") || "");
+                data.set("current_sem", source.get("current_sem") || source.get("semester") || "");
+                data.set("priority", source.get("priority") || "Medium");
+                return data;
+            }, success);
+        }
+
+        // Academic and non-academic templates use the existing modal's demo-form.
+        const modalForm = $("#complaint-modal form");
+        if (modalForm && !modalForm.dataset.backendBound) {
+            modalForm.dataset.backendBound = "true";
+            const success = $(".form-success", modalForm);
+            const errorNode = $(".form-error", modalForm);
+            postComplaint(modalForm, () => {
+                const inputs = Array.from(modalForm.querySelectorAll("input"));
+                const selects = Array.from(modalForm.querySelectorAll("select"));
+                const description = $("textarea", modalForm)?.value || "";
+                const hasSemester = selects.length >= 3;
+                const type = (hasSemester ? selects[2]?.value : selects[1]?.value) || "General";
+                const data = new FormData();
+                data.set("title", `${type} complaint`);
+                data.set("category", type);
+                data.set("description", description);
+                data.set("roll", inputs[0]?.value || "");
+                data.set("name", inputs[1]?.value || "");
+                data.set("phone", inputs[3]?.value || "");
+                data.set("email", inputs[2]?.value || "");
+                data.set("branch", inputs[4]?.value || "");
+                data.set("year", selects[0]?.value || "");
+                data.set("current_sem", hasSemester ? (selects[1]?.value || "") : "");
+                data.set("priority", "Medium");
+                return data;
+            }, success);
+            if (errorNode) errorNode.textContent = "";
+        }
+    }
+
     function openStudentForm(kind, slug) {
         const existing = $("#sharedStudentRequest");
         if (existing) { existing.remove(); return; }
@@ -217,7 +299,7 @@
             formData.set("organization_slug", slug);
             if (isComplaint) formData.set("category", "Department request");
             try {
-                const response = await fetch(isComplaint ? "/complaints/submit" : "/complaints/club-submissions/applications", {method:"POST", body:formData, credentials:"same-origin"});
+                const response = await fetch(isComplaint ? "/category-complaints/submit" : "/complaints/club-submissions/applications", {method:"POST", body:formData, credentials:"same-origin"});
                 const result = await response.json().catch(() => ({}));
                 if (!response.ok || !result.success) throw new Error(result.message || "Could not submit your request.");
                 form.querySelector("[role=status]").textContent = "Submitted successfully.";
@@ -250,6 +332,9 @@
         const data = {
             title: item.dataset.title || "",
             image: item.dataset.image || "",
+            attachmentUrl: item.dataset.attachmentUrl || "",
+            attachmentName: item.dataset.attachmentName || "Attached file",
+            attachmentMime: item.dataset.attachmentMime || "",
             uploadDate: item.dataset.uploadDate || "",
             uploadTime: item.dataset.uploadTime || "",
             uploadedBy: item.dataset.uploadedBy || "",
@@ -283,6 +368,52 @@
             } else {
                 imageEl.src = "";
                 imageWrap.style.display = "none";
+            }
+        }
+
+        // Attachment preview/download area: images use the existing cover slot;
+        // supported videos/audio/PDFs preview inline and all other formats download.
+        let attachmentWrap = $("#updateModalAttachmentWrap");
+        if (!attachmentWrap && descEl) {
+            attachmentWrap = document.createElement("div");
+            attachmentWrap.id = "updateModalAttachmentWrap";
+            attachmentWrap.style.cssText = "margin:14px 0;display:none";
+            descEl.parentNode.insertBefore(attachmentWrap, descEl);
+        }
+        if (attachmentWrap) {
+            attachmentWrap.replaceChildren();
+            if (data.attachmentUrl) {
+                attachmentWrap.style.display = "block";
+                const mime = data.attachmentMime.toLowerCase();
+                let preview;
+                if (mime.startsWith("video/") || /\.(mp4|webm|mov|m4v|avi)(?:$|\?)/i.test(url)) {
+                    preview = document.createElement("video");
+                    preview.controls = true;
+                    preview.src = data.attachmentUrl;
+                    preview.style.cssText = "width:100%;max-height:420px;border-radius:10px;background:#111";
+                } else if (mime.startsWith("audio/") || /\.(mp3|wav)(?:$|\?)/i.test(url)) {
+                    preview = document.createElement("audio");
+                    preview.controls = true;
+                    preview.src = data.attachmentUrl;
+                    preview.style.width = "100%";
+                } else if (mime === "application/pdf" || /\.(pdf|docx?|xlsx?|pptx?)(?:$|\?)/i.test(data.attachmentUrl)) {
+                    preview = document.createElement("iframe");
+                    preview.src = `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(data.attachmentUrl)}`;
+                    preview.title = data.attachmentName;
+                    preview.style.cssText = "width:100%;height:480px;border:1px solid #ddd;border-radius:10px";
+                }
+                if (preview) attachmentWrap.appendChild(preview);
+                const download = document.createElement("a");
+                download.href = data.attachmentUrl;
+                download.target = "_blank";
+                download.rel = "noopener";
+                download.download = data.attachmentName;
+                download.href = data.attachmentUrl.replace("/upload/", "/upload/fl_attachment/");
+                download.textContent = `Download ${data.attachmentName}`;
+                download.style.cssText = "display:inline-flex;margin-top:10px;padding:10px 14px;border-radius:8px;background:#2563eb;color:#fff;text-decoration:none";
+                attachmentWrap.appendChild(download);
+            } else {
+                attachmentWrap.style.display = "none";
             }
         }
 
@@ -363,9 +494,10 @@
             if (feedContainer) renderFeed(feedContainer, updates, orgName);
             else renderList(listContainer, updates, orgName);
 
-            // Club pages provide their own richer forms. All other category
-            // pages receive the same persisted application and complaint flow.
-            if (!$("#joinClubForm") && !$("#sharedComplaintButton")) {
+            // Persist the complaint forms already present on academic, non-academic,
+            // club and cell pages. Add a shared fallback only if the page has no form.
+            bindExistingComplaintForms(slug);
+            if (!$("#complaintForm") && !$("#complaint-modal") && !$("#sharedComplaintButton")) {
                 const button = document.createElement("button");
                 button.id = "sharedComplaintButton";
                 button.type = "button";
@@ -373,19 +505,20 @@
                 button.style.cssText = "margin:12px 0;border:0;border-radius:7px;padding:9px 13px;background:#dc2626;color:#fff;cursor:pointer";
                 button.onclick = () => openStudentForm("complaint", slug);
                 wrapper.appendChild(button);
-                document.addEventListener("click", event => {
-                    const apply = event.target.closest("#updateModalApply.enabled");
-                    if (!apply) return;
-                    event.preventDefault(); event.stopImmediatePropagation();
-                    openStudentForm("application", slug);
-                }, true);
             }
+            document.addEventListener("click", event => {
+                const apply = event.target.closest("#updateModalApply.enabled");
+                if (!apply) return;
+                event.preventDefault(); event.stopImmediatePropagation();
+                openStudentForm("application", slug);
+            }, true);
         } catch (error) {
             console.error(`public-updates: failed to load updates for "${slug}":`, error);
         }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        setTimeout(install, 0);
-    });
+    // This script is included at the end of each page, so the updates
+    // container already exists. Start the request immediately instead of
+    // waiting for DOMContentLoaded plus an extra timer.
+    install();
 })();

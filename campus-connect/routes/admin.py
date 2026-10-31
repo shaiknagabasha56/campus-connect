@@ -1,3 +1,4 @@
+
 from flask import Blueprint, session, redirect, abort, render_template, request
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -27,80 +28,58 @@ admin_bp = Blueprint(
 @admin_bp.route("/")
 def admin_redirect():
 
-    # --------------------------------------
-    # CHECK WHETHER USER IS AN ADMIN
-    # --------------------------------------
+    # Check whether user is an admin
     if session.get("role") != "admin":
         abort(403)
 
-
-    # --------------------------------------
-    # GET ADMIN'S ORGANIZATION ID
-    # --------------------------------------
+    # Get admin's organization ID
     organization_id = session.get("organization_id")
 
-    # Some admin accounts (e.g. the Complaints Admin) are not tied
-    # to a club/cell/academic organization row at all. Send these
-    # straight to their own dedicated admin page instead of 403ing.
+    # Handle dedicated admin accounts without an organization
     if not organization_id:
+        email = (session.get("email") or "").strip().lower()
 
-        if session.get("email") == "complaints-admin@gmail.com":
-            return redirect("/complaints/admin")
+        dedicated_admin_routes = {
+            "complaints-admin@gmail.com": "/complaints/admin",
+            "radio-admin@gmail.com": "/radio/admin",
+            "emergency-admin@gmail.com": "/emergency/admin/",
+        }
+
+        destination = dedicated_admin_routes.get(email)
+
+        if destination:
+            return redirect(destination)
 
         abort(403)
 
-
-    # --------------------------------------
-    # GET ORGANIZATION DETAILS
-    # --------------------------------------
-    organization = get_organization_by_id(
-        organization_id
-    )
+    # Get organization details
+    organization = get_organization_by_id(organization_id)
 
     if not organization:
         abort(404)
 
-
-    # --------------------------------------
-    # GET CATEGORY AND SLUG
-    # --------------------------------------
+    # Get category and slug
     category = organization["category"]
     slug = organization["slug"]
 
-
-    # --------------------------------------
-    # MAP DATABASE CATEGORY TO URL PREFIX
-    # --------------------------------------
+    # Map database category to URL prefix
     category_routes = {
-
         "club": "clubs",
         "clubs": "clubs",
-
         "cell": "cells",
         "cells": "cells",
-
         "academic": "academic",
-
         "non-academic": "non-academic",
         "non_academic": "non-academic"
     }
 
-
-    # --------------------------------------
-    # GET CORRECT URL CATEGORY
-    # --------------------------------------
     url_category = category_routes.get(category)
 
     if not url_category:
         abort(404)
 
-
-    # --------------------------------------
-    # REDIRECT TO ADMIN'S OWN PAGE
-    # --------------------------------------
-    return redirect(
-        f"/{url_category}/{slug}/admin"
-    )
+    # Redirect to the admin's own page
+    return redirect(f"/{url_category}/{slug}/admin")
 
 
 # ==========================================

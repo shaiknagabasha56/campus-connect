@@ -164,6 +164,35 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // Render the optional uploaded document/video alongside the update.
+    let attachmentBox = $("#modal-update-attachment");
+    if (!attachmentBox && bodyEl) {
+      attachmentBox = document.createElement("div");
+      attachmentBox.id = "modal-update-attachment";
+      bodyEl.insertAdjacentElement("afterend", attachmentBox);
+    }
+    if (attachmentBox) {
+      attachmentBox.replaceChildren();
+      const url = item.dataset.attachmentUrl || "";
+      const mime = (item.dataset.attachmentMime || "").toLowerCase();
+      const filename = item.dataset.attachmentName || "Attached file";
+      if (url) {
+        if (mime.startsWith("video/") || /\.(mp4|webm|mov|m4v|avi)(?:$|\?)/i.test(url)) {
+          const video = document.createElement("video"); video.src = url; video.controls = true;
+          video.style.cssText = "width:100%;max-height:420px;border-radius:10px"; attachmentBox.appendChild(video);
+        } else if (mime.startsWith("audio/") || /\.(mp3|wav)(?:$|\?)/i.test(url)) {
+          const audio = document.createElement("audio"); audio.src = url; audio.controls = true; audio.style.width = "100%"; attachmentBox.appendChild(audio);
+        } else if (mime === "application/pdf" || /\.pdf($|\?)/i.test(url)) {
+          const frame = document.createElement("iframe"); frame.src = url; frame.title = filename;
+          frame.style.cssText = "width:100%;height:460px;border:1px solid #ddd;border-radius:10px"; attachmentBox.appendChild(frame);
+        }
+        const link = document.createElement("a"); link.href = url; link.target = "_blank"; link.rel = "noopener";
+        link.download = filename; link.href = url.replace("/upload/", "/upload/fl_attachment/"); link.textContent = `Download ${filename}`;
+        link.style.cssText = "display:inline-flex;margin:12px 0;padding:10px 14px;border-radius:8px;background:var(--cat);color:#fff;text-decoration:none";
+        attachmentBox.appendChild(link); attachmentBox.style.display = "block";
+      } else { attachmentBox.style.display = "none"; }
+    }
+
     setApplyState(item);
 
     // Always start at the top when another update is opened.

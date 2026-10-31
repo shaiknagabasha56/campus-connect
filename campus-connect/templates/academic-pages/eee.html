@@ -45,22 +45,8 @@
    </div>
   </div>
   <div class="na-updates-feed">
-        <article class="na-update-item" role="button" tabindex="0" data-status="new" data-title="Power systems lab reopened" data-date="10-07-2026" data-time="9:30 AM" data-uploaded-by="EEE Department" data-deadline="" data-category="Lab Update" data-category-color="#f59e0b" data-email="eee@rgukt.ac.in" data-image="" data-apply="false"  data-body="The power systems lab has reopened after equipment maintenance." data-full="The power systems laboratory has reopened following equipment maintenance. Students may resume practical work according to the updated laboratory schedule.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">10-07-2026<span class="na-time">9:30 AM</span></div>
-            <p class="na-update-title">Power systems lab reopened</p>
-            <p class="na-update-body">The power systems lab has reopened after equipment maintenance.</p>
-          </div>
-        </article>
-        <article class="na-update-item" role="button" tabindex="0" data-status="old" data-title="Industry visit planned" data-date="27-06-2026" data-time="1:00 PM" data-uploaded-by="EEE Department" data-deadline="" data-category="Industry Visit" data-category-color="#f59e0b" data-email="eee@rgukt.ac.in" data-image="" data-apply="true" data-apply-link="https://example.com/apply" data-body="An industry visit to a power distribution facility is being arranged for final years." data-full="An industry visit to a power distribution facility is being arranged for final-year students to gain practical exposure to electrical power systems.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">27-06-2026<span class="na-time">1:00 PM</span></div>
-            <p class="na-update-title">Industry visit planned</p>
-            <p class="na-update-body">An industry visit to a power distribution facility is being arranged for final years.</p>
-          </div>
-        </article></div>
+        
+        </div>
  </section>
 
  <aside>
@@ -112,6 +98,7 @@
   <div class="modal-head update-modal-head"><div></div><button class="close-btn modal-close" aria-label="Close">×</button></div>
   <div id="modal-update-detail-content" class="modal-body">
    <img id="modal-update-image" class="update-image" alt="Update image">
+   <div id="modal-update-attachment" style="display:none"></div>
    <div class="update-category" id="modal-update-category">Update</div>
    <h3 class="update-detail-title" id="modal-update-title-secondary">Update</h3>
    <div class="update-meta-list">
@@ -158,7 +145,6 @@
  </div>
 </div>
 <script src="../../static/js/eee.js"></script>
-<script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
-<script src="{{ url_for('static', filename='js/section_public_forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_updates.js', v='20261031-category-inbox-2') }}"></script>
 </body>
 </html>

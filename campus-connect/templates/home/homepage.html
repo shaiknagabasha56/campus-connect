@@ -286,6 +286,12 @@
                 <b>Director interactive session with students at 4:00 PM |</b>
             </span>
 
+            {% for emergency in active_emergencies %}
+            <span class="emergency-dynamic-item">
+                <b>🚨 {{ emergency.title }}: {{ emergency.message }} |</b>
+            </span>
+            {% endfor %}
+
         </div>
 
     </div>
@@ -1623,212 +1629,41 @@
 
 
 <!-- ========================================================= -->
-<!-- CHAT WIDGET -->
+<!-- COMMUNITY CHAT + POLLS -->
 <!-- ========================================================= -->
-
-<div
-  id="rg-chat-widget"
-  aria-hidden="false">
-
-
-  <button
-    id="rg-chat-toggle"
-    aria-label="Open chat">
-
-    💬
-
-  </button>
-
-
-  <div
-    id="rg-chat-panel"
-    role="dialog"
-    aria-hidden="true"
-    aria-label="Chat panel">
-
-
-    <!-- Chat Header -->
-
-    <div class="rg-chat-header">
-
-      <div class="rg-title">
-
-        <img
-          src=""
-          alt=""
-          style="width:28px;height:28px;border-radius:50%;background:#fff;">
-
-        <div>
-          BotPenguin
+<div id="rg-chat-widget" data-current-user-id="{{ session.get('user_id', 0) }}" aria-hidden="false">
+  <button id="rg-chat-toggle" type="button" aria-label="Open community chat">💬</button>
+  <section id="rg-chat-panel" role="dialog" aria-label="Campus community" aria-hidden="true">
+    <header class="rg-chat-header">
+      <div class="rg-title"><span class="rg-chat-avatar">RG</span><div><strong>Campus Community</strong><small>Chat and polls</small></div></div>
+      <button class="rg-chat-close" id="rg-chat-close" type="button" aria-label="Close chat">×</button>
+    </header>
+    <nav class="rg-chat-tabs" aria-label="Community sections">
+      <button type="button" class="rg-chat-tab rg-active" data-chat-tab="chat">💬 Chat</button>
+      <button type="button" class="rg-chat-tab" data-chat-tab="polls">📊 Polls</button>
+    </nav>
+    <section class="rg-chat-view rg-chat-view-active" id="rg-chat-view-chat" aria-label="Community messages">
+      <div class="rg-chat-messages" id="rg-chat-messages" role="log" aria-live="polite"><div class="rg-chat-loading">Loading community messages…</div></div>
+      <div class="rg-chat-footer">
+        <button id="rg-emoji-btn" class="rg-emoji-btn" type="button" aria-label="Choose emoji" aria-expanded="false">😊</button>
+        <input id="rg-chat-input" type="text" maxlength="1000" placeholder="Message the community…" aria-label="Message input">
+        <button id="rg-send-btn" type="button" aria-label="Send message">➤</button>
+        <div id="rg-emoji-picker" role="dialog" aria-label="Emoji picker">
+          <button type="button" class="rg-emoji">😀</button><button type="button" class="rg-emoji">😁</button><button type="button" class="rg-emoji">😂</button><button type="button" class="rg-emoji">😍</button><button type="button" class="rg-emoji">🤔</button><button type="button" class="rg-emoji">👍</button><button type="button" class="rg-emoji">🔥</button><button type="button" class="rg-emoji">🎉</button><button type="button" class="rg-emoji">❤️</button><button type="button" class="rg-emoji">😅</button><button type="button" class="rg-emoji">🙌</button><button type="button" class="rg-emoji">🙏</button><button type="button" class="rg-emoji">👏</button><button type="button" class="rg-emoji">💯</button>
         </div>
-
       </div>
-
-
-      <button
-        class="rg-chat-close"
-        id="rg-chat-close"
-        aria-label="Close chat">
-
-        ✕
-
-      </button>
-
-    </div>
-
-
-    <!-- Messages -->
-
-    <div
-      class="rg-chat-messages"
-      id="rg-chat-messages"
-      role="log"
-      aria-live="polite">
-
-
-      <div class="rg-msg rg-bot">
-        Hi! Welcome to BotPenguin.
-        I'll be assisting you here today.
+    </section>
+    <section class="rg-chat-view" id="rg-chat-view-polls" aria-label="Community polls">
+      <div class="rg-poll-create">
+        <input id="rg-poll-question" type="text" maxlength="240" placeholder="Ask the campus a question…">
+        <div id="rg-poll-options-inputs"><input class="rg-poll-option-input" type="text" maxlength="100" placeholder="Option 1"><input class="rg-poll-option-input" type="text" maxlength="100" placeholder="Option 2"></div>
+        <div class="rg-poll-create-actions"><button type="button" id="rg-add-poll-option">+ Add option</button><button type="button" id="rg-create-poll">Create poll</button></div>
+        <p id="rg-poll-feedback" class="rg-poll-feedback" aria-live="polite"></p>
       </div>
-
-
-      <div class="rg-msg rg-bot">
-        How can I help you today?
-      </div>
-
-    </div>
-
-
-    <!-- Suggestions -->
-
-    <div
-      class="rg-chat-suggestions"
-      id="rg-chat-suggestions">
-    </div>
-
-
-    <!-- Chat Footer -->
-
-    <div class="rg-chat-footer">
-
-
-      <button
-        id="rg-emoji-btn"
-        class="rg-emoji-btn"
-        aria-haspopup="dialog"
-        aria-expanded="false">
-
-        😊
-
-      </button>
-
-
-      <input
-        id="rg-chat-input"
-        type="text"
-        placeholder="Type a message..."
-        aria-label="Message input">
-
-
-      <button
-        id="rg-send-btn"
-        aria-label="Send">
-
-        ➤
-
-      </button>
-
-
-      <!-- Emoji Picker -->
-
-      <div
-        id="rg-emoji-picker"
-        aria-hidden="true"
-        role="dialog"
-        aria-label="Emoji picker">
-
-
-        <span
-          class="rg-emoji"
-          data-emoji="😀">
-          😀
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="😁">
-          😁
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="😂">
-          😂
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="😍">
-          😍
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="🤔">
-          🤔
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="👍">
-          👍
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="🔥">
-          🔥
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="🎉">
-          🎉
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="❤️">
-          ❤️
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="😅">
-          😅
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="🙌">
-          🙌
-        </span>
-
-        <span
-          class="rg-emoji"
-          data-emoji="🙏">
-          🙏
-        </span>
-
-      </div>
-
-    </div>
-
-  </div>
-
+      <div id="rg-polls-list" class="rg-polls-list"><div class="rg-chat-loading">Loading polls…</div></div>
+    </section>
+  </section>
 </div>
-
-
 
 <!-- ========================================================= -->
 <!-- HOMEPAGE JAVASCRIPT -->
@@ -1837,6 +1672,7 @@
 <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.22.3/dist/livekit-client.umd.min.js"></script>
 
 <script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
+<script src="{{ url_for('static', filename='js/community_chat.js') }}"></script>
 
 </body>
 </html>

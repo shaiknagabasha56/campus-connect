@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const slug = window.location.pathname.split("/").filter(Boolean)[1];
+  // Use the organization slug declared by this page instead of deriving it
+  // from the URL. This keeps profile and submission requests tied to the
+  // correct club even if the route structure changes.
+  const updatesSection = document.querySelector(".na-updates[data-org-slug]");
+  const slug = updatesSection?.dataset.orgSlug;
   if (!slug) return;
 
   function openApplicationForm() {
@@ -39,7 +43,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!response.ok || !result.success) throw new Error(result.message || "Could not submit application.");
         overlay.querySelector("#clubApplicationMessage").textContent = "Application submitted successfully.";
         event.currentTarget.reset();
-        setTimeout(() => overlay.remove(), 1500);
       } catch (error) {
         overlay.querySelector("#clubApplicationMessage").textContent = error.message;
       }
@@ -75,23 +78,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const endpoint = form.id === "joinClubForm"
         ? "/complaints/club-submissions/members"
-        : "/complaints/submit";
+        : "/category-complaints/submit";
       const response = await fetch(endpoint, {method: "POST", body: formData});
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.message || "Could not submit form.");
       const message = form.querySelector(".form-success") || document.getElementById("complaintFormSuccess");
       if (message) message.textContent = "Submitted successfully.";
       form.reset();
-      // close the popup by itself (the old page script that used to do this is bypassed by this handler)
-      setTimeout(() => {
-        const overlay = form.closest(".action-form-overlay");
-        if (overlay) {
-          overlay.classList.remove("show");
-          overlay.setAttribute("aria-hidden", "true");
-          document.body.style.overflow = "";
-        }
-        if (message) message.textContent = "";
-      }, 1500);
     } catch (error) {
       console.error(error);
       const message = form.querySelector(".form-success") || document.getElementById("complaintFormSuccess");
@@ -105,16 +98,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const result = await response.json();
     if (!result.success) return;
 
+    // Never apply profile data returned for a different organization.
+    if (result.organization?.slug !== slug) {
+      console.error("Organization profile slug mismatch:", { requested: slug, received: result.organization?.slug });
+      return;
+    }
+
     const profile = result.profile || {};
     const leaders = result.leaders || [];
-    const headerTitle = document.querySelector(".na-cat-header h1");
-    const headerDescription = document.querySelector(".na-cat-header p");
-    if (headerTitle && (profile.title || result.organization?.name)) {
-      headerTitle.textContent = profile.title || result.organization.name;
-    }
-    if (headerDescription && profile.description) {
-      headerDescription.textContent = profile.description;
-    }
+    // Club identity (title and description) stays page-specific in the HTML.
+    // Profile data is still used below for contact details, social links and leaders.
 
     const quickRows = document.querySelectorAll(".na-side-card .na-info-row");
     const quickValues = [

@@ -45,26 +45,8 @@
    </div>
   </div>
   <div class="na-updates-feed">
-        <article class="na-update-item" role="button" tabindex="0" data-status="new" data-title="GPU lab access hours updated" data-date="05-07-2026" data-time="10:00 AM" data-uploaded-by="AI & ML Department" data-deadline="12-07-2026" data-category="Lab Update" data-category-color="#db2777" data-email="aiml@rgukt.ac.in" data-image="" data-apply="false" data-body="Extended access hours announced for the GPU lab ahead of project deadlines." data-full="Extended access hours announced for the GPU lab ahead of project deadlines.
-
-This update can be expanded here with additional details, instructions, eligibility information, or related documents when connected to the backend.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">05-07-2026<span class="na-time">10:00 AM</span></div>
-            <p class="na-update-title">GPU lab access hours updated</p>
-            <p class="na-update-body">Extended access hours announced for the GPU lab ahead of project deadlines.</p>
-          </div>
-        </article>
-        <article class="na-update-item" role="button" tabindex="0" data-status="old" data-title="ML workshop series begins" data-date="21-06-2026" data-time="2:30 PM" data-uploaded-by="AI & ML Department" data-deadline="25-06-2026" data-category="Workshop" data-category-color="#8b5cf6" data-email="aiml@rgukt.ac.in" data-image="" data-apply="true" data-apply-link="https://example.com/apply" data-body="A weekly workshop series covering applied machine learning topics has started." data-full="A weekly workshop series covering applied machine learning topics has started.
-
-This update can be expanded here with additional details, instructions, eligibility information, or related documents when connected to the backend.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">21-06-2026<span class="na-time">2:30 PM</span></div>
-            <p class="na-update-title">ML workshop series begins</p>
-            <p class="na-update-body">A weekly workshop series covering applied machine learning topics has started.</p>
-          </div>
-        </article></div>
+        
+        </div>
  </section>
 
  <aside>
@@ -116,6 +98,7 @@ This update can be expanded here with additional details, instructions, eligibil
   <div class="modal-head update-modal-head"><div></div><button class="close-btn modal-close" aria-label="Close">×</button></div>
   <div id="modal-update-detail-content" class="modal-body">
    <img id="modal-update-image" class="update-image" alt="Update image">
+   <div id="modal-update-attachment" style="display:none"></div>
    <div class="update-category" id="modal-update-category">Update</div>
    <h3 class="update-detail-title" id="modal-update-title-secondary">Update</h3>
    <div class="update-meta-list">
@@ -162,7 +145,6 @@ This update can be expanded here with additional details, instructions, eligibil
  </div>
 </div>
 <script src="../../static/js/ai-ml.js"></script>
-<script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
-<script src="{{ url_for('static', filename='js/section_public_forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_updates.js', v='20261031-category-inbox-2') }}"></script>
 </body>
 </html>

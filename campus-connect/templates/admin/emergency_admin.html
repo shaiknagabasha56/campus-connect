@@ -25,6 +25,7 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 </head>
 
 
@@ -52,7 +53,7 @@
 
     <nav class="main-nav">
 
-        <a href="#" class="nav-link">
+        <a href="{{ url_for('homepage.homepage') }}" class="nav-link">
             Home
         </a>
 
@@ -240,7 +241,7 @@
 
             <div class="summary-icon red">
 
-                <i class="fa-solid fa-xmark"></i>
+                <i class="fa-regular fa-trash-can"></i>
 
             </div>
 
@@ -608,15 +609,16 @@
 
                                     <form
                                         method="POST"
-                                        action="{{ url_for('emergency.reject_emergency_route', emergency_id=emergency.id) }}"
+                                        action="{{ url_for('emergency.delete_emergency_route', emergency_id=emergency.id) }}"
                                         style="display:inline;">
 
                                         <button
                                             type="submit"
                                             class="reject"
-                                            title="Reject">
+                                            title="Delete emergency"
+                                            onclick="return confirm('Delete this emergency? It will disappear from public displays.');">
 
-                                            <i class="fa-solid fa-xmark"></i>
+                                            <i class="fa-regular fa-trash-can"></i>
 
                                         </button>
 

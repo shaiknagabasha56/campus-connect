@@ -92,6 +92,16 @@
       </div>
       <div class="na-ann-scroll">
         <ul class="na-ann-list" id="active-emergency-list">
+          {% for emergency in emergencies %}
+          <li class="database-emergency-item" data-severity="{{ emergency.priority }}">
+            <span class="na-ann-marker" style="background:{% if emergency.priority == 'critical' %}#dc2626{% elif emergency.priority == 'warning' %}#ea580c{% else %}#65a30d{% endif %};"></span>
+            <div class="na-ann-body">
+              <span class="na-ann-date">{{ emergency.created_at.strftime('%d-%m-%Y') if emergency.created_at else '' }}<span class="na-ann-time">{{ emergency.created_at.strftime('%I:%M %p') if emergency.created_at else '' }}</span><span class="na-ann-cat">{{ emergency.category }}</span></span>
+              <p class="na-ann-text"><strong>{{ emergency.title }}</strong> — {{ emergency.message }}</p>
+            </div>
+          </li>
+          {% endfor %}
+
 
           <li data-severity="critical">
             <span class="na-ann-marker" style="background:#dc2626;"></span>
@@ -214,7 +224,6 @@
     &copy; 2025 RGUKT Website. All Rights Reserved.
   </footer>
 
-  <script src="../../static/js/emergency.js"></script>
   
   
 
@@ -248,6 +257,9 @@
 
                 <input
                     type="text"
+                    name="title"
+                    id="emergency-title"
+                    maxlength="180"
                     placeholder="Enter emergency title"
                     required
                 >
@@ -261,6 +273,8 @@
                 </label>
 
                 <textarea
+                    name="message"
+                    id="emergency-message"
                     placeholder="Enter emergency details / description"
                     required
                 ></textarea>
@@ -275,7 +289,7 @@
                         Category / Type <span>*</span>
                     </label>
 
-                    <select required>
+                    <select name="category" id="emergency-category" required>
                         <option value="">Select Category</option>
                         <option>Weather</option>
                         <option>Medical</option>
@@ -293,11 +307,11 @@
                         Priority <span>*</span>
                     </label>
 
-                    <select required>
+                    <select name="priority" id="emergency-priority" required>
                         <option value="">Select Priority</option>
-                        <option>Critical</option>
-                        <option>Warning</option>
-                        <option>Info</option>
+                        <option value="critical">Critical</option>
+                        <option value="warning">Warning</option>
+                        <option value="info">Info</option>
                     </select>
                 </div>
 
@@ -307,7 +321,7 @@
             <!-- Important -->
             <label class="important-option">
 
-                <input type="checkbox">
+                <input type="checkbox" name="is_important" id="emergency-important">
 
                 <span>
                     Mark as Important
@@ -342,48 +356,18 @@
 
 <script>
 function openEmergencyForm() {
-
-    const modal = document.getElementById("emergencyModal");
-
-    modal.style.display = "flex";
-
+    document.getElementById("emergencyModal").style.display = "flex";
     document.body.style.overflow = "hidden";
 }
-
-
-function closeEmergencyForm(){ 
-
-    const modal = document.getElementById("emergencyModal");
-
-    modal.style.display = "none";
-
+function closeEmergencyForm() {
+    document.getElementById("emergencyModal").style.display = "none";
     document.body.style.overflow = "auto";
 }
-
-
-/* Close when clicking outside the form */
-
 document.getElementById("emergencyModal").addEventListener("click", function(event) {
-
-    if (event.target === this) {
-        closeEmergencyForm();
-    }
-
-});
-
-
-/* Prevent page reload for now */
-
-document.getElementById("emergencyForm").addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    alert("Emergency published successfully!");
-
-    closeEmergencyForm();
-
+    if (event.target === this) closeEmergencyForm();
 });
 </script>
 
+<script src="{{ url_for('static', filename='js/emergency.js') }}"></script>
 </body>
 </html>

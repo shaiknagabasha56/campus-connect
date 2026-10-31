@@ -1574,3 +1574,73 @@ html, body {
     right: 0;
   }
 }
+
+/* ==========================================================
+   Campus community chat and polls — isolated rg- components
+   ========================================================== */
+#rg-chat-panel {
+  width: 390px;
+  height: min(620px, calc(100vh - 120px));
+  max-height: calc(100vh - 110px);
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #fff;
+  color: #172033;
+}
+.rg-chat-header { min-height: 62px; padding: 12px 16px; background: #10243a; }
+.rg-chat-header .rg-title { display:flex; align-items:center; gap:11px; }
+.rg-chat-header .rg-title > div { display:flex; flex-direction:column; gap:2px; }
+.rg-chat-header .rg-title strong { font-size:14px; }
+.rg-chat-header .rg-title small { font-size:11px; font-weight:400; color:#cbd5e1; }
+.rg-chat-avatar { width:34px; height:34px; border-radius:50%; display:grid; place-items:center; background:#ec4899; color:white; font-size:12px; font-weight:800; }
+.rg-chat-tabs { display:grid; grid-template-columns:1fr 1fr; gap:0; background:#fff; border-bottom:1px solid #e8edf4; }
+.rg-chat-tab { min-height:44px; border:0; border-bottom:3px solid transparent; background:#fff; color:#64748b; font-weight:700; cursor:pointer; }
+.rg-chat-tab.rg-active { color:#2563eb; border-bottom-color:#2563eb; }
+.rg-chat-view { display:none; min-height:0; flex:1; flex-direction:column; overflow:hidden; }
+.rg-chat-view.rg-chat-view-active { display:flex; }
+#rg-chat-view-chat { background:#f4f7fb; }
+.rg-chat-messages { flex:1; min-height:0; overflow-y:auto; padding:14px 12px; display:flex; flex-direction:column; justify-content:flex-start; gap:10px; background:#f4f7fb; }
+.rg-message-row { display:flex; width:100%; justify-content:flex-start; }
+.rg-message-row.rg-message-own { justify-content:flex-end; }
+.rg-message-bubble { max-width:86%; min-width:90px; padding:8px 11px 6px; background:#fff; border:1px solid #e5eaf1; border-radius:4px 14px 14px 14px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+.rg-message-bubble-own { background:#dff7e8; border-color:#c8ecd5; border-radius:14px 4px 14px 14px; }
+.rg-message-name { color:#2563a8; font-size:11px; font-weight:800; margin-bottom:4px; }
+.rg-message-bubble-own .rg-message-name { color:#15803d; }
+.rg-message-text { color:#1e293b; font-size:13px; line-height:1.45; white-space:pre-wrap; overflow-wrap:anywhere; }
+.rg-message-time { display:block; margin-top:4px; color:#94a3b8; font-size:9px; text-align:right; }
+.rg-chat-footer { flex:0 0 auto; min-height:60px; gap:7px; padding:9px 10px; }
+.rg-chat-footer #rg-chat-input { min-width:0; height:40px; border-radius:22px; padding:8px 13px; background:#f8fafc; }
+.rg-chat-footer #rg-send-btn { width:38px; height:38px; flex:0 0 38px; border-radius:50%; color:white; background:#2563eb; font-size:17px; }
+.rg-chat-footer #rg-send-btn:disabled { opacity:.55; }
+.rg-chat-footer .rg-emoji-btn { flex:0 0 32px; }
+#rg-emoji-picker { bottom:64px; width:230px; max-height:190px; border-radius:12px; }
+#rg-emoji-picker .rg-emoji { border:0; background:transparent; }
+.rg-chat-loading, .rg-chat-empty, .rg-chat-error { margin:auto; padding:24px 12px; color:#64748b; text-align:center; font-size:13px; }
+.rg-chat-error { color:#b91c1c; }
+#rg-chat-view-polls { background:#f8fafc; overflow-y:auto; }
+.rg-poll-create { margin:12px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:13px; }
+.rg-poll-create input { display:block; width:100%; min-width:0; box-sizing:border-box; height:36px; margin-bottom:8px; padding:8px 10px; border:1px solid #dbe3ed; border-radius:8px; color:#172033; font-size:12px; outline:none; }
+.rg-poll-create input:focus { border-color:#60a5fa; box-shadow:0 0 0 2px #dbeafe; }
+.rg-poll-create-actions { display:flex; justify-content:space-between; gap:8px; }
+.rg-poll-create-actions button { padding:8px 11px; border:1px solid #2563eb; border-radius:8px; background:#fff; color:#2563eb; font-size:11px; font-weight:700; cursor:pointer; }
+.rg-poll-create-actions #rg-create-poll { background:#2563eb; color:#fff; }
+.rg-poll-feedback { min-height:0; margin:7px 0 0; font-size:11px; }
+.rg-poll-feedback:empty { display:none; }
+.rg-poll-feedback.rg-success { color:#15803d; }
+.rg-poll-feedback.rg-error { color:#b91c1c; }
+.rg-polls-list { display:flex; flex-direction:column; gap:10px; padding:0 12px 14px; }
+.rg-poll-card { padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:13px; }
+.rg-poll-meta { margin-bottom:6px; color:#94a3b8; font-size:10px; }
+.rg-poll-question-text { margin:0 0 10px; color:#172033; font-size:14px; line-height:1.4; }
+.rg-poll-choice { position:relative; display:flex; flex-wrap:wrap; justify-content:space-between; gap:5px; width:100%; margin:6px 0; padding:8px 9px; overflow:hidden; border:1px solid #dbe3ed; border-radius:8px; background:#fff; color:#334155; text-align:left; font-size:11px; cursor:pointer; }
+.rg-poll-choice:hover { border-color:#60a5fa; }
+.rg-poll-choice.rg-voted { border-color:#2563eb; background:#eff6ff; }
+.rg-poll-choice-label, .rg-poll-choice-count { position:relative; z-index:1; }
+.rg-poll-choice-count { color:#64748b; font-size:10px; }
+.rg-poll-choice-bar { position:absolute; left:0; bottom:0; width:100%; height:3px; background:#eef2f7; }
+.rg-poll-choice-fill { display:block; height:100%; background:#60a5fa; }
+.rg-poll-total { margin-top:8px; color:#94a3b8; font-size:10px; }
+@media (max-width:480px) {
+  #rg-chat-panel { left:10px; right:10px; bottom:78px; width:auto; height:min(650px, calc(100vh - 100px)); max-height:calc(100vh - 90px); }
+  #rg-chat-toggle { right:14px; bottom:14px; }
+}

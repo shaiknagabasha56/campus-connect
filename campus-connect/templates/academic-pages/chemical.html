@@ -45,22 +45,8 @@
    </div>
   </div>
   <div class="na-updates-feed">
-        <article class="na-update-item" role="button" tabindex="0" data-status="new" data-title="Process lab safety audit" data-date="06-07-2026" data-time="10:00 AM" data-uploaded-by="Chemical Engineering Department" data-deadline="" data-category="Safety" data-category-color="#16a34a" data-email="chemical@rgukt.ac.in" data-image="" data-apply="false"  data-body="A routine safety audit of the process engineering lab has been completed." data-full="A routine safety audit of the process engineering laboratory has been completed to maintain safe practical working conditions.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">06-07-2026<span class="na-time">10:00 AM</span></div>
-            <p class="na-update-title">Process lab safety audit</p>
-            <p class="na-update-body">A routine safety audit of the process engineering lab has been completed.</p>
-          </div>
-        </article>
-        <article class="na-update-item" role="button" tabindex="0" data-status="old" data-title="Industrial visit to plant" data-date="22-06-2026" data-time="1:30 PM" data-uploaded-by="Chemical Engineering Department" data-deadline="" data-category="Industrial Visit" data-category-color="#16a34a" data-email="chemical@rgukt.ac.in" data-image="" data-apply="true" data-apply-link="https://example.com/apply" data-body="A visit to a nearby chemical processing plant is being organized for students." data-full="An industrial visit to a nearby chemical processing plant is being organized to give students practical exposure to chemical processing operations.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">22-06-2026<span class="na-time">1:30 PM</span></div>
-            <p class="na-update-title">Industrial visit to plant</p>
-            <p class="na-update-body">A visit to a nearby chemical processing plant is being organized for students.</p>
-          </div>
-        </article></div>
+        
+        </div>
  </section>
 
  <aside>
@@ -112,6 +98,7 @@
   <div class="modal-head update-modal-head"><div></div><button class="close-btn modal-close" aria-label="Close">×</button></div>
   <div id="modal-update-detail-content" class="modal-body">
    <img id="modal-update-image" class="update-image" alt="Update image">
+   <div id="modal-update-attachment" style="display:none"></div>
    <div class="update-category" id="modal-update-category">Update</div>
    <h3 class="update-detail-title" id="modal-update-title-secondary">Update</h3>
    <div class="update-meta-list">
@@ -158,7 +145,6 @@
  </div>
 </div>
 <script src="../../static/js/chemical.js"></script>
-<script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
-<script src="{{ url_for('static', filename='js/section_public_forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_updates.js', v='20261031-category-inbox-2') }}"></script>
 </body>
 </html>

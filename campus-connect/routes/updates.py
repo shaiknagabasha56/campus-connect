@@ -22,7 +22,9 @@ from database.queries import (
     get_update_by_id,
     update_update,
     delete_update,
-    get_organization_by_slug
+    get_organization_by_slug,
+    get_published_updates_by_slugs,
+    get_public_organization_updates_by_slug
 )
 
 
@@ -56,6 +58,59 @@ ALLOWED_EXTENSIONS = {
     "jpeg",
     "webp"
 }
+
+
+ALLOWED_ATTACHMENT_EXTENSIONS = {
+    "pdf", "doc", "docx", "xls", "xlsx", "csv", "ppt", "pptx",
+    "txt", "rtf", "odt", "ods", "odp", "mp4", "webm", "mov",
+    "m4v", "avi", "mp3", "wav", "zip"
+}
+MAX_ATTACHMENT_SIZE = 100 * 1024 * 1024  # 100 MB; also configure Cloudinary limits
+
+
+def upload_update_attachment(file):
+    """Upload a document/video attachment using Cloudinary's auto resource type."""
+    configure_cloudinary()
+    extension = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
+    if extension not in ALLOWED_ATTACHMENT_EXTENSIONS:
+        raise ValueError("Unsupported attachment type. Upload PDF, Office documents, sheets, videos, audio, text or ZIP files.")
+    file.stream.seek(0, os.SEEK_END)
+    size = file.stream.tell()
+    file.stream.seek(0)
+    if size > MAX_ATTACHMENT_SIZE:
+        raise ValueError("Attachment must be 100 MB or smaller.")
+    result = cloudinary.uploader.upload(
+        file,
+        public_id=f"campus_connect/updates/files/{uuid.uuid4().hex}",
+        resource_type="auto",
+        overwrite=False,
+        use_filename=True,
+        unique_filename=True
+    )
+    return result.get("secure_url"), result.get("public_id"), result.get("resource_type"), file.filename, file.mimetype or "application/octet-stream"
+
+
+def delete_update_attachment(url, resource_type="raw"):
+    if not url or "res.cloudinary.com" not in url:
+        return
+    try:
+        configure_cloudinary()
+        parsed = urlparse(url)
+        path = parsed.path
+        match = __import__("re").search(r"/(raw|video|image)/upload/", path)
+        if not match:
+            return
+        kind = match.group(1)
+        public_id = path.split(f"/{kind}/upload/", 1)[1]
+        parts = public_id.split("/")
+        if parts and parts[0].startswith("v") and parts[0][1:].isdigit():
+            parts = parts[1:]
+        public_id = "/".join(parts)
+        if kind == "image":
+            public_id = os.path.splitext(public_id)[0]
+        cloudinary.uploader.destroy(public_id, resource_type=kind, invalidate=True)
+    except Exception as error:
+        print("Cloudinary attachment delete error:", error)
 
 
 def configure_cloudinary():
@@ -230,6 +285,20 @@ def empty_to_none(value):
 # HELPER: MAKE UPDATE DATA JSON SAFE
 # ==================================================
 
+def optimized_cloudinary_url(image_url):
+    """Return an auto-format/auto-quality delivery URL without changing the stored original."""
+    if not image_url or not image_url.startswith("https://res.cloudinary.com/"):
+        return image_url
+    marker = "/image/upload/"
+    if marker not in image_url:
+        return image_url
+    prefix, remainder = image_url.split(marker, 1)
+    first_segment = remainder.split("/", 1)[0]
+    if first_segment.startswith(("f_auto", "q_auto", "w_auto", "c_")):
+        return image_url
+    return prefix + marker + "f_auto,q_auto/" + remainder
+
+
 def serialize_update(update):
 
     if not update:
@@ -277,11 +346,59 @@ def serialize_update(update):
                 f"{seconds:02d}"
             )
 
+        elif key == "cover_image":
+
+            serialized[key] = optimized_cloudinary_url(value)
+
         else:
 
             serialized[key] = value
 
     return serialized
+# ==================================================
+# GET PUBLISHED UPDATES FOR A PUBLIC HUB CATEGORY
+# ==================================================
+@updates_bp.route("/public/category/<string:category>", methods=["GET"])
+def get_public_category_updates(category):
+    category_organizations = {
+        "academic": {
+            "cse": "CSE", "ece": "ECE", "civil": "Civil", "eee": "EEE",
+            "mech": "Mechanical", "metallurgy": "Metallurgy",
+            "chemical": "Chemical", "ai-ml": "AI & ML"
+        },
+        "non-academic": {
+            "mess": "Mess", "canteen": "Canteen", "store": "Store",
+            "hostel": "Hostel", "it-infra": "IT Infrastructure",
+            "hospital": "Hospital", "scholorship-office": "Scholarship Office",
+            "financial-office": "Financial Office"
+        },
+        "clubs": {
+            "artix": "Artix", "techxcel": "TechXcel", "aws": "AWS",
+            "icro": "ICRO", "khelsaathi": "KhelSaathi",
+            "kaladharani": "Kaladharani", "sarvasrijana": "Sarvasrijana",
+            "pixelro": "PixelRO"
+        },
+        "cells": {"ecell": "E-Cell", "cdpc": "CDPC", "hec": "HEC"}
+    }
+    organizations = category_organizations.get(category)
+    if organizations is None:
+        return jsonify({"success": False, "message": "Unknown category."}), 404
+
+    # Fetch every published update for this category in one SQL query.
+    # Previously this performed two sequential queries per organization.
+    updates = get_published_updates_by_slugs(list(organizations.keys()))
+
+    combined_updates = []
+    for update in updates:
+        item = serialize_update(update)
+        item["organization_name"] = organizations.get(
+            item.pop("organization_slug", ""), item.get("organization_name", "Update")
+        )
+        combined_updates.append(item)
+
+    return jsonify({"success": True, "updates": combined_updates})
+
+
 # ==================================================
 # GET ALL UPDATES
 # GET /updates
@@ -322,52 +439,22 @@ def get_updates():
     "/organization/<organization_slug>",
     methods=["GET"]
 )
-def get_public_organization_updates(
-    organization_slug
-):
-
-    # ----------------------------------------------
-    # GET ORGANIZATION
-    # ----------------------------------------------
-
-    organization = get_organization_by_slug(
+def get_public_organization_updates(organization_slug):
+    # Fetch organization metadata and its published updates together.
+    # This removes one complete DB connection/query from every page load.
+    organization, updates = get_public_organization_updates_by_slug(
         organization_slug
     )
 
     if not organization:
-
         return jsonify({
             "success": False,
             "message": "Organization not found."
         }), 404
 
+    serialized_updates = [serialize_update(update) for update in updates]
 
-    # ----------------------------------------------
-    # GET ONLY PUBLISHED UPDATES
-    # ----------------------------------------------
-
-    updates = (
-        get_published_updates_by_organization(
-            organization["id"]
-        )
-    )
-
-
-    # ----------------------------------------------
-    # SERIALIZE DATA
-    # ----------------------------------------------
-
-    serialized_updates = [
-        serialize_update(update)
-        for update in updates
-    ]
-
-
-    # ----------------------------------------------
-    # RESPONSE
-    # ----------------------------------------------
-
-    return jsonify({
+    response = jsonify({
         "success": True,
         "organization": {
             "id": organization["id"],
@@ -376,6 +463,9 @@ def get_public_organization_updates(
         },
         "updates": serialized_updates
     })
+    # Public announcement data changes infrequently; allow short browser/CDN caching.
+    response.headers["Cache-Control"] = "public, max-age=15, stale-while-revalidate=45"
+    return response
 
 
 # ==================================================
@@ -466,7 +556,7 @@ def get_public_updates(
             "slug": organization["slug"]
         },
 
-        "updates": updates
+        "updates": [serialize_update(update) for update in updates]
 
     })
 
@@ -644,6 +734,25 @@ def create_new_update():
             }), 500
 
 
+    # ----------------------------------------------
+    # OPTIONAL DOCUMENT / VIDEO / OTHER ATTACHMENT
+    # ----------------------------------------------
+    attachment_url = attachment_name = attachment_mime = None
+    attachment_public_id = None
+    attachment_resource_type = None
+    attachment_file = request.files.get("attachment")
+    if attachment_file and attachment_file.filename:
+        try:
+            (attachment_url, attachment_public_id, attachment_resource_type,
+             attachment_name, attachment_mime) = upload_update_attachment(attachment_file)
+            if not attachment_url:
+                raise RuntimeError("Cloudinary did not return an attachment URL.")
+        except ValueError as error:
+            return jsonify({"success": False, "message": str(error)}), 400
+        except Exception as error:
+            print("Cloudinary attachment upload error:", error)
+            return jsonify({"success": False, "message": "Failed to upload attachment."}), 500
+
 # ----------------------------------------------
     # CREATE DATABASE UPDATE
     # ----------------------------------------------
@@ -675,8 +784,10 @@ def create_new_update():
         enable_application=enable_application,
 
         application_url=application_url,
-
-        status="published"
+        status="published",
+        attachment_url=attachment_url,
+        attachment_name=attachment_name,
+        attachment_mime=attachment_mime
     )
 
 
@@ -702,6 +813,11 @@ def create_new_update():
                     "Cloudinary cleanup error:",
                     error
                 )
+        if attachment_public_id:
+            try:
+                cloudinary.uploader.destroy(attachment_public_id, resource_type=attachment_resource_type or "raw", invalidate=True)
+            except Exception as error:
+                print("Cloudinary attachment cleanup error:", error)
 
         return jsonify({
             "success": False,
@@ -926,6 +1042,27 @@ def edit_existing_update(update_id):
             }), 500
 
 
+    # ----------------------------------------------
+    # KEEP OR REPLACE THE EXISTING ATTACHMENT
+    # ----------------------------------------------
+    attachment_url = existing_update.get("attachment_url")
+    attachment_name = existing_update.get("attachment_name")
+    attachment_mime = existing_update.get("attachment_mime")
+    new_attachment_public_id = None
+    new_attachment_resource_type = None
+    attachment_file = request.files.get("attachment")
+    if attachment_file and attachment_file.filename:
+        try:
+            (attachment_url, new_attachment_public_id, new_attachment_resource_type,
+             attachment_name, attachment_mime) = upload_update_attachment(attachment_file)
+            if not attachment_url:
+                raise RuntimeError("Cloudinary did not return an attachment URL.")
+        except ValueError as error:
+            return jsonify({"success": False, "message": str(error)}), 400
+        except Exception as error:
+            print("Cloudinary attachment upload error:", error)
+            return jsonify({"success": False, "message": "Failed to upload attachment."}), 500
+
 # ----------------------------------------------
     # UPDATE DATABASE
     # ----------------------------------------------
@@ -957,8 +1094,10 @@ def edit_existing_update(update_id):
         enable_application=enable_application,
 
         application_url=application_url,
-
-        status="published"
+        status="published",
+        attachment_url=attachment_url,
+        attachment_name=attachment_name,
+        attachment_mime=attachment_mime
     )
 
 
@@ -980,6 +1119,11 @@ def edit_existing_update(update_id):
                     "Cloudinary cleanup error:",
                     error
                 )
+        if new_attachment_public_id:
+            try:
+                cloudinary.uploader.destroy(new_attachment_public_id, resource_type=new_attachment_resource_type or "raw", invalidate=True)
+            except Exception as error:
+                print("Cloudinary attachment cleanup error:", error)
 
         return jsonify({
             "success": False,
@@ -993,6 +1137,8 @@ def edit_existing_update(update_id):
     # Cloudinary asset only AFTER the database update succeeds.
     if new_uploaded_public_id and old_cloudinary_image:
         delete_from_cloudinary(old_cloudinary_image)
+    if new_attachment_public_id and existing_update.get("attachment_url"):
+        delete_update_attachment(existing_update.get("attachment_url"))
 
     updated_update = get_update_by_id(
         update_id,
@@ -1079,6 +1225,7 @@ def remove_update(update_id):
 
     if image_url:
         delete_from_cloudinary(image_url)
+    delete_update_attachment(existing_update.get("attachment_url"))
 
 
     return jsonify({

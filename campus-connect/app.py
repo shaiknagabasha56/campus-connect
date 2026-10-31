@@ -10,10 +10,12 @@ from routes.cells import cells_bp
 from routes.academic import academic_bp
 from routes.non_academic import non_academic_bp
 from routes.complaints import complaints_bp
+from routes.category_complaints import category_complaints_bp
 from routes.emergency import emergency_bp
 from routes.admin import admin_bp
 from routes.updates import updates_bp
 from routes.radio import radio_bp
+from routes.community_chat import community_chat_bp
 
 
 def createApp():
@@ -37,10 +39,12 @@ def createApp():
     app.register_blueprint(academic_bp)
     app.register_blueprint(non_academic_bp)
     app.register_blueprint(complaints_bp)
+    app.register_blueprint(category_complaints_bp)
     app.register_blueprint(emergency_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(updates_bp)
     app.register_blueprint(radio_bp)
+    app.register_blueprint(community_chat_bp)
 
     @app.before_request
     def require_login():
@@ -56,26 +60,30 @@ def createApp():
         # LOGIN CHECK 
         if "user_id" not in session:
             return redirect(url_for("auth.login"))
-        # ADMIN ROUTE CHECK
-    
-        if request.path.endswith("/admin"):
-            # User must be an admin
+        # ORGANIZATION ADMIN ROUTE CHECK
+        # Radio and Emergency have their own dedicated admin roles and
+        # enforce authorization inside their own routes. Do not apply the
+        # organization-admin-only check to those module admin pages.
+        normalized_path = request.path.rstrip("/")
+        path_parts = normalized_path.strip("/").split("/")
+        is_module_admin_route = (
+            len(path_parts) >= 2
+            and path_parts[0] in {"radio", "emergency"}
+            and path_parts[-1] == "admin"
+        )
+
+        if normalized_path.endswith("/admin") and not is_module_admin_route:
+            # Organization admin pages require the main admin role.
             if session.get("role") != "admin":
                 abort(403)
-                # Get organization slug from URL
-            path_parts = request.path.strip("/").split("/")
+
+            # Resolve and validate the organization for organization admin URLs.
             if len(path_parts) >= 3:
                 organization_slug = path_parts[-2]
-                # Get organization from database
-                organization = get_organization_by_slug(
-                    organization_slug
-            )
-                # Organization does not exist
+                organization = get_organization_by_slug(organization_slug)
                 if not organization:
                     abort(404)
 
-
-                # Check organization ownership
                 if session.get("organization_id") != organization["id"]:
                     abort(403)
 

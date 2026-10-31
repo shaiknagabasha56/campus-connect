@@ -517,6 +517,18 @@
         `;
     }
 
+    function attachmentField() {
+        return `
+            <div class="admin-field full admin-upload">
+                <label for="updateAttachment">Attachment (PDF, Word, Excel, PowerPoint, video, audio, ZIP, etc.)</label>
+                <input id="updateAttachment" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.txt,.rtf,.odt,.ods,.odp,.mp4,.webm,.mov,.m4v,.avi,.mp3,.wav,.zip">
+                <small class="admin-help">Optional · Maximum 100 MB. A newly selected file replaces the current attachment.</small>
+                <div id="updateAttachmentCurrent" class="admin-help"></div>
+                <div class="admin-error"></div>
+            </div>
+        `;
+    }
+
     function bindCount(id) {
         const el = $("#" + id);
         const count = $("#" + id + "Count");
@@ -639,7 +651,8 @@
             // FIX:
             // Supports Cloudinary URLs and local paths.
             image:
-                getImageUrl(update.cover_image)
+                getImageUrl(update.cover_image),
+            attachmentName: update.attachment_name || ""
         };
     }
 
@@ -665,8 +678,10 @@
 
                 ${imageField(
                     "updateImage",
-                    "Cover Image"
+                    "Cover Image (optional)"
                 )}
+
+                ${attachmentField()}
 
                 ${field(
                     "Category Tag",
@@ -796,6 +811,10 @@
             "updateImage",
             d.image
         );
+        const currentAttachment = $("#updateAttachmentCurrent");
+        if (currentAttachment && d.attachmentName) {
+            currentAttachment.textContent = `Current attachment: ${d.attachmentName}`;
+        }
 
         bindModalClose();
 
@@ -967,6 +986,11 @@
                 "cover_image",
                 imageInput.files[0]
             );
+        }
+
+        const attachmentInput = $("#updateAttachment");
+        if (attachmentInput?.files?.[0]) {
+            formData.append("attachment", attachmentInput.files[0]);
         }
 
         return formData;

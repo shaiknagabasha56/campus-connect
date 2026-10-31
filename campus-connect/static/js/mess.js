@@ -164,6 +164,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // Inline preview and download for an optional update attachment.
+    let attachmentBox = $("#modal-update-attachment");
+    if (!attachmentBox && bodyEl) { attachmentBox = document.createElement("div"); attachmentBox.id = "modal-update-attachment"; bodyEl.insertAdjacentElement("afterend", attachmentBox); }
+    if (attachmentBox) {
+      attachmentBox.replaceChildren();
+      const url = item.dataset.attachmentUrl || "", mime = (item.dataset.attachmentMime || "").toLowerCase();
+      const filename = item.dataset.attachmentName || "Attached file";
+      if (url) {
+        if (mime.startsWith("video/") || /\.(mp4|webm|mov|m4v|avi)(?:$|\?)/i.test(url)) { const v=document.createElement("video"); v.src=url; v.controls=true; v.style.cssText="width:100%;max-height:420px;border-radius:10px"; attachmentBox.appendChild(v); }
+        else if (mime.startsWith("audio/") || /\.(mp3|wav)(?:$|\?)/i.test(url)) { const a=document.createElement("audio"); a.src=url; a.controls=true; a.style.width="100%"; attachmentBox.appendChild(a); }
+        else if (mime === "application/pdf" || /\.(pdf|docx?|xlsx?|pptx?)(?:$|\?)/i.test(url)) { const f=document.createElement("iframe"); f.src=`https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(url)}`; f.title=filename; f.style.cssText="width:100%;height:460px;border:1px solid #ddd;border-radius:10px"; attachmentBox.appendChild(f); }
+        const link=document.createElement("a"); link.href=url; link.target="_blank"; link.rel="noopener"; link.download=filename; link.textContent=`Download ${filename}`; link.style.cssText="display:inline-flex;margin:12px 0;padding:10px 14px;border-radius:8px;background:var(--cat);color:#fff;text-decoration:none"; attachmentBox.appendChild(link); attachmentBox.style.display="block";
+      } else attachmentBox.style.display="none";
+    }
+
     setApplyState(item);
 
     // Always start at the top when another update is opened.

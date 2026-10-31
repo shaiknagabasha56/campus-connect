@@ -45,31 +45,18 @@
    </div>
   </div>
   <div class="na-updates-feed">
-        <article class="na-update-item" role="button" tabindex="0" data-status="new" data-title="VLSI lab equipment upgraded" data-date="11-07-2026" data-time="10:00 AM" data-uploaded-by="ECE Department" data-deadline="" data-category="Lab Update" data-category-color="#06b6d4" data-email="ece@rgukt.ac.in" data-image="" data-apply="false"  data-body="New kits have been added to the VLSI design lab for hands-on practice." data-full="New VLSI design kits have been added to the laboratory to support hands-on practice and project work. Students can contact the department for lab access details.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">11-07-2026<span class="na-time">10:00 AM</span></div>
-            <p class="na-update-title">VLSI lab equipment upgraded</p>
-            <p class="na-update-body">New kits have been added to the VLSI design lab for hands-on practice.</p>
-          </div>
-        </article>
-        <article class="na-update-item" role="button" tabindex="0" data-status="old" data-title="Workshop on embedded systems" data-date="29-06-2026" data-time="2:00 PM" data-uploaded-by="ECE Department" data-deadline="" data-category="Workshop" data-category-color="#06b6d4" data-email="ece@rgukt.ac.in" data-image="" data-apply="true" data-apply-link="https://example.com/apply" data-body="A two-day workshop on embedded systems is planned for the ECE department." data-full="A two-day workshop on embedded systems is planned for ECE students, covering practical concepts and hands-on development.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">29-06-2026<span class="na-time">2:00 PM</span></div>
-            <p class="na-update-title">Workshop on embedded systems</p>
-            <p class="na-update-body">A two-day workshop on embedded systems is planned for the ECE department.</p>
-          </div>
-        </article></div>
+        
+        </div>
  </section>
 
  <aside>
   <div class="na-side-card">
    <h4>Contact &amp; Info</h4>
-   <div class="na-info-row"><i class="fa-solid fa-user"></i><div><span class="na-info-label">HOD</span>[HOD Name]</div></div>
-   <div class="na-info-row"><i class="fa-solid fa-phone"></i><div><span class="na-info-label">Contact</span>[Contact Number]</div></div>
-   <div class="na-info-row"><i class="fa-solid fa-location-dot"></i><div><span class="na-info-label">Location</span>[ECE Block, Floor]</div></div>
-   <div class="na-info-row"><i class="fa-solid fa-clock"></i><div><span class="na-info-label">Office Hours</span>[e.g. Mon–Sat, 9:30 AM–4:30 PM]</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-user"></i><div><span class="na-info-label">HOD</span>Mr M.VijayabhaskarMTech
+</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-phone"></i><div><span class="na-info-label">Contact</span>8989008999</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-location-dot"></i><div><span class="na-info-label">Location</span>G-Block,2nd floor</div></div>
+   <div class="na-info-row"><i class="fa-solid fa-clock"></i><div><span class="na-info-label">Office Hours</span> Mon–Sat, 9:30 AM–4:30 PM</div></div>
   </div>
   <div class="na-side-card complaint-card"><h4>Need Something Resolved?</h4><button id="complaint-btn" class="primary-btn"><i class="fa-solid fa-circle-exclamation"></i>&nbsp; Raise a Complaint</button></div>
   
@@ -81,13 +68,13 @@
   <div class="hod-photo hod-section-photo"><img src="../../static/images/hod.svg" alt="HOD profile placeholder"></div>
   <div class="hod-main-info">
     <h2>HOD</h2>
-    <h3>[HOD Name]</h3>
+    <h3>Mr M.Vijayabhaskar</h3>
     <p class="designation">Head of Department (HOD)</p>
   </div>
   <div class="hod-contact-info">
-    <div><span>Contact</span><strong>[Contact Number]</strong></div>
-    <div><span>Email</span><strong>ece@rgukt.ac.in</strong></div>
-    <div><span>Cabin No.</span><strong>[Cabin Number]</strong></div>
+    <div><span>Contact</span><strong>8989008999</strong></div>
+    <div><span>Email</span><strong>ece-hod@rgukt.ac.in</strong></div>
+    <div><span>Cabin No.</span><strong>G-Block,2nd floor,206</strong></div>
   </div>
   <button id="hod-profile-btn" class="secondary-btn hod-view-btn">View Profile</button>
 </section>
@@ -112,6 +99,7 @@
   <div class="modal-head update-modal-head"><div></div><button class="close-btn modal-close" aria-label="Close">×</button></div>
   <div id="modal-update-detail-content" class="modal-body">
    <img id="modal-update-image" class="update-image" alt="Update image">
+   <div id="modal-update-attachment" style="display:none"></div>
    <div class="update-category" id="modal-update-category">Update</div>
    <h3 class="update-detail-title" id="modal-update-title-secondary">Update</h3>
    <div class="update-meta-list">
@@ -154,11 +142,10 @@
 <div id="hod-modal" class="modal-backdrop hidden">
  <div class="modal-card profile-modal">
   <div class="modal-head"><div><h2>HOD Profile</h2><p>ECE Department</p></div><button class="close-btn modal-close">×</button></div>
-  <div class="modal-body"><div class="profile-preview"><div class="hod-photo"><img src="hod-placeholder.svg" alt="HOD profile placeholder"></div><div><h3 style="margin:0 0 4px">[HOD Name]</h3><p style="margin:0;color:var(--cat);font-size:12px;font-weight:700">Head of Department (HOD)</p></div></div><p style="font-size:13px;color:#64748b;line-height:1.7;margin:0">HOD profile details can be connected to the department database later. Replace the placeholder name and profile image with the actual department information.</p></div>
+  <div class="modal-body"><div class="profile-preview"><div class="hod-photo"><img src="hod-placeholder.svg" alt="HOD profile placeholder"></div><div><h3 style="margin:0 0 4px">Mr M.Vijayabhaskar</h3><p style="margin:0;color:var(--cat);font-size:12px;font-weight:700">Head of Department (HOD)</p></div></div><p style="font-size:13px;color:#64748b;line-height:1.7;margin:0">HOD profile details can be connected to the department database later. Replace the placeholder name and profile image with the actual department information.</p></div>
  </div>
 </div>
 <script src="../../static/js/ece.js"></script>
-<script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
-<script src="{{ url_for('static', filename='js/section_public_forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_updates.js', v='20261031-category-inbox-2') }}"></script>
 </body>
 </html>

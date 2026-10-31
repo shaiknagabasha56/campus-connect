@@ -45,22 +45,8 @@
    </div>
   </div>
   <div class="na-updates-feed">
-        <article class="na-update-item" role="button" tabindex="0" data-status="new" data-title="Workshop safety briefing" data-date="09-07-2026" data-time="10:30 AM" data-uploaded-by="MECH Department" data-deadline="" data-category="Safety" data-category-color="#78716c" data-email="mech@rgukt.ac.in" data-image="" data-apply="false"  data-body="Mandatory safety briefing scheduled before the next manufacturing lab session." data-full="A mandatory safety briefing has been scheduled before the next manufacturing laboratory session. Students should attend before entering the workshop area.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">09-07-2026<span class="na-time">10:30 AM</span></div>
-            <p class="na-update-title">Workshop safety briefing</p>
-            <p class="na-update-body">Mandatory safety briefing scheduled before the next manufacturing lab session.</p>
-          </div>
-        </article>
-        <article class="na-update-item" role="button" tabindex="0" data-status="old" data-title="CAD software licenses renewed" data-date="26-06-2026" data-time="3:00 PM" data-uploaded-by="MECH Department" data-deadline="" data-category="Lab Update" data-category-color="#78716c" data-email="mech@rgukt.ac.in" data-image="" data-apply="false"  data-body="Updated CAD software licenses are now available in the design lab." data-full="Updated CAD software licenses are now available in the design laboratory for student design and project work.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">26-06-2026<span class="na-time">3:00 PM</span></div>
-            <p class="na-update-title">CAD software licenses renewed</p>
-            <p class="na-update-body">Updated CAD software licenses are now available in the design lab.</p>
-          </div>
-        </article></div>
+        
+        </div>
  </section>
 
  <aside>
@@ -112,6 +98,7 @@
   <div class="modal-head update-modal-head"><div></div><button class="close-btn modal-close" aria-label="Close">×</button></div>
   <div id="modal-update-detail-content" class="modal-body">
    <img id="modal-update-image" class="update-image" alt="Update image">
+   <div id="modal-update-attachment" style="display:none"></div>
    <div class="update-category" id="modal-update-category">Update</div>
    <h3 class="update-detail-title" id="modal-update-title-secondary">Update</h3>
    <div class="update-meta-list">
@@ -158,7 +145,6 @@
  </div>
 </div>
 <script src="../../static/js/mech.js"></script>
-<script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
-<script src="{{ url_for('static', filename='js/section_public_forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_updates.js', v='20261031-category-inbox-2') }}"></script>
 </body>
 </html>

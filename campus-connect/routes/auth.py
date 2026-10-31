@@ -4,13 +4,14 @@ from extensions import oauth
 from database.queries import (
     get_user_by_email,
     update_user_password,
-    update_user_profile_details
+    update_user_profile,
+    update_user_profile_by_id,
+    update_user_password_by_id
 )
 from werkzeug.security import (
     check_password_hash,
     generate_password_hash
 )
-
 
 
 
@@ -162,100 +163,67 @@ def google_callback():
 
 @auth_bp.route("/update-profile", methods=["POST"])
 def update_user_profile_route():
+    user_id = session.get("user_id")
+    current_email = session.get("email")
+    if not user_id or not current_email:
+        return jsonify({"success": False, "message": "Please login first."}), 401
 
-    # Check login
-    if "email" not in session:
-
-        return jsonify({
-            "success": False,
-            "message": "Please login first."
-        }), 401
-
-
-    # Get JSON data
     data = request.get_json(silent=True) or {}
+    username = (data.get("username") or "").strip()
+    new_email = (data.get("email") or "").strip().lower()
 
-
-    username = (
-        data.get("username") or ""
-    ).strip()
-
-    new_email = (
-        data.get("email") or ""
-    ).strip().lower()
-
-
-    # Validate
-    if not username:
-
-        return jsonify({
-            "success": False,
-            "message": "Username is required."
-        }), 400
-
-
+    if len(username) < 3:
+        return jsonify({"success": False, "message": "Username must be at least 3 characters."}), 400
     if not new_email:
+        return jsonify({"success": False, "message": "Email is required."}), 400
 
-        return jsonify({
-            "success": False,
-            "message": "Email is required."
-        }), 400
-
-
-    current_email = session["email"]
-
-
-    # Check whether another user already has this email
     existing_user = get_user_by_email(new_email)
+    if existing_user and int(existing_user.get("id")) != int(user_id):
+        return jsonify({"success": False, "message": "This email is already in use."}), 409
 
-    if (
-        existing_user
-        and existing_user.get("email") != current_email
-    ):
+    if not update_user_profile_by_id(user_id, username, new_email):
+        return jsonify({"success": False, "message": "Profile could not be updated. Please try again."}), 500
 
-        return jsonify({
-            "success": False,
-            "message": "This email is already in use."
-        }), 409
-
-
-    try:
-
-        updated = update_user_profile_details(
-            session["user_id"],
-            username,
-            new_email
-        )
+    session["username"] = username
+    session["email"] = new_email
+    return jsonify({
+        "success": True,
+        "message": "Profile updated successfully.",
+        "username": username,
+        "email": new_email
+    }), 200
 
 
-        if not updated:
+@auth_bp.route("/update-password", methods=["POST"])
+def update_user_password_route():
+    user_id = session.get("user_id")
+    email = session.get("email")
+    if not user_id or not email:
+        return jsonify({"success": False, "message": "Please login first."}), 401
 
-            return jsonify({
-                "success": False,
-                "message": "Profile could not be updated."
-            }), 500
+    data = request.get_json(silent=True) or {}
+    current_password = data.get("current_password") or ""
+    new_password = data.get("new_password") or ""
+    confirm_password = data.get("confirm_password") or ""
 
+    if not current_password or not new_password or not confirm_password:
+        return jsonify({"success": False, "message": "Please fill all password fields."}), 400
+    if new_password != confirm_password:
+        return jsonify({"success": False, "message": "New passwords do not match."}), 400
+    if len(new_password) < 8:
+        return jsonify({"success": False, "message": "Password must be at least 8 characters."}), 400
 
-        # Update Flask session
-        session["username"] = username
+    user = get_user_by_email(email)
+    if not user:
+        return jsonify({"success": False, "message": "Account not found. Please log in again."}), 404
+    stored_hash = user.get("password_hash")
+    if not stored_hash:
+        return jsonify({"success": False, "message": "This account uses Google sign-in and has no local password to change."}), 400
+    if not check_password_hash(stored_hash, current_password):
+        return jsonify({"success": False, "message": "Current password is incorrect."}), 400
 
-        session["email"] = new_email
+    new_hash = generate_password_hash(new_password)
+    if not update_user_password_by_id(user_id, new_hash):
+        return jsonify({"success": False, "message": "Password could not be updated. Please try again."}), 500
 
-
-        return jsonify({
-            "success": True,
-            "message": "Profile updated successfully."
-        }), 200
-
-
-    except Exception as error:
-
-        print(
-            "PROFILE UPDATE ERROR:",
-            error
-        )
-
-        return jsonify({
-            "success": False,
-            "message": "Failed to update profile."
-        }), 500
+    return jsonify({"success": True, "message": "Password updated successfully."}), 200

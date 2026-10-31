@@ -150,32 +150,129 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /* ============================================================
-   Emergency ticker — news-style right-to-left scroll
+   Database-backed emergency ticker and submission form
    ============================================================ */
-(function(){
-  const headlines = [
-    "Fire drill scheduled tomorrow at 10:00 AM — all hostellers must evacuate within 5 minutes",
-    "Ambulance bay near Block A temporarily relocated to the main gate for repairs",
-    "Heavy rain alert: avoid low-lying pathways near the lake road after 6 PM",
-    "Campus security helpline now active 24/7 — save the number on your phone",
-    "Mock emergency evacuation for all hostels this Saturday, 7:00 AM"
-    // Edit this list to update what scrolls in the ticker.
-  ];
-
+(function () {
   const content = document.getElementById("emergency-ticker-content");
-  if (!content) return;
+  const form = document.getElementById("emergencyForm");
 
-  function renderItems(list) {
-    return list
-      .map(
-        (text) =>
-          `<span class="emergency-ticker-item"><i class="fa-solid fa-circle-exclamation" style="margin-right:8px;color:#dc2626;"></i>${text}<span class="emergency-ticker-sep">•</span></span>`
-      )
-      .join(" ");
+  function renderTicker(emergencies) {
+    if (!content) return;
+    content.replaceChildren();
+    const items = emergencies.length ? emergencies : [{ title: "No active emergency reports", message: "" }];
+    const fragment = document.createDocumentFragment();
+    items.forEach(function (emergency) {
+      const item = document.createElement("span");
+      item.className = "emergency-ticker-item";
+      const icon = document.createElement("i");
+      icon.className = "fa-solid fa-circle-exclamation";
+      icon.style.marginRight = "8px";
+      icon.style.color = "#dc2626";
+      item.appendChild(icon);
+      item.appendChild(document.createTextNode(
+        [emergency.title, emergency.message].filter(Boolean).join(": ")
+      ));
+      const separator = document.createElement("span");
+      separator.className = "emergency-ticker-sep";
+      separator.textContent = " • ";
+      item.appendChild(separator);
+      fragment.appendChild(item);
+    });
+    content.appendChild(fragment);
+    Array.from(content.children).forEach(function (item) {
+      content.appendChild(item.cloneNode(true));
+    });
   }
 
-  // Render twice back-to-back so the CSS animation (0% -> -50%) loops seamlessly.
-  content.innerHTML = renderItems(headlines) + renderItems(headlines);
+  function renderActiveList(emergencies) {
+    const list = document.getElementById("active-emergency-list");
+    if (!list) return;
+    list.querySelectorAll(".database-emergency-item").forEach((item) => item.remove());
+    emergencies.slice().reverse().forEach(function (emergency) {
+      const li = document.createElement("li");
+      li.className = "database-emergency-item";
+      li.dataset.severity = emergency.priority;
+      const marker = document.createElement("span");
+      marker.className = "na-ann-marker";
+      marker.style.background = emergency.priority === "critical" ? "#dc2626" : emergency.priority === "warning" ? "#ea580c" : "#65a30d";
+      const body = document.createElement("div");
+      body.className = "na-ann-body";
+      const meta = document.createElement("span");
+      meta.className = "na-ann-date";
+      const date = emergency.created_at ? new Date(emergency.created_at) : new Date();
+      meta.textContent = date.toLocaleDateString("en-GB");
+      const time = document.createElement("span");
+      time.className = "na-ann-time";
+      time.textContent = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      const category = document.createElement("span");
+      category.className = "na-ann-cat";
+      category.textContent = emergency.category;
+      meta.append(time, category);
+      const text = document.createElement("p");
+      text.className = "na-ann-text";
+      const title = document.createElement("strong");
+      title.textContent = emergency.title;
+      text.append(title, document.createTextNode(" — " + emergency.message));
+      body.append(meta, text);
+      li.append(marker, body);
+      list.prepend(li);
+    });
+  }
+
+  async function loadEmergencies() {
+    try {
+      const response = await fetch("/emergency/api/active", { headers: { "Accept": "application/json" } });
+      const result = await response.json();
+      if (response.ok && result.success) {
+        renderTicker(result.emergencies || []);
+        renderActiveList(result.emergencies || []);
+      }
+    } catch (error) {
+      console.error("Could not load emergency data:", error);
+    }
+  }
+
+  if (form) {
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const submitButton = form.querySelector('[type="submit"]');
+      const originalText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = "Publishing...";
+      const payload = {
+        title: form.querySelector('[name="title"]').value.trim(),
+        message: form.querySelector('[name="message"]').value.trim(),
+        category: form.querySelector('[name="category"]').value,
+        priority: form.querySelector('[name="priority"]').value,
+        is_important: form.querySelector('[name="is_important"]').checked
+      };
+      try {
+        const response = await fetch("/emergency/api", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.message || "Emergency could not be published.");
+        alert(result.message);
+        form.reset();
+        if (typeof closeEmergencyForm === "function") closeEmergencyForm();
+        await loadEmergencies();
+        window.location.reload();
+      } catch (error) {
+        alert(error.message || "Something went wrong while publishing the emergency.");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+    });
+  }
+
+  loadEmergencies();
+  if (content || document.getElementById("active-emergency-list")) {
+    window.setInterval(loadEmergencies, 10000);
+  }
 })();
 
 /* ============================================================
@@ -189,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!toggle || !menu) return;
 
   var options = menu.querySelectorAll('.na-filter-option');
-  var items = document.querySelectorAll('#active-emergency-list li');
 
   toggle.addEventListener('click', function (e) {
     e.stopPropagation();
@@ -212,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.classList.add('active');
 
       var value = btn.getAttribute('data-emergency-filter');
-      items.forEach(function (item) {
+      document.querySelectorAll('#active-emergency-list li').forEach(function (item) {
         var severity = item.getAttribute('data-severity');
         var show = (value === 'all') || (severity === value);
         item.classList.toggle('na-hide', !show);

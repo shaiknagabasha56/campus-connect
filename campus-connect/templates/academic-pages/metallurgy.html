@@ -45,22 +45,8 @@
    </div>
   </div>
   <div class="na-updates-feed">
-        <article class="na-update-item" role="button" tabindex="0" data-status="new" data-title="Materials testing lab update" data-date="07-07-2026" data-time="10:00 AM" data-uploaded-by="Metallurgical Engineering Department" data-deadline="" data-category="Lab Update" data-category-color="#57534e" data-email="metallurgy@rgukt.ac.in" data-image="" data-apply="false"  data-body="New testing equipment has been installed in the materials characterization lab." data-full="New testing equipment has been installed in the materials characterization laboratory to support materials analysis and practical work.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">07-07-2026<span class="na-time">10:00 AM</span></div>
-            <p class="na-update-title">Materials testing lab update</p>
-            <p class="na-update-body">New testing equipment has been installed in the materials characterization lab.</p>
-          </div>
-        </article>
-        <article class="na-update-item" role="button" tabindex="0" data-status="old" data-title="Guest talk on alloy design" data-date="23-06-2026" data-time="2:00 PM" data-uploaded-by="Metallurgical Engineering Department" data-deadline="" data-category="Guest Lecture" data-category-color="#57534e" data-email="metallurgy@rgukt.ac.in" data-image="" data-apply="true" data-apply-link="https://example.com/apply" data-body="An expert talk on modern alloy design techniques is being arranged." data-full="An expert guest talk on modern alloy design techniques is being arranged for students interested in materials development and processing.">
-          <div class="na-update-marker"></div>
-          <div>
-            <div class="na-update-date">23-06-2026<span class="na-time">2:00 PM</span></div>
-            <p class="na-update-title">Guest talk on alloy design</p>
-            <p class="na-update-body">An expert talk on modern alloy design techniques is being arranged.</p>
-          </div>
-        </article></div>
+        
+        </div>
  </section>
 
  <aside>
@@ -112,6 +98,7 @@
   <div class="modal-head update-modal-head"><div></div><button class="close-btn modal-close" aria-label="Close">×</button></div>
   <div id="modal-update-detail-content" class="modal-body">
    <img id="modal-update-image" class="update-image" alt="Update image">
+   <div id="modal-update-attachment" style="display:none"></div>
    <div class="update-category" id="modal-update-category">Update</div>
    <h3 class="update-detail-title" id="modal-update-title-secondary">Update</h3>
    <div class="update-meta-list">
@@ -158,7 +145,6 @@
  </div>
 </div>
 <script src="../../static/js/metallurgy.js"></script>
-<script src="{{ url_for('static', filename='js/public_updates.js') }}"></script>
-<script src="{{ url_for('static', filename='js/section_public_forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/public_updates.js', v='20261031-category-inbox-2') }}"></script>
 </body>
 </html>

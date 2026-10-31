@@ -119,8 +119,8 @@ def main():
         connection.close()
 
     print("\nSetup complete.")
-    print("Radio Admin:     radio.admin@rgukt.ac.in")
-    print("Emergency Admin: emergency.admin@rgukt.ac.in")
+    print("Radio Admin:     radio-admin@gmail.com")
+    print("Emergency Admin: emergency-admin@gmail.com")
     print("Use the passwords you entered above.")
 
 

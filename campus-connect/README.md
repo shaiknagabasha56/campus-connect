@@ -1,3 +1,25 @@
+## Important: database migration for multi-format updates and complaints
+
+If you are upgrading an existing Campus Connect database, run this file in MySQL Workbench
+against the **same database configured in your project's `.env`** before starting Flask:
+
+`migrations/20261031_updates_attachments_and_complaint_routing.sql`
+
+This migration is safe to run more than once. It checks each required column/index first,
+adds only missing items, and preserves existing update and complaint rows. It adds:
+- `updates.attachment_url`, `updates.attachment_name`, `updates.attachment_mime`
+- `complaints.organization_id`, `complaints.email`, `complaints.branch`,
+  `complaints.year`, `complaints.semester`
+- an organization/date index for complaint listing
+
+After running it, the final `SHOW COLUMNS` statements in the SQL editor should show
+`attachment_url`, `attachment_name`, `attachment_mime`, `organization_id`, and `email`.
+
+The errors `Unknown column 'u.attachment_url'` and
+`Unknown column 'email' in 'field list'` mean the running database is missing these
+columns; restarting Flask alone will not fix a schema mismatch. Do not drop or recreate
+your database to resolve this.
+
 # 🎓 Campus Connect
 
 > **A centralized digital platform for managing and accessing campus information.**
@@ -626,3 +648,11 @@ This project is developed as an academic project by **Team Catalyst**.
 Made with ❤️ by **Team Catalyst**
 
 </p>
+
+## Updates attachments and organization complaints
+
+- Admins can keep the existing optional cover image and attach one PDF, Office document, spreadsheet, presentation, video, audio, text, or ZIP file to each update. Attachments are uploaded to Cloudinary and saved as metadata in MySQL.
+- Student update details preview videos/audio and supported documents where the browser/Google viewer supports them, and provide a download link for the original attachment.
+- Complaint submissions from category pages are stored with the originating organization. Each organization admin sees and updates only complaints assigned to that organization.
+- Before deploying these changes, back up MySQL and run `migrations/20261031_updates_attachments_and_complaint_routing.sql` once. See `migrations/README.md`.
+- Configure Cloudinary with upload permissions for the file types you plan to accept. The application currently limits update attachments to 100 MB and the total multipart request to 110 MB.
