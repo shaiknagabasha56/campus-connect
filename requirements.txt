@@ -1,0 +1,13 @@
+Flask
+Flask-SQLAlchemy
+Flask-Mail
+Flask-Bcrypt
+PyMySQL
+itsdangerous
+mysql-connector-python
+python-dotenv
+gunicorn
+Authlib
+requests
+cloudinary
+livekit-api
