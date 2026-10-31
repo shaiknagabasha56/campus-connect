@@ -1,0 +1,221 @@
+.
+├── app.py
+├── config.py
+├── database
+│   ├── db.py
+│   ├── __init__.py
+│   └── queries.py
+├── README.md
+├── requirements.txt
+├── routes
+│   ├── academic.py
+│   ├── auth.py
+│   ├── cells.py
+│   ├── clubs.py
+│   ├── complaints.py
+│   ├── emergency.py
+│   ├── homepage.py
+│   ├── __init__.py
+│   ├── non_academic.py
+│   ├── __pycache__
+│   │   ├── academic.cpython-310.pyc
+│   │   ├── auth.cpython-310.pyc
+│   │   ├── cells.cpython-310.pyc
+│   │   ├── clubs.cpython-310.pyc
+│   │   ├── complaints.cpython-310.pyc
+│   │   ├── emergency.cpython-310.pyc
+│   │   ├── homepage.cpython-310.pyc
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── non_academic.cpython-310.pyc
+│   │   └── non_cademic.cpython-310.pyc
+│   └── radio.py
+├── services
+│   ├── auth_services.py
+│   ├── __init__.py
+│   └── __pycache__
+│       ├── auth_services.cpython-310.pyc
+│       └── __init__.cpython-310.pyc
+├── static
+│   ├── css
+│   │   ├── academic.css
+│   │   ├── ai-ml.css
+│   │   ├── artix.css
+│   │   ├── aws.css
+│   │   ├── canteen.css
+│   │   ├── cdpc.css
+│   │   ├── cells.css
+│   │   ├── chemical.css
+│   │   ├── civil.css
+│   │   ├── clubs.css
+│   │   ├── complaint.css
+│   │   ├── cse.css
+│   │   ├── ece.css
+│   │   ├── ecell.css
+│   │   ├── eee.css
+│   │   ├── emergency.css
+│   │   ├── financial.css
+│   │   ├── hec.css
+│   │   ├── homepage.css
+│   │   ├── hospital.css
+│   │   ├── hostel.css
+│   │   ├── icro.css
+│   │   ├── it-infra.css
+│   │   ├── kaladharani.css
+│   │   ├── khelsaathi.css
+│   │   ├── landing.css
+│   │   ├── login.css
+│   │   ├── mech.css
+│   │   ├── mess.css
+│   │   ├── metallurgy.css
+│   │   ├── non-academic.css
+│   │   ├── pixelro.css
+│   │   ├── reset-password.css
+│   │   ├── sarvasrijana.css
+│   │   ├── scholarship.css
+│   │   ├── store.css
+│   │   └── techxcel.css
+│   ├── images
+│   │   ├── 480661.png
+│   │   ├── artix-head-1.svg
+│   │   ├── artix-head-2.svg
+│   │   ├── artix-head-3.svg
+│   │   ├── aws-head-1.svg
+│   │   ├── aws-head-2.svg
+│   │   ├── aws-head-3.svg
+│   │   ├── background.jpg
+│   │   ├── bluecar.jpg
+│   │   ├── cdpc-head-1.svg
+│   │   ├── cdpc-head-2.svg
+│   │   ├── cdpc-head-3.svg
+│   │   ├── ecell-head-1.svg
+│   │   ├── ecell-head-2.svg
+│   │   ├── ecell-head-3.svg
+│   │   ├── f2car.jpeg
+│   │   ├── frds.jpeg
+│   │   ├── hec-head-1.svg
+│   │   ├── hec-head-2.svg
+│   │   ├── hec-head-3.svg
+│   │   ├── hod.svg
+│   │   ├── icro-head-1.svg
+│   │   ├── icro-head-2.svg
+│   │   ├── icro-head-3.svg
+│   │   ├── kaladharani-head-1.svg
+│   │   ├── kaladharani-head-2.svg
+│   │   ├── kaladharani-head-3.svg
+│   │   ├── kali.png
+│   │   ├── khelsaathi-head-1.svg
+│   │   ├── khelsaathi-head-2.svg
+│   │   ├── khelsaathi-head-3.svg
+│   │   ├── me2.png
+│   │   ├── me.png
+│   │   ├── pixelro-head-1.svg
+│   │   ├── pixelro-head-2.svg
+│   │   ├── pixelro-head-3.svg
+│   │   ├── pixels.jpg
+│   │   ├── ravan.jpg
+│   │   ├── sarvasrijana-head-1.svg
+│   │   ├── sarvasrijana-head-2.svg
+│   │   ├── sarvasrijana-head-3.svg
+│   │   ├── spider.jpeg
+│   │   ├── students.jpg
+│   │   ├── sunset.png
+│   │   ├── techxcel-head-1.svg
+│   │   ├── techxcel-head-2.svg
+│   │   ├── techxcel-head-3.svg
+│   │   ├── tharcar.jpeg
+│   │   ├── venomspidy.jpeg
+│   │   ├── welcome1.jpg
+│   │   ├── welcome2.jpg
+│   │   └── whitecar.jpeg
+│   └── js
+│       ├── academic.js
+│       ├── ai-ml.js
+│       ├── artix.js
+│       ├── aws.js
+│       ├── canteen.js
+│       ├── cdpc.js
+│       ├── cells.js
+│       ├── chemical.js
+│       ├── civil.js
+│       ├── clubs.js
+│       ├── complaint.js
+│       ├── cse.js
+│       ├── ece.js
+│       ├── ecell.js
+│       ├── eee.js
+│       ├── emergency.js
+│       ├── financial.js
+│       ├── hec.js
+│       ├── homepage.js
+│       ├── hospital.js
+│       ├── hostel.js
+│       ├── icro.js
+│       ├── it-infra.js
+│       ├── kaladharani.js
+│       ├── khelsaathi.js
+│       ├── landing.js
+│       ├── login.js
+│       ├── mech.js
+│       ├── mess.js
+│       ├── metallurgy.js
+│       ├── non-academic.js
+│       ├── pixelro.js
+│       ├── reset-password.js
+│       ├── sarvasrijana.js
+│       ├── scholarship.js
+│       ├── store.js
+│       └── techxcel.js
+├── structure.txt
+└── templates
+    ├── academic
+    │   └── academic.html
+    ├── academic-pages
+    │   ├── ai-ml.html
+    │   ├── chemical.html
+    │   ├── civil.html
+    │   ├── cse.html
+    │   ├── ece.html
+    │   ├── eee.html
+    │   ├── mech.html
+    │   └── metallurgy.html
+    ├── auth
+    │   ├── login.html
+    │   └── reset-password.html
+    ├── base.html
+    ├── cells
+    │   └── cells.html
+    ├── cells-pages
+    │   ├── cdpc.html
+    │   ├── ecell.html
+    │   └── hec.html
+    ├── clubs
+    │   └── clubs.html
+    ├── clubs-pages
+    │   ├── artix.html
+    │   ├── aws.html
+    │   ├── icro.html
+    │   ├── kaladharani.html
+    │   ├── khelsaathi.html
+    │   ├── pixelro.html
+    │   ├── sarvasrijana.html
+    │   └── techxcel.html
+    ├── complaints
+    │   └── complaint.html
+    ├── emergency
+    │   └── emergency.html
+    ├── home
+    │   └── homepage.html
+    ├── landing.html
+    ├── non-academic
+    │   └── non-academic.html
+    └── non-academic-pages
+        ├── canteen.html
+        ├── financial.html
+        ├── hospital.html
+        ├── hostel.html
+        ├── it-infra.html
+        ├── mess.html
+        ├── scholarship.html
+        └── store.html
+
+22 directories, 196 files

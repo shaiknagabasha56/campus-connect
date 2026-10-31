@@ -1,0 +1,1678 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61pSSs5nCTpuj/zy4C+OGpamoVnE8Vx1h1Z0Z0"
+          crossorigin="anonymous" />
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            crossorigin="anonymous"></script>
+
+    <script src="https://kit.fontawesome.com/ac42c3b1f7.js"
+            crossorigin="anonymous"></script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <title>RGUKT - Virtual Notice Board</title>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Homepage CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/homepage.css') }}">
+
+    <!-- Mobile CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/mobile.css') }}">
+
+    <!-- Mobile Navigation -->
+    <script src="{{ url_for('static', filename='js/mobile-nav.js') }}"
+            defer></script>
+
+
+<style>
+/* Radio homepage fixes */
+.radio-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.radio-status::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: .9;
+}
+
+.radio-status.live {
+    color: #16a34a;
+}
+
+.radio-status.paused {
+    color: #d97706;
+}
+
+.radio-status.offline {
+    color: #64748b;
+}
+
+.radio-status.error {
+    color: #dc2626;
+}
+
+.menu-item {
+    border: 0;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+}
+
+#playPauseBtn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.needle.disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .radio-status {
+        width: 100%;
+    }
+}
+</style>
+
+<style>
+/* Whole announcement card is clickable; arrow remains visual only */
+.card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.card-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+</style>
+
+</head>
+
+<body>
+
+
+<!-- ========================================================= -->
+<!-- TOP NAVIGATION -->
+<!-- ========================================================= -->
+
+<header class="topbar" aria-label="top navigation">
+
+  <div class="container">
+
+    <!-- Brand -->
+    <div class="brand_1" aria-hidden="false">
+
+      <div>
+        <img
+          src="{{ url_for('static', filename='images/logo.png') }}"
+          alt="RGUKT logo"
+          onerror="this.style.display='none'"
+        />
+      </div>
+
+      <div style="font-size:20px;letter-spacing:0.6px">
+        CAMPUS CONNECT
+      </div>
+
+    </div>
+
+
+    <!-- Main Navigation -->
+    <nav class="main-nav"
+         role="navigation"
+         aria-label="main nav">
+
+      <a href="{{ url_for('homepage.homepage') }}">
+        Home
+      </a>
+
+      <a href="#radio">
+        Radio
+      </a>
+
+      <a href="{{ url_for('complaints.complaints_homepage') }}">
+        Complaints
+      </a>
+
+      <a href="{{ url_for('emergency.emergency_homepage') }}">
+        Emergency
+      </a>
+
+    </nav>
+
+
+    <!-- ===================================================== -->
+    <!-- ADMIN BUTTON -->
+    <!-- Main Admin      -> /admin -->
+    <!-- Radio Admin     -> /radio/admin -->
+    <!-- Emergency Admin -> /emergency/admin -->
+    <!-- ===================================================== -->
+
+    {% if session.get("role") in ["admin", "radio_admin", "emergency_admin"] %}
+
+        {% if session.get("role") == "radio_admin" %}
+
+            <a href="{{ url_for('radio.radio_admin') }}"
+               class="admin-panel-btn">
+                Admin
+            </a>
+
+        {% elif session.get("role") == "emergency_admin" %}
+
+            <a href="{{ url_for('emergency.emergency_admin') }}"
+               class="admin-panel-btn">
+                Admin
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('admin.admin_redirect') }}"
+               class="admin-panel-btn">
+                Admin
+            </a>
+
+        {% endif %}
+
+    {% endif %}
+
+
+    <!-- Search -->
+
+    <div class="search-wrap"
+         role="search"
+         aria-label="Search announcements">
+
+      <svg class="search-icon"
+           xmlns="http://www.w3.org/2000/svg"
+           width="16"
+           height="16"
+           fill="currentColor"
+           viewBox="0 0 16 16">
+
+        <path d="M11.742 10.344l3.387 3.387a1 1 0 0 1-1.415 1.415l-3.387-3.387a6 6 0 1 1 1.415-1.415zM6.5 11a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/>
+
+      </svg>
+
+      <input
+        id="nav-search"
+        type="text"
+        placeholder="Search notices..."
+        aria-label="Search"
+      />
+
+    </div>
+
+
+    <!-- Profile -->
+
+    <button
+      class="profile"
+      title="Profile"
+      type="button"
+      aria-label="Open profile">
+
+      <span class="profile-initial">
+        {{ (session.get("username", "")[:1] or "U")|upper }}
+      </span>
+
+    </button>
+
+  </div>
+
+</header>
+
+
+
+<!-- ========================================================= -->
+<!-- EMERGENCY BAR -->
+<!-- ========================================================= -->
+
+<div class="updates-container">
+
+    <div class="updates-label"
+         title="View Emergency Events">
+        Emergency
+    </div>
+
+    <div class="updates-marquee">
+
+        <div class="marquee-content">
+
+            <span>
+                <b>🩸 Need A+ blood for heart surgery |</b>
+            </span>
+
+            <span>
+                <b>⚡ Power shortage in college for two days |</b>
+            </span>
+
+            <span>
+                <b>💦 Water shortage for this day |</b>
+            </span>
+
+            <span>
+                <b>Director interactive session with students at 4:00 PM |</b>
+            </span>
+
+            {% for emergency in active_emergencies %}
+            <span class="emergency-dynamic-item">
+                <b>🚨 {{ emergency.title }}: {{ emergency.message }} |</b>
+            </span>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- HERO SLIDER -->
+<!-- ========================================================= -->
+
+<div class="hero-wrap" aria-hidden="false">
+
+  <div class="hero"
+       role="region"
+       aria-label="Main carousel">
+
+    <div class="slides" id="slides">
+
+
+      <!-- Slide 1 -->
+
+      <div
+        class="slide active"
+        style="background-image:url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop');"
+        data-title="Hackathon 2025"
+        data-sub="Sept 15-16 • Register by Sept 10">
+
+        <div class="slide-content">
+
+          <div class="label">
+            Upcoming Event
+          </div>
+
+          <h2>
+            Hackathon 2025 — College Tech Challenge
+          </h2>
+
+          <p>
+            Join teams, solve challenges and win prizes.
+            Register fast to secure your slot.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Slide 2 -->
+
+      <div
+        class="slide"
+        style="background-image:url('https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=1200&auto=format&fit=crop');"
+        data-title="Guest Lecture"
+        data-sub="Sept 18 • 3 PM">
+
+        <div class="slide-content">
+
+          <div class="label">
+            Guest Lecture
+          </div>
+
+          <h2>
+            AI & Future of Computing — Prof. Reddy
+          </h2>
+
+          <p>
+            Attend the talk to learn about practical AI applications
+            and campus research opportunities.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- Slide 3 -->
+
+      <div
+        class="slide"
+        style="background-image:url('https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1200&auto=format&fit=crop');"
+        data-title="Cultural Fest"
+        data-sub="Oct 05">
+
+        <div class="slide-content">
+
+          <div class="label">
+            Campus Life
+          </div>
+
+          <h2>
+            Cultural Fest 2025 — Performances & Competitions
+          </h2>
+
+          <p>
+            Auditions starting soon.
+            Showcase your talent and join the festivities.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Slider arrows -->
+
+    <button
+      class="arrow prev"
+      aria-label="Previous slide">
+
+      &#10094;
+
+    </button>
+
+    <button
+      class="arrow next"
+      aria-label="Next slide">
+
+      &#10095;
+
+    </button>
+
+
+    <!-- Slider dots -->
+
+    <div class="dots" id="dots"></div>
+
+  </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- MAIN CONTENT -->
+<!-- ========================================================= -->
+
+<main class="container" role="main">
+
+
+  <!-- ======================================================= -->
+  <!-- LATEST ANNOUNCEMENTS -->
+  <!-- ======================================================= -->
+
+  <h2>
+    📌 Latest Announcements
+  </h2>
+
+
+  <div class="cards-container"
+       id="notice-cards">
+
+
+    <!-- ===================================================== -->
+    <!-- CARD 1 - ACADEMIC -->
+    <!-- ===================================================== -->
+
+    <a
+      href="{{ url_for('academic.academic_homepage') }}"
+      class="card card-link"
+      data-card="1"
+      data-interval="5000">
+
+      <span class="tag general">
+        Academic
+      </span>
+
+
+      <span class="arrow" aria-hidden="true">
+        ↗
+      </span>
+
+
+      {% for announcement in academic %}
+
+      <div class="announcement {% if loop.first %}active{% endif %}">
+
+        <h4>
+          {{ announcement.title }}
+        </h4>
+
+        <p>
+          {{ announcement.description }}
+        </p>
+
+      </div>
+
+      {% else %}
+
+      <div class="announcement active">
+
+        <h4>
+          No announcements
+        </h4>
+
+        <p>
+          No academic announcements available.
+        </p>
+
+      </div>
+
+      {% endfor %}
+
+    </a>
+
+
+
+    <!-- ===================================================== -->
+    <!-- CARD 2 - NON ACADEMIC -->
+    <!-- ===================================================== -->
+
+    <a
+      href="{{ url_for('non_academic.non_academic_homepage') }}"
+      class="card card-link"
+      data-card="2"
+      data-interval="7000">
+
+      <span class="tag clubs">
+        Non-academic
+      </span>
+
+
+      <span class="arrow" aria-hidden="true">
+        ↗
+      </span>
+
+
+      {% for announcement in non_academic %}
+
+      <div class="announcement {% if loop.first %}active{% endif %}">
+
+        <h4>
+          {{ announcement.title }}
+        </h4>
+
+        <p>
+          {{ announcement.description }}
+        </p>
+
+      </div>
+
+      {% else %}
+
+      <div class="announcement active">
+
+        <h4>
+          No announcements
+        </h4>
+
+        <p>
+          No non-academic announcements available.
+        </p>
+
+      </div>
+
+      {% endfor %}
+
+    </a>
+
+
+
+    <!-- ===================================================== -->
+    <!-- CARD 3 - CLUBS -->
+    <!-- ===================================================== -->
+
+    <a
+      href="{{ url_for('clubs.clubs_homepage') }}"
+      class="card card-link"
+      data-card="3"
+      data-interval="6000">
+
+      <span class="tag technical">
+        Clubs
+      </span>
+
+
+      <span class="arrow" aria-hidden="true">
+        ↗
+      </span>
+
+
+      {% for announcement in clubs %}
+
+      <div class="announcement {% if loop.first %}active{% endif %}">
+
+        <h4>
+          {{ announcement.title }}
+        </h4>
+
+        <p>
+          {{ announcement.description }}
+        </p>
+
+      </div>
+
+      {% else %}
+
+      <div class="announcement active">
+
+        <h4>
+          No announcements
+        </h4>
+
+        <p>
+          No club announcements available.
+        </p>
+
+      </div>
+
+      {% endfor %}
+
+    </a>
+
+
+
+    <!-- ===================================================== -->
+    <!-- CARD 4 - CELLS -->
+    <!-- ===================================================== -->
+
+    <a
+      href="{{ url_for('cells.cells_homepage') }}"
+      class="card card-link"
+      data-card="4"
+      data-interval="8000">
+
+      <span class="tag non-technical">
+        Cells
+      </span>
+
+
+      <span class="arrow" aria-hidden="true">
+        ↗
+      </span>
+
+
+      {% for announcement in cells %}
+
+      <div class="announcement {% if loop.first %}active{% endif %}">
+
+        <h4>
+          {{ announcement.title }}
+        </h4>
+
+        <p>
+          {{ announcement.description }}
+        </p>
+
+      </div>
+
+      {% else %}
+
+      <div class="announcement active">
+
+        <h4>
+          No announcements
+        </h4>
+
+        <p>
+          No cell announcements available.
+        </p>
+
+      </div>
+
+      {% endfor %}
+
+    </a>
+
+
+  </div>
+
+
+
+  <!-- ======================================================= -->
+  <!-- NEWS & EVENTS -->
+  <!-- ======================================================= -->
+
+  <div class="news">
+
+    <section class="news-card">
+
+      <div class="news-header">
+
+        <h2>
+          All college updates
+        </h2>
+
+        <a
+          href="#"
+          class="news-link"
+          title="View all">
+
+          ↗
+
+        </a>
+
+      </div>
+
+
+      <div class="news-scroll">
+
+
+        <ul class="news-list">
+
+          {% for update in college_updates %}
+
+          <li>
+
+            {% if update.type == "club" %}
+
+              <span class="marker purple"></span>
+
+            {% elif update.type == "cell" %}
+
+              <span class="marker green"></span>
+
+            {% elif update.type == "academic" %}
+
+              <span class="marker yellow"></span>
+
+            {% elif update.type == "non_academic" %}
+
+              <span class="marker red"></span>
+
+            {% elif update.type == "complaint" %}
+
+              <span class="marker red"></span>
+
+            {% endif %}
+
+
+            <div class="news-content">
+
+              <div class="news-date">
+
+                {% if update.created_at %}
+
+                  {{ update.created_at.strftime('%d-%m-%Y') }}
+
+                  <span>
+                    {{ update.created_at.strftime('%I:%M %p') }}
+                  </span>
+
+                {% endif %}
+
+              </div>
+
+
+              <p>
+
+                <strong>
+                  {% if update.type == "club" %}
+                    Club
+                  {% elif update.type == "cell" %}
+                    Cell
+                  {% elif update.type == "academic" %}
+                    Academic
+                  {% elif update.type == "non_academic" %}
+                    Non-academic
+                  {% elif update.type == "complaint" %}
+                    Complaint
+                  {% endif %}
+                </strong>
+
+                —
+
+                {{ update.title }}
+
+              </p>
+
+            </div>
+
+          </li>
+
+          {% else %}
+
+          <li>
+
+            <span class="marker green"></span>
+
+            <div class="news-content">
+
+              <p>
+                No college updates available.
+              </p>
+
+            </div>
+
+          </li>
+
+          {% endfor %}
+
+        </ul>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+
+  <!-- ======================================================= -->
+  <!-- CENTRAL RADIO -->
+  <!-- ======================================================= -->
+
+  <h2
+    id="radio"
+    style="max-width:1100px;padding:0 18px">
+    Central Radio
+  </h2>
+
+  <div
+    class="app"
+    id="radioApp"
+    data-state-url="/radio/api/state">
+
+    <!-- RADIO SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">
+        Campus Audio — Live
+      </div>
+
+      <button
+        type="button"
+        class="menu-item active"
+        data-id="college"
+        id="m-college">
+
+        <div class="emoji">🎙</div>
+
+        <div>
+
+          <div style="font-weight:700">
+            College Radio
+          </div>
+
+          <div style="font-size:12px;color:var(--muted)">
+            Live campus news &amp; shows
+          </div>
+
+        </div>
+
+      </button>
+
+
+      <button
+        type="button"
+        class="menu-item"
+        data-id="commentary"
+        id="m-commentary">
+
+        <div class="emoji">🎧</div>
+
+        <div>
+
+          <div style="font-weight:700">
+            Live Commentary
+          </div>
+
+          <div style="font-size:12px;color:var(--muted)">
+            Event coverage
+          </div>
+
+        </div>
+
+      </button>
+
+
+      <button
+        type="button"
+        class="menu-item"
+        data-id="meetings"
+        id="m-meetings">
+
+        <div class="emoji">🏫</div>
+
+        <div>
+
+          <div style="font-weight:700">
+            Meetings
+          </div>
+
+          <div style="font-size:12px;color:var(--muted)">
+            Seminar recordings
+          </div>
+
+        </div>
+
+      </button>
+
+
+      <button
+        type="button"
+        class="menu-item"
+        data-id="songs"
+        id="m-songs">
+
+        <div class="emoji">🎶</div>
+
+        <div>
+
+          <div style="font-weight:700">
+            Special Songs
+          </div>
+
+          <div style="font-size:12px;color:var(--muted)">
+            Curated tracks
+          </div>
+
+        </div>
+
+      </button>
+
+
+      <div style="flex:1"></div>
+
+    </aside>
+
+
+    <!-- RADIO MAIN -->
+    <section class="main" aria-label="Radio player">
+
+      <div
+        class="player"
+        role="region"
+        aria-label="Campus radio player">
+
+        <div class="dial-wrap">
+
+          <div class="dial" id="dial">
+
+            <div class="ticks" id="ticks"></div>
+
+            <div
+              class="needle disabled"
+              id="needle"
+              role="slider"
+              aria-label="Radio tuner"
+              aria-valuemin="88"
+              aria-valuemax="108"
+              aria-valuenow="93.1"
+              tabindex="0">
+            </div>
+
+
+            <div class="freq">
+
+              <div class="num" id="freqNum">
+                93.1
+              </div>
+
+              <div class="label" id="freqLabel">
+                FM • College Radio
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="controls">
+
+          <button
+            type="button"
+            class="btn secondary"
+            id="prevBtn">
+            ⏮ Prev
+          </button>
+
+
+          <button
+            type="button"
+            class="btn"
+            id="playPauseBtn"
+            disabled>
+            ▶ Play
+          </button>
+
+
+          <button
+            type="button"
+            class="btn secondary"
+            id="nextBtn">
+            ⏭ Next
+          </button>
+
+        </div>
+
+
+        <div class="meta" id="metaRow">
+
+          <div
+            id="metaName"
+            style="font-weight:700">
+            College Radio
+          </div>
+
+          <div
+            id="metaState"
+            class="radio-status offline">
+            Radio offline
+          </div>
+
+        </div>
+
+
+        <audio
+          id="player"
+          preload="none"
+          crossorigin="anonymous">
+        </audio>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+</main>
+
+
+
+<!-- ========================================================= -->
+<!-- PROFILE DASHBOARD -->
+<!-- ========================================================= -->
+
+<div
+  class="profile-dashboard"
+  id="profileDashboard"
+  aria-hidden="true">
+
+
+  <!-- Header -->
+
+  <div class="pd-top">
+
+    <span class="pd-title">
+      My Profile
+    </span>
+
+    <button
+      class="close-dashboard"
+      aria-label="Close"
+      type="button">
+
+      &times;
+
+    </button>
+
+  </div>
+
+
+  <!-- User Card -->
+
+  {% set uname = session.get("username", "") %}
+
+  <div class="pd-user">
+
+    <div
+      class="pd-avatar"
+      aria-hidden="true">
+
+      {{ (uname[:1] or "U")|upper }}
+
+    </div>
+
+
+    <div class="pd-user-text">
+
+      <strong class="pd-name">
+        {{ uname }}
+      </strong>
+
+      <span class="pd-email">
+        {{ session.get("email", "") }}
+      </span>
+
+      {% if session.get("role") %}
+
+      <span class="pd-role">
+        {{ session.get("role")|capitalize }}
+      </span>
+
+      {% endif %}
+
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- PROFILE MENU -->
+  <!-- ===================================================== -->
+
+  <nav
+    class="pd-menu"
+    aria-label="Profile menu">
+
+
+    <!-- Main Admin -->
+    {% if session.get("role") == "admin" %}
+
+    <a
+      class="pd-item"
+      href="{{ url_for('admin.admin_redirect') }}">
+
+      <i class="fa-solid fa-user-shield pd-icon"></i>
+
+      <span class="pd-label">
+        Admin dashboard
+      </span>
+
+      <i class="fa-solid fa-chevron-right pd-chev"></i>
+
+    </a>
+
+    {% endif %}
+
+
+    <!-- Radio Admin -->
+    {% if session.get("role") == "radio_admin" %}
+
+    <a
+      class="pd-item"
+      href="{{ url_for('radio.radio_admin') }}">
+
+      <i class="fa-solid fa-radio pd-icon"></i>
+
+      <span class="pd-label">
+        Radio Admin
+      </span>
+
+      <i class="fa-solid fa-chevron-right pd-chev"></i>
+
+    </a>
+
+    {% endif %}
+
+
+    <!-- Emergency Admin -->
+    {% if session.get("role") == "emergency_admin" %}
+
+    <a
+      class="pd-item"
+      href="{{ url_for('emergency.emergency_admin') }}">
+
+      <i class="fa-solid fa-triangle-exclamation pd-icon"></i>
+
+      <span class="pd-label">
+        Emergency Admin
+      </span>
+
+      <i class="fa-solid fa-chevron-right pd-chev"></i>
+
+    </a>
+
+    {% endif %}
+
+
+    <!-- Account Settings -->
+
+    <button
+      class="pd-item"
+      type="button"
+      data-panel="accountPanel">
+
+      <i class="fa-solid fa-gear pd-icon"></i>
+
+      <span class="pd-label">
+        Account &amp; Settings
+      </span>
+
+      <i class="fa-solid fa-chevron-right pd-chev"></i>
+
+    </button>
+
+  </nav>
+
+
+  <!-- Logout -->
+
+  <div class="pd-footer">
+
+    <button
+      class="pd-logout"
+      type="button"
+      onclick="logoutUser()">
+
+      <i class="fa-solid fa-right-from-bracket"></i>
+
+      Logout
+
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- ACCOUNT SUB PANEL -->
+<!-- ========================================================= -->
+
+<div
+  class="sub-dashboard"
+  id="accountPanel">
+
+
+  <div class="sub-header">
+
+    <button
+      class="back-btn"
+      type="button">
+
+      &larr; Back
+
+    </button>
+
+    <h3>
+      Account &amp; Settings
+    </h3>
+
+  </div>
+
+
+  <div class="sub-content">
+
+    <button
+      class="dash-btn"
+      type="button"
+      data-panel="editProfilePanel">
+
+      Edit Profile
+
+    </button>
+
+
+    <button
+      class="dash-btn"
+      type="button"
+      data-panel="changePasswordPanel">
+
+      Change Password
+
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- EDIT PROFILE -->
+<!-- ========================================================= -->
+
+<div
+  class="sub-dashboard"
+  id="editProfilePanel">
+
+
+  <div class="sub-header">
+
+    <button
+      class="back-btn"
+      type="button">
+
+      &larr; Back
+
+    </button>
+
+    <h3>
+      Edit Profile
+    </h3>
+
+  </div>
+
+
+  <div class="sub-content profile-settings-content">
+
+    <form
+      id="editProfileForm"
+      class="profile-settings-form">
+
+
+      <div class="profile-form-group">
+
+        <label for="editUsername">
+          Username
+        </label>
+
+        <input
+          type="text"
+          id="editUsername"
+          name="username"
+          value="{{ session.get('username', '') }}"
+          autocomplete="username"
+          required>
+
+      </div>
+
+
+      <div class="profile-form-group">
+
+        <label for="editEmail">
+          Email
+        </label>
+
+        <input
+          type="email"
+          id="editEmail"
+          name="email"
+          value="{{ session.get('email', '') }}"
+          autocomplete="email"
+          required>
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="save-profile-btn">
+
+        Save Changes
+
+      </button>
+
+
+      <p
+        id="profileMessage"
+        class="profile-form-message"
+        aria-live="polite">
+      </p>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- CHANGE PASSWORD -->
+<!-- ========================================================= -->
+
+<div
+  class="sub-dashboard"
+  id="changePasswordPanel">
+
+
+  <div class="sub-header">
+
+    <button
+      class="back-btn"
+      type="button">
+
+      &larr; Back
+
+    </button>
+
+    <h3>
+      Change Password
+    </h3>
+
+  </div>
+
+
+  <div class="sub-content profile-settings-content">
+
+    <form
+      id="changePasswordForm"
+      class="profile-settings-form">
+
+
+      <div class="profile-form-group">
+
+        <label for="currentPassword">
+          Current Password
+        </label>
+
+        <input
+          type="password"
+          id="currentPassword"
+          name="current_password"
+          autocomplete="current-password"
+          required>
+
+      </div>
+
+
+      <div class="profile-form-group">
+
+        <label for="newPassword">
+          New Password
+        </label>
+
+        <input
+          type="password"
+          id="newPassword"
+          name="new_password"
+          autocomplete="new-password"
+          minlength="6"
+          required>
+
+      </div>
+
+
+      <div class="profile-form-group">
+
+        <label for="confirmPassword">
+          Confirm Password
+        </label>
+
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirm_password"
+          autocomplete="new-password"
+          minlength="6"
+          required>
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="save-profile-btn">
+
+        Change Password
+
+      </button>
+
+
+      <p
+        id="passwordMessage"
+        class="profile-form-message"
+        aria-live="polite">
+      </p>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- DASHBOARD OVERLAY -->
+<!-- ========================================================= -->
+
+<div
+  class="dashboard-overlay"
+  id="dashboardOverlay">
+</div>
+
+
+
+<!-- ========================================================= -->
+<!-- ABOUT -->
+<!-- ========================================================= -->
+
+<section class="about-section">
+
+  <div class="about-container">
+
+    <h2 id="about">
+      About
+    </h2>
+
+
+    <p>
+      Rajiv Gandhi University of Knowledge Technologies (RGUKT)
+      was established to provide high-quality technical education
+      to rural youth.
+
+      With fully residential campuses, RGUKT offers a unique
+      6-year integrated program (PUC + B.Tech), along with
+      advanced postgraduate and research opportunities.
+    </p>
+
+
+    <p>
+      Guided by its vision to bridge the rural-urban education gap,
+      RGUKT nurtures innovation, research, and holistic development
+      to empower students for a brighter future.
+    </p>
+
+  </div>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- FOOTER -->
+<!-- ========================================================= -->
+
+<footer class="footer">
+
+  <div class="footer-container">
+
+
+    <!-- Quick Links -->
+
+    <div class="footer-links">
+
+      <h3>
+        Quick Links
+      </h3>
+
+
+      <div class="links-grid">
+
+        <a
+          href="https://www.rgukt.in"
+          target="_blank">
+          RGUKT Main
+        </a>
+
+        <a
+          href="https://rgukt.in/admissions/ug-admissions/2025"
+          target="_blank">
+          Admissions
+        </a>
+
+        <a
+          href="https://rguktong.ac.in"
+          target="_blank">
+          RGUKT Ongole
+        </a>
+
+        <a
+          href="http://nexus.rguktong.ac.in/"
+          target="_blank">
+          Results
+        </a>
+
+        <a
+          href="https://placements.rgukt.ac.in"
+          target="_blank">
+          Placements
+        </a>
+
+        <a
+          href="https://rguktong.ac.in/instituteinfo.php?data=careers"
+          target="_blank">
+          Career
+        </a>
+
+        <a
+          href="http://alumni.rguktong.ac.in/"
+          target="_blank">
+          Alumni
+        </a>
+
+        <a
+          href="https://rguktong.ac.in/instituteinfo.php?data=contact"
+          target="_blank">
+          Help desk
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- Contact -->
+
+    <div class="footer-contact">
+
+      <h3 id="contact">
+        Contact Us
+      </h3>
+
+
+      <p>
+        Email:
+
+        <a href="mailto:info@rgukt.ac.in">
+          direcor@rguktong.ac.in
+        </a>
+
+      </p>
+
+
+      <div class="social-icons">
+
+        <a href="#">
+          <i class="fab fa-instagram"></i>
+        </a>
+
+        <a
+          href="https://www.linkedin.com/company/rguktongole"
+          target="_blank"
+          rel="noopener">
+
+          <i class="fab fa-linkedin"></i>
+
+        </a>
+
+        <a href="#">
+          <i class="fab fa-twitter"></i>
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Copyright -->
+
+  <div class="footer-bottom">
+
+    <p>
+      &copy; 2025 RGUKT Website.
+      All Rights Reserved.
+    </p>
+
+  </div>
+
+</footer>
+
+
+
+<!-- ========================================================= -->
+<!-- COMMUNITY CHAT + POLLS -->
+<!-- ========================================================= -->
+<div id="rg-chat-widget" data-current-user-id="{{ session.get('user_id', 0) }}" aria-hidden="false">
+  <button id="rg-chat-toggle" type="button" aria-label="Open community chat">💬</button>
+  <section id="rg-chat-panel" role="dialog" aria-label="Campus community" aria-hidden="true">
+    <header class="rg-chat-header">
+      <div class="rg-title"><span class="rg-chat-avatar">RG</span><div><strong>Campus Community</strong><small>Chat and polls</small></div></div>
+      <button class="rg-chat-close" id="rg-chat-close" type="button" aria-label="Close chat">×</button>
+    </header>
+    <nav class="rg-chat-tabs" aria-label="Community sections">
+      <button type="button" class="rg-chat-tab rg-active" data-chat-tab="chat">💬 Chat</button>
+      <button type="button" class="rg-chat-tab" data-chat-tab="polls">📊 Polls</button>
+    </nav>
+    <section class="rg-chat-view rg-chat-view-active" id="rg-chat-view-chat" aria-label="Community messages">
+      <div class="rg-chat-messages" id="rg-chat-messages" role="log" aria-live="polite"><div class="rg-chat-loading">Loading community messages…</div></div>
+      <div class="rg-chat-footer">
+        <button id="rg-emoji-btn" class="rg-emoji-btn" type="button" aria-label="Choose emoji" aria-expanded="false">😊</button>
+        <input id="rg-chat-input" type="text" maxlength="1000" placeholder="Message the community…" aria-label="Message input">
+        <button id="rg-send-btn" type="button" aria-label="Send message">➤</button>
+        <div id="rg-emoji-picker" role="dialog" aria-label="Emoji picker">
+          <button type="button" class="rg-emoji">😀</button><button type="button" class="rg-emoji">😁</button><button type="button" class="rg-emoji">😂</button><button type="button" class="rg-emoji">😍</button><button type="button" class="rg-emoji">🤔</button><button type="button" class="rg-emoji">👍</button><button type="button" class="rg-emoji">🔥</button><button type="button" class="rg-emoji">🎉</button><button type="button" class="rg-emoji">❤️</button><button type="button" class="rg-emoji">😅</button><button type="button" class="rg-emoji">🙌</button><button type="button" class="rg-emoji">🙏</button><button type="button" class="rg-emoji">👏</button><button type="button" class="rg-emoji">💯</button>
+        </div>
+      </div>
+    </section>
+    <section class="rg-chat-view" id="rg-chat-view-polls" aria-label="Community polls">
+      <div class="rg-poll-create">
+        <input id="rg-poll-question" type="text" maxlength="240" placeholder="Ask the campus a question…">
+        <div id="rg-poll-options-inputs"><input class="rg-poll-option-input" type="text" maxlength="100" placeholder="Option 1"><input class="rg-poll-option-input" type="text" maxlength="100" placeholder="Option 2"></div>
+        <div class="rg-poll-create-actions"><button type="button" id="rg-add-poll-option">+ Add option</button><button type="button" id="rg-create-poll">Create poll</button></div>
+        <p id="rg-poll-feedback" class="rg-poll-feedback" aria-live="polite"></p>
+      </div>
+      <div id="rg-polls-list" class="rg-polls-list"><div class="rg-chat-loading">Loading polls…</div></div>
+    </section>
+  </section>
+</div>
+
+<!-- ========================================================= -->
+<!-- HOMEPAGE JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/livekit-client@2.22.3/dist/livekit-client.umd.min.js"></script>
+
+<script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
+<script src="{{ url_for('static', filename='js/community_chat.js') }}"></script>
+
+</body>
+</html>

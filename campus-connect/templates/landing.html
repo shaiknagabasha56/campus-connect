@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Connect — Your Campus, One Place</title>
+  <link rel="stylesheet" href="../static/css/landing.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="wrap">
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 26 26" fill="none">
+          <circle cx="13" cy="6" r="3.4" fill="#ef4360"/>
+          <circle cx="5" cy="19" r="3.4" fill="#1cb587"/>
+          <circle cx="21" cy="19" r="3.4" fill="#3d8bff"/>
+          <path d="M13 9.4 L5 15.6 M13 9.4 L21 15.6" stroke="#8b95a8" stroke-width="1.6"/>
+        </svg>
+        CAMPUS CONNECT
+      </div>
+      <ul class="nav-links">
+        <li><a href="#works">How it works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+      </ul>
+      <div>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-glass">Log in</a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Sign up →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-brand">
+        
+        <span>CAMPUS <em>CONNECT</em></span>
+      </div>
+      <h1>Every notice, club and complaint — <span class="grad">one campus feed.</span></h1>
+      <p>Campus Connect replaces scattered WhatsApp groups and notice boards with a single organized place for academics, clubs, cells and emergency alerts.</p>
+      <div class="cta-row">
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Get started </a>
+        <a href="#works" class="btn btn-outline-l">See how it works</a>
+      </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="head">
+        <div class="kicker">WHAT'S INSIDE</div>
+        <h2>One portal, every part of campus</h2>
+        <p>Organized the way departments, clubs and cells actually work.</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card" style="border-top-color:var(--green);"><span class="tag" style="background:var(--green);">Academic</span><h3>Academic notices</h3><p>Deadlines and revaluations, filtered by branch and year.</p></div>
+        <div class="feat-card" style="border-top-color:var(--blue);"><span class="tag" style="background:var(--blue);">Non-academic</span><h3>Non-academic updates</h3><p>Quizzes, workshops and general announcements in one feed.</p></div>
+        <div class="feat-card" style="border-top-color:var(--orange);"><span class="tag" style="background:var(--orange);">Clubs</span><h3>Clubs</h3><p>Hackathons and recruitment drives from every student club.</p></div>
+        <div class="feat-card" style="border-top-color:var(--red);"><span class="tag" style="background:var(--red);">Cells</span><h3>Cells</h3><p>Sports meets and committee updates, tracked in real time.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="works" id="works">
+    <div class="wrap">
+      <div class="head" style="padding-top:70px;">
+        <div class="kicker">HOW IT WORKS</div>
+        <h2>From login to your first notice</h2>
+        <p>Three steps, under a minute.</p>
+      </div>
+      <div class="works-grid">
+        <div class="work-card">
+          <div class="img-wrap">
+            <img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790486973/ChatGPT_Image_Sep_27_2026_10_54_17_AM.png" alt="signin image" >
+            <div class="badge-num">1</div>
+          </div>
+          <div class="body">
+            <h3>Sign in with your college ID</h3>
+            <p>One account gets you every department, club and cell — no separate groups to join.</p>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="img-wrap">
+            <img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790486977/ChatGPT_Image_Sep_27_2026_10_55_47_AM.png" alt="Personalized feed">
+            <div class="badge-num">2</div>
+          </div>
+          <div class="body">
+            <h3>Get your personalized feed</h3>
+            <p>Notices are filtered automatically by your branch, year and the clubs you follow.</p>
+          </div>
+        </div>
+        <div class="work-card">
+          <div class="img-wrap">
+            <img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790486977/ChatGPT_Image_Sep_27_2026_10_56_50_AM.png" alt="Stay updated">
+            <div class="badge-num">3</div>
+          </div>
+          <div class="body">
+            <h3>Never miss what matters</h3>
+            <p>Important updates and deadlines surface first, automatically — no scrolling required.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="gallery" id="gallery">
+    <div class="wrap">
+      <div class="head">
+        <div class="kicker">LIFE ON CAMPUS</div>
+        <h2>Moments from around RGUKT</h2>
+        <p>Hackathons, sports meets and club events — swap these for your own photos.</p>
+      </div>
+      <div class="g-grid">
+        <a href="{{ url_for('auth.login') }}"><img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790487600/ChatGPT_Image_Sep_27_2026_11_08_00_AM.png" alt="Hackathon 2026"><div class="cap">Hackathon 2026</div></a>
+        <a href="{{ url_for('auth.login') }}"><img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790487876/ChatGPT_Image_Sep_27_2026_11_13_18_AM.png" alt="Sports meet"><div class="cap">Sports Meet</div></a>
+        <a href="{{ url_for('auth.login') }}"><img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790488264/ChatGPT_Image_Sep_27_2026_11_20_35_AM.png" alt="Club fest"><div class="cap">Club Fest</div></a>
+        <a href="{{ url_for('auth.login') }}"><img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790488101/ChatGPT_Image_Sep_27_2026_11_17_19_AM.png" alt="Tech-Xcel quiz"><div class="cap">Tech-Xcel Quiz</div></a>
+        <a href="{{ url_for('auth.login') }}"><img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790488000/ChatGPT_Image_Sep_27_2026_11_16_12_AM.png" alt="Cultural cell event"><div class="cap">Cultural Cell Event</div></a>
+        <a href="{{ url_for('auth.login') }}"><img src="https://res.cloudinary.com/iapagzu6/image/upload/v1790488180/ChatGPT_Image_Sep_27_2026_11_19_04_AM.png" alt="Campus radio show"><div class="cap">Campus Radio</div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final">
+    <div class="wrap">
+      <div class="final-card">
+        <h2>Stop missing announcements.</h2>
+        <p>Sign in with your college ID and get your campus feed instantly.</p>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Create your account</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot-grid">
+      <div>© 2026 Campus Connect — RGUKT Ongole</div>
+      <div class="foot-links">
+        <a href="#features">Features</a>
+        <a href="#works">How it works</a>
+        <a href="#gallery">Gallery</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Cinematic intro overlay -->
+  <div id="cinematicTransition" class="cinematic-transition" aria-hidden="true">
+    <div class="cinematic-word" id="cinematicWord"></div>
+  </div>
+  <script src="../static/js/landing.js"></script>
+</body>
+</html>
