@@ -134,6 +134,14 @@ def complaints_homepage():
 
 @complaints_bp.route("/admin")
 def complaints_admin():
+    # Only the dedicated central complaints administrator may open this page.
+    if (
+        session.get("role") != "admin"
+        or (session.get("email") or "").strip().lower() != "complaints-admin@gmail.com"
+        or session.get("organization_id")
+    ):
+        return jsonify({"success": False, "message": "Central complaints administrator access required."}), 403
+
     return render_template("admin/complaint/complaint_admin.html")
 
 
@@ -144,15 +152,41 @@ def complaints_admin():
 
 @complaints_bp.route("/api", methods=["GET"])
 def list_complaints():
-    if session.get("role") != "admin" or not session.get("organization_id"):
-        return jsonify({"success": False, "message": "Admin access required."}), 403
-    complaints = get_all_complaints(session.get("organization_id"))
+    role = session.get("role")
+    email = (session.get("email") or "").strip().lower()
+    is_central_complaints_admin = (
+        role == "admin"
+        and email == "complaints-admin@gmail.com"
+        and not session.get("organization_id")
+    )
+
+    # Students must be logged in to view the general complaints board.
+    # Organization admins must not access the central complaints inbox.
+    if not session.get("user_id") or (role == "admin" and not is_central_complaints_admin):
+        return jsonify({"success": False, "message": "You are not authorized to view these complaints."}), 403
+
+    complaints = get_all_complaints()
+
+    serialized = [serialize_complaint(complaint) for complaint in complaints]
+
+    # Students can see all general complaint reports, but not other
+    # students' personal contact/identity details.
+    if not is_central_complaints_admin:
+        for complaint in serialized:
+            if complaint.get("anonymous"):
+                complaint["name"] = None
+                complaint["roll"] = None
+                complaint["phone"] = None
+                complaint["email"] = None
+            else:
+                complaint["name"] = None
+                complaint["roll"] = None
+                complaint["phone"] = None
+                complaint["email"] = None
 
     return jsonify({
         "success": True,
-        "complaints": [
-            serialize_complaint(complaint) for complaint in complaints
-        ]
+        "complaints": serialized
     })
 
 
@@ -297,10 +331,15 @@ def set_complaint_status(reference_id):
     # ONLY ADMINS CAN CHANGE A COMPLAINT'S STATUS
     # ----------------------------------------------
 
-    if session.get("role") != "admin":
+    is_central_complaints_admin = (
+        session.get("role") == "admin"
+        and (session.get("email") or "").strip().lower() == "complaints-admin@gmail.com"
+        and not session.get("organization_id")
+    )
+    if not is_central_complaints_admin:
         return jsonify({
             "success": False,
-            "message": "You are not authorized to do this."
+            "message": "Only the central complaints administrator can update complaint statuses."
         }), 403
 
     data = request.get_json(silent=True) or {}
@@ -315,18 +354,17 @@ def set_complaint_status(reference_id):
             )
         }), 400
 
-    organization_id = session.get("organization_id")
-    if session.get("role") != "admin" or not organization_id:
-        return jsonify({"success": False, "message": "Admin access required."}), 403
     complaint = get_complaint_by_reference(reference_id)
 
-    if not complaint or int(complaint.get("organization_id") or 0) != int(organization_id):
+    if not complaint:
         return jsonify({
             "success": False,
             "message": "Complaint not found."
         }), 404
 
-    updated = update_complaint_status(reference_id, status, organization_id)
+    # Main/general complaints are managed centrally, including rows whose
+    # organization_id is NULL. Category complaints use a separate system.
+    updated = update_complaint_status(reference_id, status, None)
 
     if not updated:
         return jsonify({

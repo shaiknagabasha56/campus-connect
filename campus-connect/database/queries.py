@@ -1067,62 +1067,57 @@ def create_complaint(
     if not connection:
         return None
 
+    # This is a regular (tuple) cursor, so SHOW COLUMNS rows use row[0].
     cursor = connection.cursor()
 
     try:
-        query = """
-            INSERT INTO complaints (
-                reference_id,
-                organization_id,
-                title,
-                category,
-                priority,
-                status,
-                description,
-                anonymous,
-                name,
-                roll,
-                phone,
-                email,
-                branch,
-                year,
-                semester,
-                attachments
-            )
-            VALUES (
-                %s, %s, %s, %s, %s, 'pending',
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-            )
-        """
+        cursor.execute("SHOW COLUMNS FROM complaints")
+        available_columns = {row[0] for row in cursor.fetchall()}
 
-        cursor.execute(
-            query,
-            (
-                reference_id,
-                organization_id,
-                title,
-                category,
-                priority,
-                description,
-                anonymous,
-                name,
-                roll,
-                phone,
-                email,
-                branch,
-                year,
-                semester,
-                attachments
+        values_by_column = {
+            "reference_id": reference_id,
+            "organization_id": organization_id,
+            "title": title,
+            "category": category,
+            "priority": priority,
+            "status": "pending",
+            "description": description,
+            "anonymous": anonymous,
+            "name": name,
+            "roll": roll,
+            "phone": phone,
+            "email": email,
+            "branch": branch,
+            "year": year,
+            "semester": semester,
+            "attachments": attachments,
+        }
+
+        required_columns = [
+            "reference_id", "organization_id", "title", "category",
+            "priority", "status", "description", "anonymous", "attachments"
+        ]
+        missing_required = [column for column in required_columns if column not in available_columns]
+        if missing_required:
+            raise RuntimeError(
+                "complaints table is missing required columns: "
+                + ", ".join(missing_required)
             )
+
+        columns = [column for column in values_by_column if column in available_columns]
+        placeholders = ", ".join(["%s"] * len(columns))
+        query = (
+            "INSERT INTO complaints (" + ", ".join(columns) + ") "
+            "VALUES (" + placeholders + ")"
         )
 
+        cursor.execute(query, tuple(values_by_column[column] for column in columns))
         connection.commit()
-
         return cursor.lastrowid
 
     except Exception as error:
         connection.rollback()
-        print("Create complaint database error:", error)
+        print("Create complaint database error:", repr(error))
         return None
 
     finally:
@@ -1142,33 +1137,32 @@ def get_all_complaints(organization_id=None):
     cursor = connection.cursor(dictionary=True)
 
     try:
-        query = """
-            SELECT
-                id,
-                reference_id,
-                organization_id,
-                title,
-                category,
-                priority,
-                status,
-                description,
-                anonymous,
-                name,
-                roll,
-                phone,
-                email,
-                branch,
-                year,
-                semester,
-                attachments,
-                created_at
+        cursor.execute("SHOW COLUMNS FROM complaints")
+        available_columns = {row["Field"] for row in cursor.fetchall()}
+
+        selected_columns = [
+            "id", "reference_id", "organization_id", "title", "category",
+            "priority", "status", "description", "anonymous", "name",
+            "roll", "phone", "attachments", "created_at",
+            "email", "branch", "year", "semester"
+        ]
+        select_parts = [
+            column if column in available_columns else f"NULL AS {column}"
+            for column in selected_columns
+        ]
+
+        query = f"""
+            SELECT {', '.join(select_parts)}
             FROM complaints
             WHERE (%s IS NULL OR organization_id = %s)
             ORDER BY created_at DESC
         """
-
         cursor.execute(query, (organization_id, organization_id))
         return cursor.fetchall()
+
+    except Exception as error:
+        print("Get all complaints database error:", repr(error))
+        return []
 
     finally:
         cursor.close()
@@ -1187,32 +1181,31 @@ def get_complaint_by_reference(reference_id):
     cursor = connection.cursor(dictionary=True)
 
     try:
-        query = """
-            SELECT
-                id,
-                reference_id,
-                organization_id,
-                title,
-                category,
-                priority,
-                status,
-                description,
-                anonymous,
-                name,
-                roll,
-                phone,
-                email,
-                branch,
-                year,
-                semester,
-                attachments,
-                created_at
+        cursor.execute("SHOW COLUMNS FROM complaints")
+        available_columns = {row["Field"] for row in cursor.fetchall()}
+
+        selected_columns = [
+            "id", "reference_id", "organization_id", "title", "category",
+            "priority", "status", "description", "anonymous", "name",
+            "roll", "phone", "attachments", "created_at",
+            "email", "branch", "year", "semester"
+        ]
+        select_parts = [
+            column if column in available_columns else f"NULL AS {column}"
+            for column in selected_columns
+        ]
+
+        query = f"""
+            SELECT {', '.join(select_parts)}
             FROM complaints
             WHERE reference_id = %s
         """
-
         cursor.execute(query, (reference_id,))
         return cursor.fetchone()
+
+    except Exception as error:
+        print("Get complaint by reference database error:", repr(error))
+        return None
 
     finally:
         cursor.close()
