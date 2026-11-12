@@ -3,6 +3,87 @@ from flask import current_app
 
 
 RESEND_API_URL = "https://api.resend.com/emails"
+BREVO_API_URL = "https://api.brevo.com/v3/smtp/email"
+
+
+# ==================================================
+# BREVO TRANSACTIONAL EMAIL (HTTPS API)
+# ==================================================
+
+def send_brevo_email(to_email, subject, content, html_content=None):
+    """
+    Send a transactional email using the Brevo HTTPS API.
+    Returns True on success, False on failure.
+    The real reason for a failure is printed to the server logs.
+    """
+
+    api_key = (current_app.config.get("BREVO_API_KEY") or "").strip().strip('"').strip("'")
+    sender_email = (current_app.config.get("BREVO_SENDER_EMAIL") or "").strip()
+    sender_name = (current_app.config.get("BREVO_SENDER_NAME") or "Campus Connect").strip()
+
+    if not api_key:
+        print("BREVO EMAIL ERROR: BREVO_API_KEY is missing. "
+              "Add it to .env (local) and your hosting Environment settings.")
+        return False
+
+    if api_key.startswith("xsmtpsib-"):
+        print("BREVO EMAIL ERROR: BREVO_API_KEY is an SMTP key (xsmtpsib-...). "
+              "The Brevo email API needs an API key that starts with 'xkeysib-'. "
+              "Create one at Brevo -> SMTP & API -> API Keys.")
+        return False
+
+    if not sender_email:
+        print("BREVO EMAIL ERROR: no sender address. Set BREVO_SENDER_EMAIL in .env "
+              "to a sender verified in Brevo.")
+        return False
+
+    headers = {
+        "api-key": api_key,
+        "accept": "application/json",
+        "content-type": "application/json"
+    }
+
+    payload = {
+        "sender": {"name": sender_name, "email": sender_email},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "textContent": content
+    }
+
+    if html_content:
+        payload["htmlContent"] = html_content
+
+    try:
+        response = requests.post(
+            BREVO_API_URL,
+            headers=headers,
+            json=payload,
+            timeout=15
+        )
+
+        if response.status_code in (200, 201, 202):
+            print("Brevo email sent successfully to", to_email)
+            return True
+
+        print("BREVO EMAIL ERROR")
+        print("Status  :", response.status_code)
+        print("Response:", response.text)
+
+        if response.status_code == 401:
+            print("HINT: BREVO_API_KEY is invalid. Use an API key that starts "
+                  "with 'xkeysib-' (not the SMTP key), and check for IP restrictions "
+                  "in Brevo -> Security -> Authorised IPs.")
+        elif response.status_code == 400:
+            print("HINT: Check that BREVO_SENDER_EMAIL is a verified sender in Brevo.")
+        elif response.status_code == 403:
+            print("HINT: Your Brevo account may not be activated for transactional "
+                  "email yet, or the request IP is not authorised.")
+
+        return False
+
+    except requests.RequestException as error:
+        print("Brevo connection error:", error)
+        return False
 
 
 def send_email(to_email, subject, content):
@@ -117,7 +198,7 @@ Regards,
 Team Campus Connect
 """
 
-    return send_email(
+    return send_brevo_email(
         email,
         "Reset your Campus Connect password",
         content

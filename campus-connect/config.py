@@ -27,6 +27,13 @@ class Config:
     RESEND_API_KEY = os.getenv("RESEND_API_KEY")
     MAIL_FROM = os.getenv("MAIL_FROM", "onboarding@resend.dev")
 
+    # BREVO (used for the forgot-password email)
+    BREVO_API_KEY = os.getenv("BREVO_API_KEY")
+    # Must be a verified sender in Brevo (Senders, Domains & Dedicated IPs).
+    # Falls back to MAIL_USERNAME if BREVO_SENDER_EMAIL is not set.
+    BREVO_SENDER_EMAIL = os.getenv("BREVO_SENDER_EMAIL") or os.getenv("MAIL_USERNAME")
+    BREVO_SENDER_NAME = os.getenv("BREVO_SENDER_NAME", "Campus Connect")
+
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
