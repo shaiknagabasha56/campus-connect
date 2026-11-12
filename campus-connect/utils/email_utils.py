@@ -2,57 +2,65 @@ import requests
 from flask import current_app
 
 
-BREVO_API_URL = "https://api.brevo.com/v3/smtp/email"
+RESEND_API_URL = "https://api.resend.com/emails"
 
 
 def send_email(to_email, subject, content):
     """
-    Send a transactional email using Brevo HTTPS API.
+    Send a transactional email using the Resend HTTPS API.
+    Returns True on success, False on failure.
+    The real reason for a failure is printed to the server logs.
     """
 
-    api_key = current_app.config["BREVO_API_KEY"]
-    sender_email = current_app.config["MAIL_USERNAME"]
+    api_key = (current_app.config.get("RESEND_API_KEY") or "").strip()
+    # Testing: onboarding@resend.dev  |  Production: an address on your verified domain
+    mail_from = (current_app.config.get("MAIL_FROM") or "onboarding@resend.dev").strip()
+
+    if not api_key:
+        print("EMAIL ERROR: RESEND_API_KEY is missing. "
+              "Add it to .env (local) and Render -> Environment.")
+        return False
 
     headers = {
-        "accept": "application/json",
-        "api-key": api_key,
-        "content-type": "application/json"
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
     }
 
     payload = {
-        "sender": {
-            "name": "Campus Connect",
-            "email": sender_email
-        },
-        "to": [
-            {
-                "email": to_email
-            }
-        ],
+        "from": f"Campus Connect <{mail_from}>",
+        "to": [to_email],
         "subject": subject,
-        "textContent": content
+        "text": content
     }
 
     try:
         response = requests.post(
-            BREVO_API_URL,
+            RESEND_API_URL,
             headers=headers,
             json=payload,
             timeout=15
         )
 
-        if response.status_code in (200, 201):
-            print("Email sent successfully.")
+        if response.status_code in (200, 201, 202):
+            print("Email sent successfully to", to_email)
             return True
 
-        print("Brevo email error:")
-        print("Status:", response.status_code)
+        print("RESEND EMAIL ERROR")
+        print("Status  :", response.status_code)
         print("Response:", response.text)
+
+        if response.status_code in (401, 403) and "api" in response.text.lower():
+            print("HINT: RESEND_API_KEY is invalid or restricted.")
+        elif response.status_code == 403:
+            print("HINT: With onboarding@resend.dev you can only send to "
+                  "your own Resend signup email. Verify a domain to send to others.")
+        elif response.status_code == 422:
+            print("HINT: Check MAIL_FROM - it must be on your verified domain.")
 
         return False
 
     except requests.RequestException as error:
-        print("Brevo connection error:", error)
+        print("Resend connection error:", error)
         return False
 
 

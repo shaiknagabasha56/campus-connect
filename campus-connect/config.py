@@ -24,7 +24,8 @@ class Config:
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 
-    BREVO_API_KEY = os.getenv("BREVO_API_KEY")
+    RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+    MAIL_FROM = os.getenv("MAIL_FROM", "onboarding@resend.dev")
 
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")

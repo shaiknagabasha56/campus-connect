@@ -376,19 +376,23 @@ def forgot_password(data):
             "success": False,
             "message": "No account found with this email."
         }
-    # GENERATE RESET TOKEN
-    reset_token = generate_password_reset_token(email)
-    # CREATE RESET URL
-    reset_url = url_for(
-        "auth.reset_password",
-        token=reset_token,
-        _external=True
-    )
-    # SEND EMAIL
-    email_sent = send_password_reset_email(
-        email,
-        reset_url
-    )
+    try:
+        # GENERATE RESET TOKEN
+        reset_token = generate_password_reset_token(email)
+        # CREATE RESET URL
+        reset_url = url_for(
+            "auth.reset_password",
+            token=reset_token,
+            _external=True
+        )
+        # SEND EMAIL
+        email_sent = send_password_reset_email(
+            email,
+            reset_url
+        )
+    except Exception as error:
+        print("Forgot password error:", error)
+        email_sent = False
     if not email_sent:
         return {
             "success": False,

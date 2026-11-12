@@ -1,3 +1,4 @@
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask, render_template, session, redirect, url_for, request,abort
 from config import Config
 from database.queries import get_organization_by_slug
@@ -21,6 +22,9 @@ from routes.community_chat import community_chat_bp
 def createApp():
     app = Flask(__name__)
     app.config.from_object(Config)
+    # Render sits behind a proxy: trust its headers so url_for(_external=True)
+    # builds https:// links (reset/verify emails) instead of http://
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
     oauth.init_app(app)
     oauth.register(
     name="google",
