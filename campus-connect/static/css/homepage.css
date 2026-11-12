@@ -616,7 +616,7 @@
     list-style: none;
     margin: 100;
     padding: 0;
-    animation: scrollNews 15s linear infinite;
+    animation: scrollNews 45s linear infinite;
   }
 
   .news-list:hover {
